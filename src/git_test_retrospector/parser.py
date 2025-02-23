@@ -23,10 +23,19 @@ class TestSuites(BaseModel):
     testsuites: List[TestSuite] = Field(..., alias='testsuite')
 
 
-def parse_test_results(commit_dir=None):
+def parse_test_results(commit_dir=None, results_dir=None):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    results_dir = os.path.join(script_dir, 'commit-test-results')  # Adjusted path
-    output_file = os.path.join(script_dir, 'test_results_summary.csv')
+
+    # Determine results_dir
+    if results_dir is None:
+        results_dir = os.path.join(script_dir, 'commit-test-results')  # Default path
+
+    # Determine output_file path
+    if results_dir:
+        output_file = os.path.join(os.getcwd(), 'test_results_summary.csv')  # Use cwd
+    else:
+        output_file = os.path.join(script_dir, 'test_results_summary.csv')  # Use script_dir
+
 
     with open(output_file, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
@@ -37,7 +46,7 @@ def parse_test_results(commit_dir=None):
             if os.path.isdir(os.path.join(results_dir, commit_dir)):
                 commit_dirs.append(commit_dir)
             else:
-                print(f"Error: Specified commit directory '{commit_dir}' not found.", file=sys.stderr)
+                print(f"Error: Specified commit directory '{commit_dir}' not found in '{results_dir}'.", file=sys.stderr)
                 sys.exit(1)
         else:
             commit_dirs = [d for d in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, d))]
@@ -57,6 +66,7 @@ def parse_test_results(commit_dir=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parse test results XML files and generate a summary CSV.")
     parser.add_argument("-c", "--commit_dir", help="Specific commit directory to process")
+    parser.add_argument("-r", "--results_dir", help="Directory containing the commit directories")
     args = parser.parse_args()
 
-    parse_test_results(args.commit_dir)
+    parse_test_results(args.commit_dir, args.results_dir)

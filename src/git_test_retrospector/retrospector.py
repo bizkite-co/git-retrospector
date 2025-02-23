@@ -4,6 +4,7 @@ import sys
 import argparse
 from .parser import parse_test_results
 
+
 def get_original_branch(target_repo):
     try:
         result = subprocess.run(
@@ -18,6 +19,7 @@ def get_original_branch(target_repo):
         print(f"Error getting original branch: {e}", file=sys.stderr)
         return None
 
+
 def get_current_commit_hash(target_repo):
     try:
         result = subprocess.run(
@@ -31,6 +33,7 @@ def get_current_commit_hash(target_repo):
     except subprocess.CalledProcessError as e:
         print(f"Error getting current commit hash: {e}", file=sys.stderr)
         return None
+
 
 def run_vitest(target_repo, output_dir):
     vitest_log = os.path.join(output_dir, 'vitest.log')
@@ -49,6 +52,7 @@ def run_vitest(target_repo, output_dir):
         except subprocess.CalledProcessError:
             # vitest returns non-zero exit code on test failure
             pass
+
 
 def run_playwright(target_repo, output_dir):
     playwright_log = os.path.join(output_dir, 'playwright.log')
@@ -69,12 +73,13 @@ def run_playwright(target_repo, output_dir):
             # playwright returns non-zero exit code on test failure
             pass
 
-def process_commit(target_repo, commit_hash, output_base, origin_branch):
-    output_dir = os.path.join(output_base, commit_hash)
-    os.makedirs(output_dir, exist_ok=True)
 
-    vitest_output = os.path.join(output_dir, 'vitest.xml')
-    playwright_output = os.path.join(output_dir, 'playwright.xml')
+def process_commit(target_repo, commit_hash, output_dir, origin_branch):
+    output_dir_for_commit = os.path.join(output_dir, commit_hash)
+    os.makedirs(output_dir_for_commit, exist_ok=True)
+
+    vitest_output = os.path.join(output_dir_for_commit, 'vitest.xml')
+    playwright_output = os.path.join(output_dir_for_commit, 'playwright.xml')
 
     print(f"Processing commit {commit_hash}")
 
@@ -98,8 +103,8 @@ def process_commit(target_repo, commit_hash, output_base, origin_branch):
         print(f"  Failed to checkout commit: {commit_hash}", file=sys.stderr)
         return
 
-    run_vitest(target_repo, output_dir)
-    run_playwright(target_repo, output_dir)
+    run_vitest(target_repo, output_dir_for_commit)
+    run_playwright(target_repo, output_dir_for_commit)
 
     try:
         subprocess.run(
@@ -112,24 +117,22 @@ def process_commit(target_repo, commit_hash, output_base, origin_branch):
     except subprocess.CalledProcessError as e:
         print(f"  Failed to checkout original branch", file=sys.stderr)
 
-def run_tests(target_repo, iteration_count):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_base = os.path.join(script_dir, 'commit-test-results')
 
+def run_tests(target_repo, iteration_count, output_dir):
     print(f"Script started")
     print(f"Target repository: {target_repo}")
-    print(f"Script directory: {script_dir}")
-    print(f"Output base: {output_base}")
+    print(f"Output directory: {output_dir}")
 
-    if not os.path.isdir(target_repo):
-        print(f"Error: Target repo directory {target_repo} does not exist", file=sys.stderr)
+    # Check if target_repo is a git repository
+    if get_current_commit_hash(target_repo) is None:
+        print(f"Error: Target repo directory {target_repo} is not a git repository or does not exist", file=sys.stderr)
         return
 
     origin_branch = get_original_branch(target_repo)
     if origin_branch is None:
         print("Could not determine original branch. Using HEAD~{i} relative to current commit.")
 
-    os.makedirs(output_base, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     for i in range(iteration_count):
         try:
@@ -150,20 +153,22 @@ def run_tests(target_repo, iteration_count):
             if not commit_hash:
                 print(f"Error: rev-parse returned empty string for commit {current_commit}~{i}")
                 continue  # Skip this iteration
-            process_commit(target_repo, commit_hash, output_base, origin_branch)
+            process_commit(target_repo, commit_hash, output_dir, origin_branch)
 
         except subprocess.CalledProcessError as e:
             print(f"Error getting commit hash: {e}", file=sys.stderr)
             continue
 
-    print(f"Test runs completed. Results stored in {output_base}")
+    print(f"Test runs completed. Results stored in {output_dir}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run tests on a range of commits and parse results.")
     parser.add_argument("target_repo", help="Path to the target repository")
     parser.add_argument("-i", "--iterations", type=int, default=10, help="Number of iterations (default: 10)")
+    parser.add_argument("-o", "--output_dir", default="commit-test-results", help="Output directory (default: commit-test-results in current working directory)")
     parser.add_argument("-c", "--commit_dir", help="Specific commit directory to process")  # Add commit_dir argument
+
     args = parser.parse_args()
 
-    run_tests(args.target_repo, args.iterations)
-    parse_test_results(args.commit_dir)  # Call parse_test_results with the commit_dir
+    run_tests(args.target_repo, args.iterations, args.output_dir)
+    parse_test_results(args.commit_dir, results_dir=args.output_dir)  # Call parse_test_results with the commit_dir
