@@ -1,0 +1,11 @@
+pyproject.toml
+src/git_test_retrospector/__init__.py
+src/git_test_retrospector/parser.py
+src/git_test_retrospector/retrospector.py
+src/git_test_retrospector/xml_processor.py
+src/git_test_retrospector.egg-info/PKG-INFO
+src/git_test_retrospector.egg-info/SOURCES.txt
+src/git_test_retrospector.egg-info/dependency_links.txt
+src/git_test_retrospector.egg-info/requires.txt
+src/git_test_retrospector.egg-info/top_level.txt
+tests/test_retrospector.py

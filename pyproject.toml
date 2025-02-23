@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git_test_retrospector"
+version = "0.1.0"
+description = "A tool to run tests on a range of Git commits and analyze the results."
+authors = [{name = "mstouffer", email = "m.ztouffer@gmail.com"}]
+requires-python = ">=3.7"
+dependencies = [
+    "pydantic",
+    "argparse",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

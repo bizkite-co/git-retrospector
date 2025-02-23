@@ -1,0 +1,62 @@
+import os
+import csv
+import xml.etree.ElementTree as ET
+from typing import List, Optional
+from pydantic import BaseModel, Field
+import argparse
+import sys
+from .xml_processor import process_xml_file  # Import the function
+
+
+class TestCase(BaseModel):
+    name: str = Field(..., alias='name')  # Use alias for XML attribute
+    time: float = Field(..., alias='time')
+    result: str
+    media_path: str = ""
+
+
+class TestSuite(BaseModel):
+    testcases: List[TestCase] = Field(..., alias='testcase')
+
+
+class TestSuites(BaseModel):
+    testsuites: List[TestSuite] = Field(..., alias='testsuite')
+
+
+def parse_test_results(commit_dir=None):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    results_dir = os.path.join(script_dir, 'commit-test-results')  # Adjusted path
+    output_file = os.path.join(script_dir, 'test_results_summary.csv')
+
+    with open(output_file, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(['Commit', 'Test Type', 'Test Name', 'Result', 'Duration', 'Media Path'])
+
+        commit_dirs = []
+        if commit_dir:
+            if os.path.isdir(os.path.join(results_dir, commit_dir)):
+                commit_dirs.append(commit_dir)
+            else:
+                print(f"Error: Specified commit directory '{commit_dir}' not found.", file=sys.stderr)
+                sys.exit(1)
+        else:
+            commit_dirs = [d for d in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, d))]
+
+        for commit_dir in commit_dirs:
+            commit_dir_path = os.path.join(results_dir, commit_dir)
+
+            vitest_xml_path = os.path.join(commit_dir_path, 'vitest.xml')
+            playwright_xml_path = os.path.join(commit_dir_path, 'playwright.xml')
+
+            process_xml_file(vitest_xml_path, commit_dir, 'vitest', csv_writer)
+            process_xml_file(playwright_xml_path, commit_dir, 'playwright', csv_writer)
+
+    print(f'Test results summary written to {output_file}')
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Parse test results XML files and generate a summary CSV.")
+    parser.add_argument("-c", "--commit_dir", help="Specific commit directory to process")
+    args = parser.parse_args()
+
+    parse_test_results(args.commit_dir)

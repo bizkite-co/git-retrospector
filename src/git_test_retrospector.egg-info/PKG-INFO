@@ -1,0 +1,8 @@
+Metadata-Version: 2.2
+Name: git_test_retrospector
+Version: 0.1.0
+Summary: A tool to run tests on a range of Git commits and analyze the results.
+Author-email: mstouffer <m.ztouffer@gmail.com>
+Requires-Python: >=3.7
+Requires-Dist: pydantic
+Requires-Dist: argparse
