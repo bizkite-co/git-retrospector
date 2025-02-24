@@ -3,11 +3,12 @@ import subprocess
 import os
 import sys
 import argparse
+from pathlib import Path
 from git_retrospector.parser import parse_test_results
 import toml
 from pydantic import ValidationError
 from git_retrospector.config import Config  # Import the Config class
-from git_retrospector.git_utils import get_original_branch, get_current_commit_hash  # Import Git utility functions
+from git_retrospector.git_utils import get_original_branch, get_current_commit_hash, get_origin_branch_or_commit  # Import Git utility functions
 from git_retrospector.runners import run_vitest, run_playwright  # Import test runner functions
 
 
@@ -22,17 +23,16 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
         origin_branch (str): The original branch to return to.
         config (Config): The configuration object.
     """
-    test_output_dir = str(config.test_result_dir)
+    output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
+    output_dir_for_commit.mkdir(parents=True, exist_ok=True)
 
-    output_dir_for_commit = os.path.join(test_output_dir, commit_hash)
-    os.makedirs(output_dir_for_commit, exist_ok=True) # Create directory
+    print(f"Running tests for commit {commit_hash}. Output directory: {output_dir_for_commit.resolve()}")
 
-    vitest_output = os.path.join(output_dir_for_commit, "vitest.xml")
-    playwright_output = os.path.join(output_dir_for_commit, "playwright.xml")
+    vitest_output = output_dir_for_commit / "vitest.xml"
+    playwright_output = output_dir_for_commit / "playwright.xml"
 
-    print(f"Processing commit {commit_hash}")
 
-    if os.path.exists(vitest_output) and os.path.exists(playwright_output):
+    if os.path.exists(str(vitest_output)) and os.path.exists(str(playwright_output)):
         print("  Skipping - output files exist")
         return
 
@@ -52,8 +52,8 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
         print(f"  Failed to checkout commit: {commit_hash}", file=sys.stderr)
         return
 
-    run_vitest(target_repo, output_dir_for_commit, config)
-    run_playwright(target_repo, output_dir_for_commit, config)
+    run_vitest(target_repo, str(output_dir_for_commit), config)
+    run_playwright(target_repo, str(output_dir_for_commit), config)
 
     try:
         subprocess.run(
@@ -84,7 +84,7 @@ def run_tests(target_name, iteration_count):
         with open(config_file_path, "r") as config_file:
             config_data = toml.load(config_file)
         config = Config(**config_data)
-        target_repo = str(config.target_repo_path)  # Use the new name and convert Path to string.
+        target_repo = str(config.repo_under_test_path)  # Use the new name and convert Path to string
         test_output_dir = str(config.test_result_dir)
 
     except (FileNotFoundError, KeyError, toml.TomlDecodeError) as e:
@@ -98,69 +98,69 @@ def run_tests(target_name, iteration_count):
     print(f"Running tests for {iteration_count} commits")
     print(f"Target repository: {target_repo}")
 
+    commits_log_path = config.test_result_dir / "commits.log"
+    with open(commits_log_path, "w") as commits_log:
+        origin_branch = get_origin_branch_or_commit(target_repo)  # Get original branch of the *target* repo
 
-    origin_branch = get_original_branch(target_repo)  # Get original branch of the *target* repo
-    if origin_branch is None:
-      print("Could not determine original branch.  Using HEAD~{i} relative to current commit.")
+        # Check if target_repo is a git repository
+        assert origin_branch is not None, "Error: Target repo directory {target_repo} is not a git repository or does not exist"
 
-    # Check if target_repo is a git repository
-    if get_current_commit_hash(target_repo) is None:
-        print(f"Error: Target repo directory {target_repo} is not a git repository or does not exist", file=sys.stderr)
-        return
+        for i in range(iteration_count):
+            try:
+                # Use get_current_commit_hash to get the initial HEAD
+                current_commit = get_current_commit_hash(target_repo)
+                if current_commit is None:
+                    print("Failed to get current commit hash. Exiting.")
+                    return
 
-    for i in range(iteration_count):
-        try:
-            # Use get_current_commit_hash to get the initial HEAD
-            current_commit = get_current_commit_hash(target_repo)
-            if current_commit is None:
-                print("Failed to get current commit hash. Exiting.")
-                return
-
-            commit_hash_result = subprocess.run(
-                ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
-                cwd=target_repo,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            commit_hash = commit_hash_result.stdout.strip()
-            if not commit_hash:
-                print(
-                    f"Error: rev-parse returned empty string for commit {current_commit}~{i}"
+                commit_hash_result = subprocess.run(
+                    ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
+                    cwd=target_repo,
+                    capture_output=True,
+                    text=True,
+                    check=True,
                 )
-                continue  # Skip this iteration
-            assert origin_branch is not None, "Failed to determine original branch"
-            process_commit(target_repo, commit_hash, test_output_dir, origin_branch, config)
+                commit_hash = commit_hash_result.stdout.strip()
+                if not commit_hash:
+                    print(
+                        f"Error: rev-parse returned empty string for commit {current_commit}~{i}"
+                    )
+                    continue  # Skip this iteration
+                process_commit(target_repo, commit_hash, test_output_dir, origin_branch, config)
+                commits_log.write(f"{commit_hash}\n")
 
-        except subprocess.CalledProcessError as e:
-            print(f"Error getting commit hash: {e}", file=sys.stderr)
-            continue
+            except subprocess.CalledProcessError as e:
+                print(f"Error getting commit hash: {e}", file=sys.stderr)
+                continue
 
     print(f"Test runs completed. Results stored in {test_output_dir}")
 
 
-def initialize(target_name, source_dir, output_base_dir="retros"):
+def initialize(target_name, repo_under_test_path, output_base_dir="retros"):
     """
     Initializes the target-specific directory and config file.
 
     Args:
         target_name (str): The name of the target repository.
-        source_dir (str): The path to the target repository.
+        repo_under_test_path (str): The path to the target repository.
         output_base_dir (str, optional): The base directory for retrospectives. Defaults to "retros".
     """
     config_file_path = os.path.join(output_base_dir, target_name, "config.toml")
     if not os.path.exists(config_file_path):
-        config = Config(name=target_name, source_dir=os.getcwd(), output_paths={
+        config = Config(name=target_name, repo_under_test_path=repo_under_test_path, test_result_dir=os.path.join(output_base_dir, target_name), output_paths={
                 "vitest": "test-output/vitest.xml",
                 "playwright": "test-output/playwright.xml",
             })
+        config.print_full_paths() # Print the full paths
         print(f"config_data: {config}")
         # Convert Path objects to strings for TOML serialization
         config_data = config.model_dump()
-        config_data['source_dir'] = str(config_data['source_dir'])
+        config_data['repo_under_test_path'] = str(config_data['repo_under_test_path'])
         config_data['test_result_dir'] = str(config_data['test_result_dir'])
+
+
         with open(config_file_path, "w") as config_file:
-            toml.dump(config_data, config_file)
+            toml.dump(config_data, config_file)  # Use config_data
     return config_file_path
 
 if __name__ == "__main__":
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     # 'init' command
     init_parser = subparsers.add_parser("init", help="Initialize a target repository")
     init_parser.add_argument("target_name", help="Name of the target repository")
-    init_parser.add_argument("source_dir", help="Path to the target repository")
+    init_parser.add_argument("target_repo_path", help="Path to the target repository")
 
     # 'run' command
     run_parser = subparsers.add_parser("run", help="Run tests on a target repository")
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "init":
-        initialize(args.target_name, args.source_dir)
+        initialize(args.target_name, args.target_repo_path)
     elif args.command == "run":
         run_tests(args.target_name, args.iterations)
         # parse_test_results(

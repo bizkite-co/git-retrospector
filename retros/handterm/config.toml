@@ -1,6 +1,6 @@
 name = "handterm"
-target_repo_path = "/home/mstouffer/repos/handterm-proj/handterm"
-test_result_dir = "retros/handterm/test-result-dir"
+repo_under_test_path = "/home/mstouffer/repos/handterm-proj/handterm"
+test_result_dir = "retros/handterm"
 test_output_dir = "test-output"
 
 [output_paths]
