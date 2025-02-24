@@ -1,15 +1,15 @@
-You are helping to refactor some Python scripts into a reusable Python module. The goal is to create a module called `git-test-retrospector` that can run tests on a range of Git commits and analyze the results.
+You are helping to refactor some Python scripts into a reusable Python module. The goal is to create a module called `git-retrospector` that can run tests on a range of Git commits and analyze the results.
 
-The original scripts were located in `/home/mstouffer/repos/handterm-proj/handterm-wiki/scripts/` and have been migrated to `/home/mstouffer/repos/handterm-proj/git-test-retrospector/`.
+The original scripts were located in `/home/mstouffer/repos/handterm-proj/handterm-wiki/scripts/` and have been migrated to `/home/mstouffer/repos/handterm-proj/git-retrospector/`.
 
 The module structure has been set up using a `src` layout:
 
 ```
-git-test-retrospector/
+git-retrospector/
 ├── pyproject.toml
 ├── README.md
 ├── src/
-│   └── git_test_retrospector/
+│   └── git_retrospector/
 │       ├── __init__.py
 │       ├── parser.py
 │       ├── retrospector.py

@@ -1,0 +1,8 @@
+name = "test_target"
+source_dir = "PosixPath('tests')"
+test_result_dir = "PosixPath('retros/test_target/test-output')"
+test_output_dir = "test-output"
+
+[output_paths]
+vitest = "test-output/vitest.xml"
+playwright = "test-output/playwright.xml"

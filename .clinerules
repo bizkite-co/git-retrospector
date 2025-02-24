@@ -1,0 +1,12 @@
+* Try to limit file size to about 100 lines.
+    * If they go over that size, parse functions out to other files.
+* use the repo remote address `github.com:bizkite-co/git-retrospector` to determine the repo name and owner.
+* Use the GitHub MCP to read and update GitHub issues on this repo.
+* Add the issues to the "Git Retrospector" project.
+* Use the GitHub CLI for GitHub actions not available in the MCP.
+* Use modern Python best practices as much as possible.
+* Suggest Python best practices improvements.
+* Use industry standard best practice coding standards and file structure and naming conventions.
+* Try to apply type hints and type safety tools like Pydantic.
+* Prefer unit tests over logging wherever possible.
+* Break problems down into smaller problems until you can find the tiny problem that's causeing the bigger problems.

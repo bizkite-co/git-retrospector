@@ -1,4 +1,4 @@
-# git-test-retrospector
+# git-retrospector
 
 This is a Python module for running tests on a range of Git commits and analyzing the results. It was refactored from scripts originally located in the `handterm-wiki/scripts` directory of the `handterm-proj` repository.
 
@@ -40,7 +40,7 @@ options:
 For example:
 
 ```
-python -m git_test_retrospector.retrospector /path/to/repo -i 5
+python -m git_retrospector.retrospector /path/to/repo -i 5
 ```
 
 This will run tests on the repository located at `/path/to/repo` for the last 5 commits.
