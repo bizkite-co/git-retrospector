@@ -1,0 +1,1551 @@
+
+Running 74 tests using 4 workers
+
+[1A[2K[1/74] [chromium] › src/e2e/edit-command.spec.ts:57:3 › Edit Command › should navigate to edit activity with specific file
+[1A[2K[2/74] [chromium] › src/e2e/browser-setup/setupWindow.spec.ts:5:3 › setupBrowserWindow › should expose a simple function
+[1A[2K[3/74] [chromium] › src/e2e/complete-command.spec.ts:23:3 › Complete Command › should mark tutorials as completed and navigate home
+[1A[2K[4/74] [chromium] › src/e2e/edit-command.spec.ts:43:3 › Edit Command › should navigate to edit activity with default file
+[1A[2K[5/74] [chromium] › src/e2e/edit-command.spec.ts:84:3 › Edit Command › should show error for invalid command
+[1A[2K  1) [chromium] › src/e2e/edit-command.spec.ts:57:3 › Edit Command › should navigate to edit activity with specific file 
+
+    Error: Window setup failed: {"hasSetCompletedTutorial":false,"hasSetActivity":true,"hasGetNextTutorial":false,"hasSetNextTutorial":false}
+
+       at browser-setup/setupWindow.ts:39
+
+      37 |
+      38 | 	if (!verification.hasSetCompletedTutorial || !verification.hasSetActivity || !verification.hasGetNextTutorial || !verification.hasSetNextTutorial) {
+    > 39 | 		throw new Error(`Window setup failed: ${JSON.stringify(verification)}`);
+         | 		      ^
+      40 | 	}
+      41 | }
+        at setupBrowserWindow (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/browser-setup/setupWindow.ts:39:9)
+        at TerminalPage.initialize (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:55:5)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/edit-command.spec.ts:33:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d1cad-activity-with-specific-file-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d1cad-activity-with-specific-file-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d1cad-activity-with-specific-file-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/edit-command-Edit-Command--d1cad-activity-with-specific-file-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2) [chromium] › src/e2e/edit-command.spec.ts:43:3 › Edit Command › should navigate to edit activity with default file 
+
+    Error: Window setup failed: {"hasSetCompletedTutorial":false,"hasSetActivity":true,"hasGetNextTutorial":false,"hasSetNextTutorial":false}
+
+       at browser-setup/setupWindow.ts:39
+
+      37 |
+      38 | 	if (!verification.hasSetCompletedTutorial || !verification.hasSetActivity || !verification.hasGetNextTutorial || !verification.hasSetNextTutorial) {
+    > 39 | 		throw new Error(`Window setup failed: ${JSON.stringify(verification)}`);
+         | 		      ^
+      40 | 	}
+      41 | }
+        at setupBrowserWindow (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/browser-setup/setupWindow.ts:39:9)
+        at TerminalPage.initialize (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:55:5)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/edit-command.spec.ts:33:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d11bb--activity-with-default-file-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d11bb--activity-with-default-file-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--d11bb--activity-with-default-file-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/edit-command-Edit-Command--d11bb--activity-with-default-file-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[6/74] [chromium] › src/e2e/github-command-navigation.spec.ts:137:3 › GitHub Command Navigation › should initialize with correct activity state
+[1A[2K[7/74] [chromium] › src/e2e/github-command-navigation.spec.ts:147:3 › GitHub Command Navigation › should handle GitHub command execution
+[1A[2K[8/74] [chromium] › src/e2e/github-command-navigation.spec.ts:201:3 › GitHub Command Navigation › should handle credential errors gracefully
+[1A[2K  3) [chromium] › src/e2e/edit-command.spec.ts:84:3 › Edit Command › should show error for invalid command 
+
+    Error: Window setup failed: {"hasSetCompletedTutorial":false,"hasSetActivity":true,"hasGetNextTutorial":false,"hasSetNextTutorial":true}
+
+       at browser-setup/setupWindow.ts:39
+
+      37 |
+      38 | 	if (!verification.hasSetCompletedTutorial || !verification.hasSetActivity || !verification.hasGetNextTutorial || !verification.hasSetNextTutorial) {
+    > 39 | 		throw new Error(`Window setup failed: ${JSON.stringify(verification)}`);
+         | 		      ^
+      40 | 	}
+      41 | }
+        at setupBrowserWindow (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/browser-setup/setupWindow.ts:39:9)
+        at TerminalPage.initialize (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:55:5)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/edit-command.spec.ts:33:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--3eb2c-w-error-for-invalid-command-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--3eb2c-w-error-for-invalid-command-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/edit-command-Edit-Command--3eb2c-w-error-for-invalid-command-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/edit-command-Edit-Command--3eb2c-w-error-for-invalid-command-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[9/74] [chromium] › src/e2e/monaco-tree-view.spec.ts:42:3 › Monaco Editor Tree View › should load tree view from localStorage
+[1A[2K  4) [chromium] › src/e2e/github-command-navigation.spec.ts:137:3 › GitHub Command Navigation › should initialize with correct activity state 
+
+    Error: page.evaluate: Error: activitySignal is not defined
+        at eval (eval at evaluate (:234:30), <anonymous>:3:15)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:3:15)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/github-command-navigation.spec.ts:138:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/github-command-navigation--105e5-with-correct-activity-state-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/github-command-navigation--105e5-with-correct-activity-state-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/github-command-navigation--105e5-with-correct-activity-state-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/github-command-navigation--105e5-with-correct-activity-state-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[10/74] [chromium] › src/e2e/monaco-tree-view.spec.ts:74:3 › Monaco Editor Tree View › should update tree view when localStorage changes
+[1A[2K  5) [chromium] › src/e2e/github-command-navigation.spec.ts:201:3 › GitHub Command Navigation › should handle credential errors gracefully 
+
+    Error: page.evaluate: Error: executeCommand is not properly defined
+        at eval (eval at evaluate (:234:30), <anonymous>:8:15)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:8:15)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/github-command-navigation.spec.ts:259:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/github-command-navigation--93a05-redential-errors-gracefully-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/github-command-navigation--93a05-redential-errors-gracefully-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/github-command-navigation--93a05-redential-errors-gracefully-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/github-command-navigation--93a05-redential-errors-gracefully-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  6) [chromium] › src/e2e/monaco-tree-view.spec.ts:42:3 › Monaco Editor Tree View › should load tree view from localStorage 
+
+    Error: page.waitForFunction: ReferenceError: isMonacoWindow is not defined
+        at eval (eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at waitForMonacoInit (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:20:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:55:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-6ab82-tree-view-from-localStorage-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-6ab82-tree-view-from-localStorage-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-6ab82-tree-view-from-localStorage-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/monaco-tree-view-Monaco-Ed-6ab82-tree-view-from-localStorage-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[11/74] [chromium] › src/e2e/monaco-tree-view.spec.ts:102:3 › Monaco Editor Tree View › should support keyboard navigation
+[1A[2K  7) [chromium] › src/e2e/github-command-navigation.spec.ts:147:3 › GitHub Command Navigation › should handle GitHub command execution 
+
+    Error: page.evaluate: Error: Required window properties are not defined
+        at eval (eval at evaluate (:234:30), <anonymous>:3:15)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:3:15)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/github-command-navigation.spec.ts:148:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/github-command-navigation--9af83-le-GitHub-command-execution-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/github-command-navigation--9af83-le-GitHub-command-execution-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/github-command-navigation--9af83-le-GitHub-command-execution-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/github-command-navigation--9af83-le-GitHub-command-execution-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[12/74] [chromium] › src/e2e/page-objects/EditorPage.spec.ts:34:2 › EditorPage › initializes with correct state
+[1A[2K[13/74] [chromium] › src/e2e/page-objects/EditorPage.spec.ts:44:2 › EditorPage › can set and get content
+[1A[2K  8) [chromium] › src/e2e/monaco-tree-view.spec.ts:74:3 › Monaco Editor Tree View › should update tree view when localStorage changes 
+
+    Error: page.waitForFunction: ReferenceError: isMonacoWindow is not defined
+        at eval (eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at waitForMonacoInit (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:20:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:76:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-583bb-w-when-localStorage-changes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-583bb-w-when-localStorage-changes-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-583bb-w-when-localStorage-changes-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/monaco-tree-view-Monaco-Ed-583bb-w-when-localStorage-changes-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  9) [chromium] › src/e2e/monaco-tree-view.spec.ts:102:3 › Monaco Editor Tree View › should support keyboard navigation 
+
+    Error: page.waitForFunction: ReferenceError: isMonacoWindow is not defined
+        at eval (eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at predicate (eval at evaluate (:234:30)), <anonymous>:2:7)
+        at predicate (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:13:24)
+        at next (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:32:31)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:42:11)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at waitForMonacoInit (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:20:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/monaco-tree-view.spec.ts:114:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-3fafb-support-keyboard-navigation-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-3fafb-support-keyboard-navigation-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/monaco-tree-view-Monaco-Ed-3fafb-support-keyboard-navigation-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/monaco-tree-view-Monaco-Ed-3fafb-support-keyboard-navigation-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[14/74] [chromium] › src/e2e/page-objects/EditorPage.spec.ts:52:2 › EditorPage › cursor movement works
+[1A[2K[15/74] [chromium] › src/e2e/page-objects/EditorPage.spec.ts:70:2 › EditorPage › vim mode transitions work
+[1A[2K  10) [chromium] › src/e2e/page-objects/EditorPage.spec.ts:34:2 › EditorPage › initializes with correct state 
+
+    TimeoutError: locator.waitFor: Timeout 4000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.vim-status-bar') to be visible[22m
+    [2m    13 × locator resolved to hidden <div class="vim-status-bar"></div>[22m
+
+
+       at page-objects/EditorPage.ts:74
+
+      72 |
+      73 | 		// Wait for Vim mode initialization
+    > 74 | 		await this.statusBar.waitFor({
+         | 		                     ^
+      75 | 			state: 'visible',
+      76 | 			timeout: TEST_CONFIG.timeout.medium
+      77 | 		});
+        at EditorPage.waitForEditor (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.ts:74:24)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-Ed-770b7-tializes-with-correct-state-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-Ed-770b7-tializes-with-correct-state-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-Ed-770b7-tializes-with-correct-state-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-EditorPage-Ed-770b7-tializes-with-correct-state-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[16/74] [chromium] › src/e2e/page-objects/EditorPage.spec.ts:85:2 › EditorPage › handles :q! command
+[1A[2K  11) [chromium] › src/e2e/page-objects/EditorPage.spec.ts:44:2 › EditorPage › can set and get content 
+
+    TimeoutError: locator.waitFor: Timeout 4000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.vim-status-bar') to be visible[22m
+    [2m    12 × locator resolved to hidden <div class="vim-status-bar"></div>[22m
+
+
+       at page-objects/EditorPage.ts:74
+
+      72 |
+      73 | 		// Wait for Vim mode initialization
+    > 74 | 		await this.statusBar.waitFor({
+         | 		                     ^
+      75 | 			state: 'visible',
+      76 | 			timeout: TEST_CONFIG.timeout.medium
+      77 | 		});
+        at EditorPage.waitForEditor (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.ts:74:24)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-can-set-and-get-content-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-can-set-and-get-content-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-can-set-and-get-content-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-EditorPage-EditorPage-can-set-and-get-content-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[17/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:33:3 › TerminalPage › should be able to type and execute commands
+[1A[2K  12) [chromium] › src/e2e/page-objects/EditorPage.spec.ts:70:2 › EditorPage › vim mode transitions work 
+
+    TimeoutError: locator.waitFor: Timeout 4000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.vim-status-bar') to be visible[22m
+    [2m    13 × locator resolved to hidden <div class="vim-status-bar"></div>[22m
+
+
+       at page-objects/EditorPage.ts:74
+
+      72 |
+      73 | 		// Wait for Vim mode initialization
+    > 74 | 		await this.statusBar.waitFor({
+         | 		                     ^
+      75 | 			state: 'visible',
+      76 | 			timeout: TEST_CONFIG.timeout.medium
+      77 | 		});
+        at EditorPage.waitForEditor (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.ts:74:24)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-vim-mode-transitions-work-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-vim-mode-transitions-work-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-vim-mode-transitions-work-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-EditorPage-EditorPage-vim-mode-transitions-work-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  13) [chromium] › src/e2e/page-objects/EditorPage.spec.ts:52:2 › EditorPage › cursor movement works 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+       8 | 	let editor: EditorPage;
+       9 |
+    > 10 | 	test.beforeEach(async ({ page }) => {
+         | 	     ^
+      11 | 		// First navigate to the page
+      12 | 		await page.goto(TEST_CONFIG.baseUrl);
+      13 | 		await page.waitForLoadState('domcontentloaded');
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:10:7
+
+    Error: locator.waitFor: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('.vim-status-bar') to be visible[22m
+    [2m    12 × locator resolved to hidden <div class="vim-status-bar"></div>[22m
+
+
+       at page-objects/EditorPage.ts:74
+
+      72 |
+      73 | 		// Wait for Vim mode initialization
+    > 74 | 		await this.statusBar.waitFor({
+         | 		                     ^
+      75 | 			state: 'visible',
+      76 | 			timeout: TEST_CONFIG.timeout.medium
+      77 | 		});
+        at EditorPage.waitForEditor (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.ts:74:24)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-cursor-movement-works-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-cursor-movement-works-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-cursor-movement-works-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-EditorPage-EditorPage-cursor-movement-works-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[18/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:45:3 › TerminalPage › should be able to get terminal output
+[1A[2K[19/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:58:3 › TerminalPage › should be able to wait for prompt
+[1A[2K[20/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:72:3 › TerminalPage › should have prompt only
+[1A[2K  14) [chromium] › src/e2e/page-objects/EditorPage.spec.ts:85:2 › EditorPage › handles :q! command ─
+
+    TimeoutError: locator.waitFor: Timeout 4000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.vim-status-bar') to be visible[22m
+    [2m    12 × locator resolved to hidden <div class="vim-status-bar"></div>[22m
+
+
+       at page-objects/EditorPage.ts:74
+
+      72 |
+      73 | 		// Wait for Vim mode initialization
+    > 74 | 		await this.statusBar.waitFor({
+         | 		                     ^
+      75 | 			state: 'visible',
+      76 | 			timeout: TEST_CONFIG.timeout.medium
+      77 | 		});
+        at EditorPage.waitForEditor (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.ts:74:24)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/EditorPage.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-handles-q-command-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-handles-q-command-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-EditorPage-EditorPage-handles-q-command-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-EditorPage-EditorPage-handles-q-command-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[21/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:99:3 › TerminalPage › should handle activity transitions
+[1A[2K[22/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:135:3 › TerminalPage › should handle localStorage operations
+[1A[2K[23/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:151:3 › TerminalPage › should execute commands and verify UI updates
+[1A[2K[24/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:168:3 › TerminalPage › should have correct terminal content after completing tutorials
+[1A[2K[25/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:182:3 › TerminalPage › should maintain single prompt after page refresh
+[1A[2K[26/74] [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:230:1 › should expose wrapper functions
+[1A[2K  15) [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:230:1 › should expose wrapper functions 
+
+    Error: Window setup failed: {"hasSetCompletedTutorial":false,"hasSetActivity":false,"hasGetNextTutorial":false,"hasSetNextTutorial":false}
+
+       at browser-setup/setupWindow.ts:39
+
+      37 |
+      38 | 	if (!verification.hasSetCompletedTutorial || !verification.hasSetActivity || !verification.hasGetNextTutorial || !verification.hasSetNextTutorial) {
+    > 39 | 		throw new Error(`Window setup failed: ${JSON.stringify(verification)}`);
+         | 		      ^
+      40 | 	}
+      41 | }
+        at setupBrowserWindow (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/browser-setup/setupWindow.ts:39:9)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.spec.ts:231:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage-should-expose-wrapper-functions-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage-should-expose-wrapper-functions-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage-should-expose-wrapper-functions-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-TerminalPage-should-expose-wrapper-functions-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[27/74] [chromium] › src/e2e/scenarios/loginPersistence.spec.ts:5:3 › Login persistence › should maintain login state across page refresh
+[1A[2K[chromium] › src/e2e/page-objects/TerminalPage.spec.ts:182:3 › TerminalPage › should maintain single prompt after page refresh
+Initial terminal content: "> >  "
+
+[1A[2K[28/74] [chromium] › src/e2e/signal-test.spec.ts:11:3 › Signal Initialization › should correctly initialize and use tutorialSignal
+[1A[2K[29/74] [chromium] › src/e2e/tests/activity-state.spec.ts:12:3 › Activity State Signal › can create activity state signal
+[1A[2K  16) [chromium] › src/e2e/signal-test.spec.ts:11:3 › Signal Initialization › should correctly initialize and use tutorialSignal 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      17 |
+      18 |     const hasFunction = await page.evaluate(() => typeof window.callSetCompletedTutorial === 'function');
+    > 19 |     expect(hasFunction).toBe(true);
+         |                         ^
+      20 |   });
+      21 | });
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/signal-test.spec.ts:19:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/signal-test-Signal-Initial-bdca5-lize-and-use-tutorialSignal-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/signal-test-Signal-Initial-bdca5-lize-and-use-tutorialSignal-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/signal-test-Signal-Initial-bdca5-lize-and-use-tutorialSignal-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/signal-test-Signal-Initial-bdca5-lize-and-use-tutorialSignal-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[30/74] [chromium] › src/e2e/tests/activity-state.spec.ts:38:3 › Activity State Signal › can update activity state
+[1A[2K  17) [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:182:3 › TerminalPage › should maintain single prompt after page refresh 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#xtermRef').getByText('> ').last() to be visible[22m
+
+
+       at page-objects/TerminalPage.ts:315
+
+      313 |    */
+      314 |   public async waitForPrompt(): Promise<void> {
+    > 315 |     await this.terminal.getByText(this.prompt).last().waitFor();
+          |                                                       ^
+      316 |   }
+      317 |
+      318 |
+        at TerminalPage.waitForPrompt (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:315:55)
+        at TerminalPage.completeTutorials (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:358:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.spec.ts:198:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage--75a40-e-prompt-after-page-refresh-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage--75a40-e-prompt-after-page-refresh-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/page-objects-TerminalPage--75a40-e-prompt-after-page-refresh-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/page-objects-TerminalPage--75a40-e-prompt-after-page-refresh-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[31/74] [chromium] › src/e2e/tests/edit-command-aws.spec.ts:13:5 › edit command with AWS integration › should create new _index.md when it does not exist
+[1A[2K[32/74] [chromium] › src/e2e/tests/edit-command-aws.spec.ts:67:5 › edit command with AWS integration › should edit existing _index.md
+[1A[2K[33/74] [chromium] › src/e2e/tests/edit-command-aws.spec.ts:123:5 › edit command with AWS integration › should handle server error
+[1A[2K  18) [chromium] › src/e2e/scenarios/loginPersistence.spec.ts:5:3 › Login persistence › should maintain login state across page refresh 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Username')[22m
+
+
+       at support/auth.ts:5
+
+      3 | export async function login(page: Page): Promise<void> {
+      4 |   await page.goto('/login');
+    > 5 |   await page.getByLabel('Username').fill('testuser');
+        |                                     ^
+      6 |   await page.getByLabel('Password').fill('testpassword');
+      7 |   await page.getByRole('button', { name: 'Login' }).click();
+      8 |   await page.waitForURL('/dashboard');
+        at login (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/support/auth.ts:5:37)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/scenarios/loginPersistence.spec.ts:7:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/scenarios-loginPersistence-6dfa1-n-state-across-page-refresh-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/scenarios-loginPersistence-6dfa1-n-state-across-page-refresh-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/scenarios-loginPersistence-6dfa1-n-state-across-page-refresh-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/scenarios-loginPersistence-6dfa1-n-state-across-page-refresh-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  19) [chromium] › src/e2e/tests/edit-command-aws.spec.ts:13:5 › edit command with AWS integration › should create new _index.md when it does not exist 
+
+    TimeoutError: page.waitForSelector: Timeout 2000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#handterm-wrapper')[22m
+
+
+       at page-objects/TerminalPage.ts:97
+
+       95 |   public async waitForTerminal(): Promise<void> {
+       96 |     // Wait for application to load
+    >  97 |     await this.page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TEST_CONFIG.timeout.short });
+          |                     ^
+       98 |
+       99 |     // Wait for terminal element
+      100 |     const xtermRef = await this.page.$('#xtermRef');
+        at TerminalPage.waitForTerminal (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:97:21)
+        at TerminalPage.goto (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:215:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-command-aws.spec.ts:9:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-01953-x-md-when-it-does-not-exist-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-01953-x-md-when-it-does-not-exist-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-01953-x-md-when-it-does-not-exist-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-command-aws-edi-01953-x-md-when-it-does-not-exist-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[34/74] [chromium] › src/e2e/tests/edit-content-display.spec.ts:50:3 › Edit Content Display › setActivity function updates activity state
+[1A[2K[35/74] [chromium] › src/e2e/tests/edit-content-display.spec.ts:72:3 › Edit Content Display › transitions to edit mode and displays content
+[1A[2K  20) [chromium] › src/e2e/tests/edit-content-display.spec.ts:50:3 › Edit Content Display › setActivity function updates activity state 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"edit"[39m
+    Received: [31m"tutorial"[39m
+
+      67 |       (window as any).activityStateSignal?.value?.current
+      68 |     );
+    > 69 |     expect(activityState).toBe('edit');
+         |                           ^
+      70 |   });
+      71 |
+      72 |   test('transitions to edit mode and displays content', async () => {
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-content-display.spec.ts:69:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-c1511-tion-updates-activity-state-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-c1511-tion-updates-activity-state-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-content-display-c1511-tion-updates-activity-state-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  21) [chromium] › src/e2e/tests/edit-command-aws.spec.ts:67:5 › edit command with AWS integration › should edit existing _index.md 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.monaco-editor') to be visible[22m
+
+
+      94 |
+      95 |         // Wait for editor to be fully loaded with content
+    > 96 |         await page.waitForSelector('.monaco-editor', { state: 'visible' });
+         |                    ^
+      97 |         await page.waitForSelector('.monaco-editor .view-lines', { state: 'visible' });
+      98 |         await expect(page.locator('.monaco-editor')).toContainText('# Existing Index');
+      99 |
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-command-aws.spec.ts:96:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f3e41-ould-edit-existing-index-md-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f3e41-ould-edit-existing-index-md-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f3e41-ould-edit-existing-index-md-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-command-aws-edi-f3e41-ould-edit-existing-index-md-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[36/74] [chromium] › src/e2e/tests/edit-content-storage.spec.ts:16:5 › Legacy Edit Content Storage › can store and retrieve edit content in localStorage
+[1A[2K[37/74] [chromium] › src/e2e/tests/edit-content-storage.spec.ts:34:5 › Legacy Edit Content Storage › edit content persists between evaluate calls
+[1A[2K[38/74] [chromium] › src/e2e/tests/edit-content-storage.spec.ts:54:5 › Legacy Edit Content Storage › can update existing edit content
+[1A[2K[39/74] [chromium] › src/e2e/tests/edit-content-display.spec.ts:116:3 › Edit Content Display › shows error for non-existent file
+[1A[2K[40/74] [chromium] › src/e2e/tests/edit-content-vim.spec.ts:55:3 › Edit Content Vim Navigation › initializes Vim mode correctly
+[1A[2K  22) [chromium] › src/e2e/tests/edit-command-aws.spec.ts:123:5 › edit command with AWS integration › should handle server error 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#output-container').getByText('Internal server error') to be visible[22m
+
+
+       at page-objects/TerminalPage.ts:295
+
+      293 |    */
+      294 |   public async waitForOutput(text: string): Promise<void> {
+    > 295 |     await this.output.getByText(text, { exact: false }).waitFor();
+          |                                                         ^
+      296 |   }
+      297 |
+      298 |   /**
+        at TerminalPage.waitForOutput (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:295:57)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-command-aws.spec.ts:139:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f6182--should-handle-server-error-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f6182--should-handle-server-error-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-command-aws-edi-f6182--should-handle-server-error-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-command-aws-edi-f6182--should-handle-server-error-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[41/74] [chromium] › src/e2e/tests/edit-content-vim.spec.ts:82:3 › Edit Content Vim Navigation › moves cursor left with h key
+[1A[2K  23) [chromium] › src/e2e/tests/edit-content-display.spec.ts:116:3 › Edit Content Display › shows error for non-existent file 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"[7mn[27mor[7mm[27mal"[39m
+    Received: [31m"[7mtut[27mor[7mi[27mal"[39m
+
+      125 |       (window as any).activityStateSignal?.value?.current
+      126 |     );
+    > 127 |     expect(activityState).toBe('normal');
+          |                           ^
+      128 |
+      129 |     // Wait for error message
+      130 |     const error = page.locator('text=File not found');
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-content-display.spec.ts:127:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-87ad9-error-for-non-existent-file-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-87ad9-error-for-non-existent-file-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-content-display-87ad9-error-for-non-existent-file-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[42/74] [chromium] › src/e2e/tests/localStorage-presence.spec.ts:12:3 › LocalStorage Presence › can write and read localStorage in one step
+[1A[2K  24) [chromium] › src/e2e/tests/edit-content-display.spec.ts:72:3 › Edit Content Display › transitions to edit mode and displays content 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForFunction: Target page, context or browser has been closed
+
+      78 |
+      79 |     // Wait for activity state to change to 'edit'
+    > 80 |     await page.waitForFunction(
+         |                ^
+      81 |       () => (window as any).activityStateSignal?.value?.current === 'edit',
+      82 |       { timeout: TEST_CONFIG.timeout.short }
+      83 |     );
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-content-display.spec.ts:80:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-1c160-t-mode-and-displays-content-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-content-display-1c160-t-mode-and-displays-content-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-content-display-1c160-t-mode-and-displays-content-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[43/74] [chromium] › src/e2e/tests/localStorage-presence.spec.ts:26:3 › LocalStorage Presence › localStorage persists between evaluate calls
+[1A[2K  25) [chromium] › src/e2e/tests/edit-content-vim.spec.ts:82:3 › Edit Content Vim Navigation › moves cursor left with h key 
+
+    Error: page.evaluate: ReferenceError: StorageKeys is not defined
+        at eval (eval at evaluate (:234:30), <anonymous>:9:28)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:9:28)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-content-vim.spec.ts:25:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-content-vim-Edi-0c208-oves-cursor-left-with-h-key-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-content-vim-Edi-0c208-oves-cursor-left-with-h-key-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-content-vim-Edi-0c208-oves-cursor-left-with-h-key-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  26) [chromium] › src/e2e/tests/edit-content-vim.spec.ts:55:3 › Edit Content Vim Navigation › initializes Vim mode correctly 
+
+    Error: page.evaluate: ReferenceError: StorageKeys is not defined
+        at eval (eval at evaluate (:234:30), <anonymous>:9:28)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:9:28)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/edit-content-vim.spec.ts:25:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-edit-content-vim-Edi-b8b83-tializes-Vim-mode-correctly-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-edit-content-vim-Edi-b8b83-tializes-Vim-mode-correctly-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-edit-content-vim-Edi-b8b83-tializes-Vim-mode-correctly-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[44/74] [chromium] › src/e2e/tests/setup-validation.spec.ts:24:5 › Setup Validation › Window Extensions › window.completedTutorialsSignal is defined
+[1A[2K  27) [chromium] › src/e2e/tests/setup-validation.spec.ts:24:5 › Setup Validation › Window Extensions › window.completedTutorialsSignal is defined 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      24 |     test('window.completedTutorialsSignal is defined', async ({ page }) => {
+      25 |       const isDefined = await page.evaluate(() => typeof window.completedTutorialsSignal !== 'undefined');
+    > 26 |       expect(isDefined).toBe(true);
+         |                         ^
+      27 |     });
+      28 |   });
+      29 |
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/setup-validation.spec.ts:26:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-setup-validation-Set-863da-dTutorialsSignal-is-defined-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-setup-validation-Set-863da-dTutorialsSignal-is-defined-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-setup-validation-Set-863da-dTutorialsSignal-is-defined-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-setup-validation-Set-863da-dTutorialsSignal-is-defined-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[45/74] [chromium] › src/e2e/tests/setup-validation.spec.ts:13:5 › Setup Validation › Basic Page Loading and Element Presence › Page loads successfully
+[1A[2K[46/74] [chromium] › src/e2e/tests/setup-validation.spec.ts:40:9 › Setup Validation › LocalStorage Consistency › localStorage is consistent between test and app context
+[1A[2K[47/74] [chromium] › src/e2e/tests/setup-validation.spec.ts:17:5 › Setup Validation › Basic Page Loading and Element Presence › #handterm-wrapper element is present
+[1A[2K[48/74] [chromium] › src/e2e/tests/signal-initialization.spec.ts:6:3 › Signal Initialization › should initialize activity signal
+[1A[2K[49/74] [chromium] › src/e2e/tests/signal-initialization.spec.ts:21:3 › Signal Initialization › should handle multiple signal initializations
+[1A[2K[50/74] [chromium] › src/e2e/tests/signal-presence.spec.ts:12:3 › Signal Presence › can add and call a function on window in one step
+[1A[2K[51/74] [chromium] › src/e2e/tests/signal-presence.spec.ts:30:3 › Signal Presence › can create and use a simple signal
+[1A[2K  28) [chromium] › src/e2e/tests/signal-initialization.spec.ts:6:3 › Signal Initialization › should initialize activity signal 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"[7mtut[27mor[7mi[27mal"[39m
+    Received: [31m"[7mn[27mor[7mm[27mal"[39m
+
+      16 |
+      17 |     expect(signalState.hasSignal).toBe(true);
+    > 18 |     expect(signalState.current).toBe(ActivityType.TUTORIAL);
+         |                                 ^
+      19 |   });
+      20 |
+      21 |   test('should handle multiple signal initializations', async ({ page }) => {
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/signal-initialization.spec.ts:18:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-872e1--initialize-activity-signal-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-872e1--initialize-activity-signal-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-872e1--initialize-activity-signal-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-signal-initializatio-872e1--initialize-activity-signal-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[52/74] [chromium] › src/e2e/tests/signal-setup.spec.ts:12:3 › Signal Setup › can create a simple signal
+[1A[2K[53/74] [chromium] › src/e2e/tests/signal-setup.spec.ts:36:3 › Signal Setup › can read from localStorage
+[1A[2K  29) [chromium] › src/e2e/tests/signal-initialization.spec.ts:21:3 › Signal Initialization › should handle multiple signal initializations 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"[7mtut[27mor[7mi[27mal"[39m
+    Received: [31m"[7mn[27mor[7mm[27mal"[39m
+
+      33 |
+      34 |     expect(signalState.hasSignal).toBe(true);
+    > 35 |     expect(signalState.current).toBe(ActivityType.TUTORIAL);
+         |                                 ^
+      36 |   });
+      37 | });
+      38 |
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/signal-initialization.spec.ts:35:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-542bd-iple-signal-initializations-chromium/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-542bd-iple-signal-initializations-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-542bd-iple-signal-initializations-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-signal-initializatio-542bd-iple-signal-initializations-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-signal-initializatio-542bd-iple-signal-initializations-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[54/74] [chromium] › src/e2e/tests/signal-setup.spec.ts:64:3 › Signal Setup › can notify subscribers
+[1A[2K[55/74] [chromium] › src/e2e/tests/signal-storage-interaction.spec.ts:12:3 › Signal Storage Interaction › signal can read from localStorage
+[1A[2K[56/74] [chromium] › src/e2e/tests/signal-storage-interaction.spec.ts:41:3 › Signal Storage Interaction › signal can read pre-existing localStorage value
+[1A[2K[57/74] [chromium] › src/e2e/tests/signal-storage-interaction.spec.ts:66:3 › Signal Storage Interaction › can check for existence in a Set-based signal
+[1A[2K[58/74] [chromium] › src/e2e/tests/signal-value.spec.ts:12:3 › Signal Value › completedTutorialsSignal.value is a Set
+[1A[2K[59/74] [chromium] › src/e2e/tests/signal-value.spec.ts:19:3 › Signal Value › completedTutorialsSignal.value is empty on initialization
+[1A[2K[60/74] [chromium] › src/e2e/tests/terminal-visibility.spec.ts:6:3 › Terminal Visibility › terminal element should be visible
+[1A[2K[61/74] [chromium] › src/e2e/tests/terminal-visibility.spec.ts:18:3 › Terminal Visibility › terminal element should have children
+[1A[2K  30) [chromium] › src/e2e/tests/signal-value.spec.ts:12:3 › Signal Value › completedTutorialsSignal.value is a Set 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'value')
+        at eval (eval at evaluate (:234:30), <anonymous>:2:46)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:2:46)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/signal-value.spec.ts:13:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-value-Signal--7f757-orialsSignal-value-is-a-Set-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-signal-value-Signal--7f757-orialsSignal-value-is-a-Set-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-signal-value-Signal--7f757-orialsSignal-value-is-a-Set-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[62/74] [chromium] › src/e2e/tests/tutorial-fdsa.spec.ts:12:1 › should complete fdsa tutorial
+[1A[2K  31) [chromium] › src/e2e/tests/signal-value.spec.ts:19:3 › Signal Value › completedTutorialsSignal.value is empty on initialization 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'value')
+        at eval (eval at evaluate (:234:30), <anonymous>:2:46)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/home/mstouffer/repos/handterm-proj/handterm/eval at evaluate (:234:30), <anonymous>:2:46)
+        at UtilityScript.evaluate (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/home/mstouffer/repos/handterm-proj/handterm/<anonymous>:1:44)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/signal-value.spec.ts:20:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-value-Signal--7d580--is-empty-on-initialization-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-signal-value-Signal--7d580--is-empty-on-initialization-chromium/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-signal-value-Signal--7d580--is-empty-on-initialization-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-signal-value-Signal--7d580--is-empty-on-initialization-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[63/74] [chromium] › src/e2e/tests/tutorial-jkl.spec.ts:12:1 › should complete jkl; tutorial
+[1A[2K  32) [chromium] › src/e2e/tests/terminal-visibility.spec.ts:6:3 › Terminal Visibility › terminal element should be visible 
+
+    Error: expect.not.toThrow: Test ended.
+    Call log:
+    [2m  - waiting for locator('#handterm-wrapper')[22m
+
+
+       at page-objects/TerminalPage.ts:97
+
+       95 |   public async waitForTerminal(): Promise<void> {
+       96 |     // Wait for application to load
+    >  97 |     await this.page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TEST_CONFIG.timeout.short });
+          |                     ^
+       98 |
+       99 |     // Wait for terminal element
+      100 |     const xtermRef = await this.page.$('#xtermRef');
+        at TerminalPage.waitForTerminal (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:97:21)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/terminal-visibility.spec.ts:12:22
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/terminal-visibility.spec.ts:13:12
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-terminal-visibility--86e0e-l-element-should-be-visible-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-terminal-visibility--86e0e-l-element-should-be-visible-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-terminal-visibility--86e0e-l-element-should-be-visible-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[64/74] [chromium] › src/e2e/tests/tutorial-signal.spec.ts:73:5 › Tutorial Signal › Tutorial Progression › starts with empty tutorial state
+[1A[2K[65/74] [chromium] › src/e2e/tests/tutorial-signal.spec.ts:86:5 › Tutorial Signal › Tutorial Progression › completes enter tutorial
+[1A[2K[66/74] [chromium] › src/e2e/tests/tutorial-signal.spec.ts:105:5 › Tutorial Signal › Tutorial Progression › completes fdsa tutorial after enter
+[1A[2K  33) [chromium] › src/e2e/tests/tutorial-fdsa.spec.ts:12:1 › should complete fdsa tutorial ────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.content: Target page, context or browser has been closed
+
+       at page-objects/TerminalPage.ts:173
+
+      171 |     } catch (error) {
+      172 |       // Enhanced error logging: Log specific DOM elements and full page content on failure
+    > 173 |       const html = await this.page.content();
+          |                                    ^
+      174 |       const tutorialComponent = await this.tutorialMode.evaluate(el => el?.outerHTML);
+      175 |       const tutorialPrompt = await this.page.locator('.tutorial-prompt').evaluate(el => el?.outerHTML);
+      176 |       console.log('[waitForTutorialMode] Error:', (error instanceof Error) ? error.message : 'Unknown error'); // Check if error is an instance of Error
+        at TerminalPage.waitForTutorialMode (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:173:36)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial-fdsa.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-fdsa-should-complete-fdsa-tutorial-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-fdsa-should-complete-fdsa-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-fdsa-should-complete-fdsa-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-fdsa-should-complete-fdsa-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[67/74] [chromium] › src/e2e/tests/tutorial-signal.spec.ts:134:5 › Tutorial Signal › Tutorial Progression › completes jkl; tutorial after fdsa
+[1A[2K  34) [chromium] › src/e2e/tests/tutorial-jkl.spec.ts:12:1 › should complete jkl; tutorial ─────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.content: Target page, context or browser has been closed
+
+       at page-objects/TerminalPage.ts:173
+
+      171 |     } catch (error) {
+      172 |       // Enhanced error logging: Log specific DOM elements and full page content on failure
+    > 173 |       const html = await this.page.content();
+          |                                    ^
+      174 |       const tutorialComponent = await this.tutorialMode.evaluate(el => el?.outerHTML);
+      175 |       const tutorialPrompt = await this.page.locator('.tutorial-prompt').evaluate(el => el?.outerHTML);
+      176 |       console.log('[waitForTutorialMode] Error:', (error instanceof Error) ? error.message : 'Unknown error'); // Check if error is an instance of Error
+        at TerminalPage.waitForTutorialMode (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:173:36)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial-jkl.spec.ts:31:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-jkl-should-complete-jkl-tutorial-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-jkl-should-complete-jkl-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-jkl-should-complete-jkl-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-jkl-should-complete-jkl-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[68/74] [chromium] › src/e2e/tests/tutorial.spec.ts:300:5 › Tutorial Mode › tutorial progression › should complete fdsa tutorial
+[1A[2K[69/74] [chromium] › src/e2e/tests/tutorial.spec.ts:248:5 › Tutorial Mode › tutorial progression › should start with `\r` tutorial
+[1A[2K[70/74] [chromium] › src/e2e/tests/tutorial.spec.ts:321:5 › Tutorial Mode › tutorial progression › should complete jkl; tutorial
+[1A[2K  35) [chromium] › src/e2e/tests/tutorial-signal.spec.ts:134:5 › Tutorial Signal › Tutorial Progression › completes jkl; tutorial after fdsa 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 1[39m
+
+    [2m  Array [[22m
+    [32m-   "\\r",[39m
+    [31m+   "    ",[39m
+    [2m    "fdsa",[22m
+    [2m    "jkl;",[22m
+    [2m  ][22m
+
+      148 |       });
+      149 |
+    > 150 |       expect(tutorials).toEqual(['\\r', 'fdsa', 'jkl;']);
+          |                         ^
+      151 |     });
+      152 |   });
+      153 |
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial-signal.spec.ts:150:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-signal-Tuto-318f9-tes-jkl-tutorial-after-fdsa-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-signal-Tuto-318f9-tes-jkl-tutorial-after-fdsa-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-signal-Tuto-318f9-tes-jkl-tutorial-after-fdsa-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[71/74] [chromium] › src/e2e/tests/tutorial.spec.ts:340:5 › Tutorial Mode › tutorial progression › should transition to game mode
+[1A[2K  36) [chromium] › src/e2e/tests/tutorial.spec.ts:300:5 › Tutorial Mode › tutorial progression › should complete fdsa tutorial 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: page.goto: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+      237 |
+      238 |       // Initialize page and wait for application
+    > 239 |       await page.goto(TEST_CONFIG.baseUrl);
+          |                  ^
+      240 |       await page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TIMEOUTS.medium });
+      241 |
+      242 |       // Initialize TerminalPage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:239:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-8a6fc-ould-complete-fdsa-tutorial-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-8a6fc-ould-complete-fdsa-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-8a6fc-ould-complete-fdsa-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-8a6fc-ould-complete-fdsa-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  37) [chromium] › src/e2e/tests/tutorial.spec.ts:321:5 › Tutorial Mode › tutorial progression › should complete jkl; tutorial 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: page.waitForSelector: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#handterm-wrapper')[22m
+
+
+      238 |       // Initialize page and wait for application
+      239 |       await page.goto(TEST_CONFIG.baseUrl);
+    > 240 |       await page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TIMEOUTS.medium });
+          |                  ^
+      241 |
+      242 |       // Initialize TerminalPage
+      243 |       terminalPage = new TerminalPage(page);
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:240:18
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-001ce-hould-complete-jkl-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-001ce-hould-complete-jkl-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-001ce-hould-complete-jkl-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[72/74] [chromium] › src/e2e/tests/tutorial.spec.ts:362:5 › Tutorial Mode › tutorial progression › should complete game phrase and return to tutorial
+[1A[2K  38) [chromium] › src/e2e/tests/tutorial.spec.ts:248:5 › Tutorial Mode › tutorial progression › should start with `\r` tutorial 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: page.goto: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+      237 |
+      238 |       // Initialize page and wait for application
+    > 239 |       await page.goto(TEST_CONFIG.baseUrl);
+          |                  ^
+      240 |       await page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TIMEOUTS.medium });
+      241 |
+      242 |       // Initialize TerminalPage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:239:18
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-12a83-hould-start-with-r-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-12a83-hould-start-with-r-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-12a83-hould-start-with-r-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[73/74] [chromium] › src/e2e/tests/tutorial.spec.ts:392:5 › Tutorial Mode › tutorial progression › test isTutorialCompleted
+[1A[2K  39) [chromium] › src/e2e/tests/tutorial.spec.ts:340:5 › Tutorial Mode › tutorial progression › should transition to game mode 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: page.goto: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+      237 |
+      238 |       // Initialize page and wait for application
+    > 239 |       await page.goto(TEST_CONFIG.baseUrl);
+          |                  ^
+      240 |       await page.waitForSelector('#handterm-wrapper', { state: 'attached', timeout: TIMEOUTS.medium });
+      241 |
+      242 |       // Initialize TerminalPage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:239:18
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-bb05e-uld-transition-to-game-mode-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-bb05e-uld-transition-to-game-mode-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-bb05e-uld-transition-to-game-mode-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[74/74] [chromium] › src/e2e/tests/tutorial.spec.ts:399:3 › Tutorial Mode › test page.evaluate
+[1A[2K  40) [chromium] › src/e2e/tests/tutorial.spec.ts:362:5 › Tutorial Mode › tutorial progression › should complete game phrase and return to tutorial 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: page.goto: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+       at page-objects/TerminalPage.ts:214
+
+      212 |
+      213 |   public async goto(): Promise<void> {
+    > 214 |     await this.page.goto(TEST_CONFIG.baseUrl);
+          |                     ^
+      215 |     await this.waitForTerminal();
+      216 |     await this.waitForPrompt();
+      217 |   }
+        at TerminalPage.goto (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:214:21)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:245:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-0848b-rase-and-return-to-tutorial-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-0848b-rase-and-return-to-tutorial-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-0848b-rase-and-return-to-tutorial-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-0848b-rase-and-return-to-tutorial-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  41) [chromium] › src/e2e/tests/tutorial.spec.ts:392:5 › Tutorial Mode › tutorial progression › test isTutorialCompleted 
+
+    [31mTest timeout of 8000ms exceeded while running "beforeEach" hook.[39m
+
+      179 | test.describe('Tutorial Mode', () => {
+      180 |   test.describe('tutorial progression', () => { // Changed to test.describe (parallel execution)
+    > 181 |     test.beforeEach(async ({ page }, _testInfo) => {
+          |          ^
+      182 |       test.setTimeout(TIMEOUTS.long);
+      183 |
+      184 |       // Mock localStorage
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:181:10
+
+    Error: locator.waitFor: Test timeout of 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#xtermRef').getByText('> ').last() to be visible[22m
+
+
+       at page-objects/TerminalPage.ts:315
+
+      313 |    */
+      314 |   public async waitForPrompt(): Promise<void> {
+    > 315 |     await this.terminal.getByText(this.prompt).last().waitFor();
+          |                                                       ^
+      316 |   }
+      317 |
+      318 |
+        at TerminalPage.waitForPrompt (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:315:55)
+        at TerminalPage.goto (/home/mstouffer/repos/handterm-proj/handterm/src/e2e/page-objects/TerminalPage.ts:216:16)
+        at /home/mstouffer/repos/handterm-proj/handterm/src/e2e/tests/tutorial.spec.ts:245:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-5bbec-on-test-isTutorialCompleted-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-5bbec-on-test-isTutorialCompleted-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tests-tutorial-Tutorial-Mo-5bbec-on-test-isTutorialCompleted-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tests-tutorial-Tutorial-Mo-5bbec-on-test-isTutorialCompleted-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  Slow test file: [chromium] › src/e2e/tests/tutorial-fdsa.spec.ts (32.7s)
+  Slow test file: [chromium] › src/e2e/scenarios/loginPersistence.spec.ts (32.3s)
+  Slow test file: [chromium] › src/e2e/tests/tutorial-jkl.spec.ts (31.6s)
+  Slow test file: [chromium] › src/e2e/complete-command.spec.ts (28.3s)
+  Consider running tests from slow files in parallel, see https://playwright.dev/docs/test-parallel.
+  41 failed
+    [chromium] › src/e2e/edit-command.spec.ts:43:3 › Edit Command › should navigate to edit activity with default file 
+    [chromium] › src/e2e/edit-command.spec.ts:57:3 › Edit Command › should navigate to edit activity with specific file 
+    [chromium] › src/e2e/edit-command.spec.ts:84:3 › Edit Command › should show error for invalid command 
+    [chromium] › src/e2e/github-command-navigation.spec.ts:137:3 › GitHub Command Navigation › should initialize with correct activity state 
+    [chromium] › src/e2e/github-command-navigation.spec.ts:147:3 › GitHub Command Navigation › should handle GitHub command execution 
+    [chromium] › src/e2e/github-command-navigation.spec.ts:201:3 › GitHub Command Navigation › should handle credential errors gracefully 
+    [chromium] › src/e2e/monaco-tree-view.spec.ts:42:3 › Monaco Editor Tree View › should load tree view from localStorage 
+    [chromium] › src/e2e/monaco-tree-view.spec.ts:74:3 › Monaco Editor Tree View › should update tree view when localStorage changes 
+    [chromium] › src/e2e/monaco-tree-view.spec.ts:102:3 › Monaco Editor Tree View › should support keyboard navigation 
+    [chromium] › src/e2e/page-objects/EditorPage.spec.ts:34:2 › EditorPage › initializes with correct state 
+    [chromium] › src/e2e/page-objects/EditorPage.spec.ts:44:2 › EditorPage › can set and get content 
+    [chromium] › src/e2e/page-objects/EditorPage.spec.ts:52:2 › EditorPage › cursor movement works ─
+    [chromium] › src/e2e/page-objects/EditorPage.spec.ts:70:2 › EditorPage › vim mode transitions work 
+    [chromium] › src/e2e/page-objects/EditorPage.spec.ts:85:2 › EditorPage › handles :q! command ───
+    [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:182:3 › TerminalPage › should maintain single prompt after page refresh 
+    [chromium] › src/e2e/page-objects/TerminalPage.spec.ts:230:1 › should expose wrapper functions ─
+    [chromium] › src/e2e/scenarios/loginPersistence.spec.ts:5:3 › Login persistence › should maintain login state across page refresh 
+    [chromium] › src/e2e/signal-test.spec.ts:11:3 › Signal Initialization › should correctly initialize and use tutorialSignal 
+    [chromium] › src/e2e/tests/edit-command-aws.spec.ts:13:5 › edit command with AWS integration › should create new _index.md when it does not exist 
+    [chromium] › src/e2e/tests/edit-command-aws.spec.ts:67:5 › edit command with AWS integration › should edit existing _index.md 
+    [chromium] › src/e2e/tests/edit-command-aws.spec.ts:123:5 › edit command with AWS integration › should handle server error 
+    [chromium] › src/e2e/tests/edit-content-display.spec.ts:50:3 › Edit Content Display › setActivity function updates activity state 
+    [chromium] › src/e2e/tests/edit-content-display.spec.ts:72:3 › Edit Content Display › transitions to edit mode and displays content 
+    [chromium] › src/e2e/tests/edit-content-display.spec.ts:116:3 › Edit Content Display › shows error for non-existent file 
+    [chromium] › src/e2e/tests/edit-content-vim.spec.ts:55:3 › Edit Content Vim Navigation › initializes Vim mode correctly 
+    [chromium] › src/e2e/tests/edit-content-vim.spec.ts:82:3 › Edit Content Vim Navigation › moves cursor left with h key 
+    [chromium] › src/e2e/tests/setup-validation.spec.ts:24:5 › Setup Validation › Window Extensions › window.completedTutorialsSignal is defined 
+    [chromium] › src/e2e/tests/signal-initialization.spec.ts:6:3 › Signal Initialization › should initialize activity signal 
+    [chromium] › src/e2e/tests/signal-initialization.spec.ts:21:3 › Signal Initialization › should handle multiple signal initializations 
+    [chromium] › src/e2e/tests/signal-value.spec.ts:12:3 › Signal Value › completedTutorialsSignal.value is a Set 
+    [chromium] › src/e2e/tests/signal-value.spec.ts:19:3 › Signal Value › completedTutorialsSignal.value is empty on initialization 
+    [chromium] › src/e2e/tests/terminal-visibility.spec.ts:6:3 › Terminal Visibility › terminal element should be visible 
+    [chromium] › src/e2e/tests/tutorial-fdsa.spec.ts:12:1 › should complete fdsa tutorial ──────────
+    [chromium] › src/e2e/tests/tutorial-jkl.spec.ts:12:1 › should complete jkl; tutorial ───────────
+    [chromium] › src/e2e/tests/tutorial-signal.spec.ts:134:5 › Tutorial Signal › Tutorial Progression › completes jkl; tutorial after fdsa 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:248:5 › Tutorial Mode › tutorial progression › should start with `\r` tutorial 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:300:5 › Tutorial Mode › tutorial progression › should complete fdsa tutorial 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:321:5 › Tutorial Mode › tutorial progression › should complete jkl; tutorial 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:340:5 › Tutorial Mode › tutorial progression › should transition to game mode 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:362:5 › Tutorial Mode › tutorial progression › should complete game phrase and return to tutorial 
+    [chromium] › src/e2e/tests/tutorial.spec.ts:392:5 › Tutorial Mode › tutorial progression › test isTutorialCompleted 
+  3 skipped
+  30 passed (6.5m)

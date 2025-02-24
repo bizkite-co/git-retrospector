@@ -84,7 +84,7 @@ def run_tests(target_name, iteration_count):
         with open(config_file_path, "r") as config_file:
             config_data = toml.load(config_file)
         config = Config(**config_data)
-        target_repo = str(config.source_dir)  # Convert Path to string
+        target_repo = str(config.target_repo_path)  # Use the new name and convert Path to string.
         test_output_dir = str(config.test_result_dir)
 
     except (FileNotFoundError, KeyError, toml.TomlDecodeError) as e:

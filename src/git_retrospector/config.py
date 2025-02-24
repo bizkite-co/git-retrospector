@@ -7,7 +7,7 @@ class Config(BaseModel):
     Configuration settings for git-retrospector.
     """
     name: str
-    source_dir: DirectoryPath
+    target_repo_path: DirectoryPath
     test_result_dir: DirectoryPath
     output_paths: dict
     test_output_dir: str = "test-output"
