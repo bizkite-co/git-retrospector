@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import subprocess
 import os
+import subprocess
 
 
 def run_vitest(target_repo, output_dir, config):
@@ -13,25 +13,20 @@ def run_vitest(target_repo, output_dir, config):
         config (Config): The configuration object.
     """
     vitest_log_file = os.path.join(output_dir, "vitest.log")
-    print("  Running Vitest...")
+    # print("  Running Vitest...")
     with open(vitest_log_file, "w") as vitest_log_file_handle:
         try:
             subprocess.run(
-                [
-                    "npx",
-                    "vitest",
-                    "run",
-                    "--reporter=junit"
-                ],
+                ["npx", "vitest", "run", "--reporter=junit"],
                 cwd=target_repo,  # Run tests in the target repository directory
                 stdout=vitest_log_file_handle,
                 stderr=subprocess.STDOUT,
                 check=True,
                 text=True,
             )
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             # vitest returns non-zero exit code on test failure
-            print(f"Vitest failed: {e}")  # added to help debug
+            # print(f"Vitest failed: {e}")  # added to help debug
             pass
 
 
@@ -45,7 +40,7 @@ def run_playwright(target_repo, output_dir, config):
         config (Config): The configuration object.
     """
     playwright_log_file = os.path.join(output_dir, "playwright.log")
-    print("  Running Playwright...")
+    # print("  Running Playwright...")
     with open(playwright_log_file, "w") as playwright_log_file_handle:
         try:
             subprocess.run(
@@ -56,7 +51,7 @@ def run_playwright(target_repo, output_dir, config):
                 check=True,
                 text=True,
             )
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             # playwright returns non-zero exit code on test failure
-            print(f"Playwright failed: {e}")  # added to help debug
+            # print(f"Playwright failed: {e}")  # added to help debug
             pass

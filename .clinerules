@@ -1,3 +1,4 @@
+* This Python 3 project has a `./.venv` virtual environment that was created with `uv`.
 * Try to limit file size to about 100 lines.
     * If they go over that size, parse functions out to other files.
 * use the repo remote address `github.com:bizkite-co/git-retrospector` to determine the repo name and owner.

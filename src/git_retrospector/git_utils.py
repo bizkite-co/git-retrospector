@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
-import os
-import sys
+
 
 def get_original_branch(target_repo):
     """Gets the original Git branch of the repository.
@@ -14,15 +13,15 @@ def get_original_branch(target_repo):
     """
     try:
         result = subprocess.run(
-            ['git', 'symbolic-ref', '--short', 'HEAD'],
+            ["git", "symbolic-ref", "--short", "HEAD"],
             cwd=target_repo,
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        print(f"Error getting original branch: {e}", file=sys.stderr)
+    except subprocess.CalledProcessError:
+        # print(f"Error getting original branch: {e}", file=sys.stderr)
         return None
 
 
@@ -37,16 +36,17 @@ def get_current_commit_hash(target_repo):
     """
     try:
         result = subprocess.run(
-            ['git', 'rev-parse', '--short', 'HEAD'],
+            ["git", "rev-parse", "--short", "HEAD"],
             cwd=target_repo,
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        print(f"Error getting current commit hash: {e}", file=sys.stderr)
+    except subprocess.CalledProcessError:
+        # print(f"Error getting current commit hash: {e}", file=sys.stderr)
         return None
+
 
 def get_origin_branch_or_commit(target_repo):
     """
@@ -61,13 +61,13 @@ def get_origin_branch_or_commit(target_repo):
     """
     try:
         result = subprocess.run(
-            ['git', 'symbolic-ref', '--short', 'HEAD'],
+            ["git", "symbolic-ref", "--short", "HEAD"],
             cwd=target_repo,
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         return result.stdout.strip()  # Return the branch name
     except subprocess.CalledProcessError:
-        print("Could not determine original branch. Using current commit.")
+        # print("Could not determine original branch. Using current commit.")
         return get_current_commit_hash(target_repo)  # Fallback to commit hash
