@@ -1,5 +1,9 @@
 name = "handterm"
 repo_under_test_path = "/home/mstouffer/repos/handterm-proj/handterm"
+github_remote = "git@github.com:bizkite-co/handterm.git"
+github_project_name = "Handterm"
+github_project_number = 4
+github_project_owner = "bizkite-co"
 test_result_dir = "retros/handterm"
 test_output_dir = "test-output"
 

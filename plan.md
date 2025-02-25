@@ -281,7 +281,7 @@ This plan outlines the steps to refactor `git-retrospector` to address the issue
             # )  # Call parse_test_results with the commit_dir
         else:
             parser.print_help()
-```
+    ```
 
 3.  **Modify `src/git_retrospector/runners.py`:**
     *   No changes needed, already correct.
@@ -339,3 +339,73 @@ def get_current_commit_hash(target_repo):
     except subprocess.CalledProcessError as e:
         print(f"Error getting current commit hash: {e}", file=sys.stderr)
         return None
+```
+
+## Plan for Issue #7: Create Issue for Failed Tests with Media
+
+This plan outlines the steps to implement the feature described in GitHub Issue #7. The feature should create a GitHub issue for each failed test that has associated media files.
+
+**1. Understand the Existing Test Framework:**
+
+*   Examine `src/git_retrospector/runners.py` to understand how tests are currently run and how the output is captured.  I'll pay close attention to `run_vitest` and `run_playwright`.
+*   Examine `src/git_retrospector/parser.py` and `src/git_retrospector/xml_processor.py` to understand how test results are parsed, especially how failed tests and media files are identified.
+
+**2. Identify Failed Tests with Media:**
+
+*   Modify `src/git_retrospector/parser.py` to include logic that specifically identifies failed tests.
+*   Within the parsing logic, check for the existence of associated media files. The exact method for this will depend on how the test runners (vitest and playwright) store media files. It might involve checking for specific file extensions or directory structures within the test output.
+
+**3. Create GitHub Issues:**
+
+*   Create a new function, possibly in `src/git_retrospector/git_utils.py` or a new file `src/git_retrospector/issue_creator.py`, named `create_github_issue_for_failed_test`.
+    *   **Parameters:**
+        *   `test_result`: An object containing details about the failed test (name, error message, etc.).
+        *   `media_files`: A list of paths to associated media files.
+        *   `config`: The `Config` object to access `github_project_number`.
+    *   **Functionality:**
+        *   Construct the issue body. This should include:
+            *   The test name.
+            *   The error message.
+            *   Links to or embedded representations of the media files (if possible). Consider how to handle different media types (images, videos, etc.).
+            *   The commit hash.
+        *   Use the GitHub MCP (`create_issue` tool) to create the issue.
+            *   `owner`: `bizkite-co` (from the .clinerules)
+            *   `repo`: `git-retrospector` (from the .clinerules)
+            *   `title`: A descriptive title, e.g., "Test Failure: [Test Name] on [Commit Hash]"
+            *   `body`: The formatted issue body.
+            *   `labels`: `["Bug"]`
+        * Use the GitHub CLI to add the issue to the project, since the MCP doesn't support that. The command will be something like: `gh project item-add <project_number> --issue-id <issue_id> --owner bizkite-co`
+        *   Handle potential errors (e.g., API rate limits, network issues).
+
+**4. Integrate into the Main Flow:**
+
+*   Modify `src/git_retrospector/retrospector.py`, specifically the `process_commit` function, to call `create_github_issue_for_failed_test` after the tests have been run and parsed.  This should only happen if failed tests with media are detected.
+
+**5. Configuration:**
+
+*   Ensure the `config.toml` file includes the necessary `github_project_number`. This is already mentioned in the issue description and .clinerules.
+
+**6. Testing:**
+
+*   Write unit tests for `create_github_issue_for_failed_test`.
+*   Consider adding integration tests that simulate failed tests with media and verify that GitHub issues are created correctly.
+
+**7. Consider Edge Cases:**
+
+*   What happens if a test fails but doesn't have media? Should an issue still be created? (Probably, but without mentioning media).
+*   What happens if there are many failed tests? Should there be a limit on the number of issues created?
+*   How to handle very large media files?
+
+**Mermaid Diagram:**
+
+```mermaid
+graph TD
+    A[Start] --> B(Checkout Commit);
+    B --> C{Run Tests};
+    C -- Pass --> D(Checkout Original Branch);
+    C -- Fail --> E(Parse Test Results);
+    E --> F{Failed Tests with Media?};
+    F -- No --> D;
+    F -- Yes --> G(Create GitHub Issue);
+    G --> D;
+    D --> H[End];

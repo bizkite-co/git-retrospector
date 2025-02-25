@@ -175,6 +175,17 @@ def initialize(target_name, repo_under_test_path, output_base_dir="retros"):
     return config_file_path
 
 
+def analyze_test_results(retro_name):
+    """
+    Analyzes test results for a given retro.
+    """
+    from git_retrospector.parser import process_retro  # Import here to
+
+    # avoid circular dependency
+
+    process_retro(retro_name)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run tests on a range of commits and parse results."
@@ -209,5 +220,6 @@ if __name__ == "__main__":
         initialize(args.target_name, args.target_repo_path)
     elif args.command == "run":
         run_tests(args.target_name, args.iterations)
+        analyze_test_results(args.target_name)
     else:
         parser.print_help()

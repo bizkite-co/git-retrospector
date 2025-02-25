@@ -3,6 +3,7 @@
     * If they go over that size, parse functions out to other files.
 * use the repo remote address `github.com:bizkite-co/git-retrospector` to determine the repo name and owner.
 * Use the GitHub MCP to read, add, and update GitHub issues on this repo.
+* Comments on progress should be added as comments on the Issue, not as edits to the issue.
 * Be sure to set the Issue Type: [Featur, Bug, Task], depending on it's type.
 * Add the issues to the "Git Retrospector" project with `--owner bizkite-co`.
 * Use the GH Project Number, not the ID, to refer to the project.
