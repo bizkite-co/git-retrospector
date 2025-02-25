@@ -4,6 +4,7 @@ import os
 import sys
 import argparse
 from pathlib import Path
+import shutil  # Import the shutil module
 from git_retrospector.parser import parse_test_results
 import toml
 from pydantic import ValidationError
@@ -28,14 +29,6 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
 
     print(f"Running tests for commit {commit_hash}. Output directory: {output_dir_for_commit.resolve()}")
 
-    vitest_output = output_dir_for_commit / "vitest.xml"
-    playwright_output = output_dir_for_commit / "playwright.xml"
-
-
-    if os.path.exists(str(vitest_output)) and os.path.exists(str(playwright_output)):
-        print("  Skipping - output files exist")
-        return
-
     if origin_branch is None:
         print("  Cannot checkout original branch (not determined). Skipping checkout.")
         return
@@ -54,6 +47,28 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
 
     run_vitest(target_repo, str(output_dir_for_commit), config)
     run_playwright(target_repo, str(output_dir_for_commit), config)
+
+    # Move Playwright output to the correct location
+    try:
+        source_dir = Path(target_repo) / "test-results"
+        if source_dir.exists():
+            for item in os.listdir(source_dir):
+                s = os.path.join(source_dir, item)
+                d = os.path.join(output_dir_for_commit, item)
+                if os.path.isdir(s):
+                    shutil.move(s, d)
+                else:
+                    shutil.move(s, d)
+            shutil.rmtree(source_dir)  # Remove the source directory after moving
+
+        # Rename playwright.log to playwright.xml
+        playwright_log_path = os.path.join(output_dir_for_commit, "playwright.log")
+        playwright_xml_path = os.path.join(output_dir_for_commit, "playwright.xml")
+        if os.path.exists(playwright_log_path):
+            os.rename(playwright_log_path, playwright_xml_path)
+
+    except Exception as e:
+        print(f"Error moving Playwright output: {e}")
 
     try:
         subprocess.run(
@@ -194,9 +209,5 @@ if __name__ == "__main__":
         initialize(args.target_name, args.target_repo_path)
     elif args.command == "run":
         run_tests(args.target_name, args.iterations)
-        # parse_test_results(
-        #     args.commit_dir,
-        #     results_dir=os.path.join("retros", args.target_name, "test-output"),
-        # )  # Call parse_test_results with the commit_dir
     else:
         parser.print_help()
