@@ -20,8 +20,8 @@ def get_original_branch(target_repo):
             check=True,
         )
         return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        # print(f"Error getting original branch: {e}", file=sys.stderr)
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting original branch: {e}", file=sys.stderr)  # noqa T201
         return None
 
 
@@ -43,8 +43,8 @@ def get_current_commit_hash(target_repo):
             check=True,
         )
         return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        # print(f"Error getting current commit hash: {e}", file=sys.stderr)
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting current commit hash: {e}", file=sys.stderr)  # noqa T201
         return None
 
 

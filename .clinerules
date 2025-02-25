@@ -1,3 +1,4 @@
+* USE SPACES INSTEAD OF TABS.
 * This Python 3 project has a `./.venv` virtual environment that was created with `uv`.
 * Try to limit file size to about 100 lines.
     * If they go over that size, parse functions out to other files.
@@ -6,6 +7,8 @@
 * Comments on progress should be added as comments on the Issue, not as edits to the issue.
 * Be sure to set the Issue Type: [Featur, Bug, Task], depending on it's type.
 * Add the issues to the "Git Retrospector" project with `--owner bizkite-co`.
+* Add the Issue to the project by switching to Code mode and executing a command of this format:
+    `gh project item-add 3 --url https://github.com/bizkite-co/git-retrospector/issues/<issue number> --owner bizkite-co`
 * Use the GH Project Number, not the ID, to refer to the project.
 * gh project list --owner bizkite-co
     NUMBER  TITLE                 STATE  ID
