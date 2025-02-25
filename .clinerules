@@ -2,9 +2,15 @@
 * Try to limit file size to about 100 lines.
     * If they go over that size, parse functions out to other files.
 * use the repo remote address `github.com:bizkite-co/git-retrospector` to determine the repo name and owner.
-* Use the GitHub MCP to read and update GitHub issues on this repo.
-* Add the issues to the "Git Retrospector" project.
+* Use the GitHub MCP to read, add, and update GitHub issues on this repo.
+* Be sure to set the Issue Type: [Featur, Bug, Task], depending on it's type.
+* Add the issues to the "Git Retrospector" project with `--owner bizkite-co`.
+* Use the GH Project Number, not the ID, to refer to the project.
+* gh project list --owner bizkite-co
+    NUMBER  TITLE                 STATE  ID
+    3       Git Retrospector      open   PVT_kwDOBVBs1c4Ay6ev
 * Use the GitHub CLI for GitHub actions not available in the MCP.
+* When the Issue is complete and the user agrees, create commit with a multi-line commit message starting with `fix #<issue number>`. That will close the issue.
 * Use modern Python best practices as much as possible.
 * Suggest Python best practices improvements.
 * Use industry standard best practice coding standards and file structure and naming conventions.

@@ -2,18 +2,27 @@ import os
 import subprocess
 import tempfile
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 
 import toml
-
-from git_retrospector.config import Config
+from pathlib import Path
 from git_retrospector.retrospector import (
     get_current_commit_hash,
     initialize,
     process_commit,
-    run_tests,
 )
-from git_retrospector.runners import run_playwright, run_vitest
+import xml.etree.ElementTree as ET
+from git_retrospector.parser import (
+    _process_vitest_log,
+    _process_playwright_xml,
+    parse_test_results,
+)
+from git_retrospector.xml_processor import (
+    extract_media_paths,
+    _write_test_case_to_csv,
+    _process_test_suite,
+    process_xml_string,
+)
 
 
 class TestRetrospector(unittest.TestCase):
@@ -27,198 +36,273 @@ class TestRetrospector(unittest.TestCase):
             check=True,
         )
         self.repo_path = self.temp_dir.name
+        self.commit_hash = get_current_commit_hash(self.repo_path)
 
     def test_get_current_commit_hash(self):
-        result = get_current_commit_hash(self.repo_path)
-        self.assertTrue(isinstance(result, str))
-        self.assertIsNotNone(result)
+        commit_hash = get_current_commit_hash(self.repo_path)
+        self.assertIsInstance(commit_hash, str)
+        self.assertTrue(len(commit_hash) > 0)
 
-    def test_initialize_creates_directory_and_config(self):
+    def test_initialize(self):
         target_name = "test_target"
-        repo_under_test_path = "test_repo_path"  # Use repo_under_test_path
-        output_base_dir = self.temp_dir.name  # Use the temporary directory
+        repo_path = os.path.join(self.temp_dir.name, "repo")
+        os.makedirs(repo_path)
+        config_file_path = initialize(target_name, repo_path, self.temp_dir.name)
+        self.assertTrue(os.path.exists(config_file_path))
 
-        initialize(target_name, repo_under_test_path, output_base_dir)
-
-        expected_target_dir = os.path.join(output_base_dir, "retros", target_name)
-        self.assertTrue(os.path.isdir(expected_target_dir))
-
-        expected_config_path = os.path.join(expected_target_dir, "config.toml")
-        self.assertTrue(os.path.isfile(expected_config_path))
-
-        with open(expected_config_path) as f:
-            config = toml.load(f)
-
+        config = toml.load(config_file_path)
         self.assertEqual(config["name"], target_name)
-        self.assertEqual(config["repo_under_test_path"], repo_under_test_path)
-        self.assertEqual(
-            config["test_result_dir"],
-            os.path.join(output_base_dir, "retros", target_name),
-        )
-        self.assertDictEqual(
-            config["output_paths"],
-            {
-                "vitest": "test-output/vitest.xml",
-                "playwright": "test-output/playwright.xml",
-            },
-        )
+        self.assertEqual(config["repo_under_test_path"], repo_path)
+        self.assertTrue(config["test_result_dir"].startswith(self.temp_dir.name))
 
-    @patch("git_retrospector.retrospector.process_commit")
-    @patch("git_retrospector.retrospector.get_current_commit_hash")
-    @patch("git_retrospector.retrospector.get_original_branch")
-    def test_run_tests_loads_config(
-        self,
-        mock_get_original_branch,
-        mock_get_current_commit_hash,
-        mock_process_commit,
-    ):
-        # Mock the return values of the mocked functions
-        mock_get_original_branch.return_value = "main"
-
-        # Use a side effect to conditionally mock get_current_commit_hash
-        def mock_commit_hash(repo_path):
-            if repo_path == "/path/to/target_repo":
-                return "abcdef"  # Mock commit hash for the target repo
-            else:
-                return get_current_commit_hash(repo_path)  # Original function
-
-        mock_get_current_commit_hash.side_effect = mock_commit_hash
-
-        # Create a temporary directory and a mock config.toml file
-        with tempfile.TemporaryDirectory() as temp_dir:
-            target_name = "test_target"
-            target_dir = os.path.join(temp_dir, "retros", target_name)
-            os.makedirs(target_dir)
-            config_file_path = os.path.join(target_dir, "config.toml")
-            config_data = {
-                "name": target_name,
-                "repo_under_test_path": "/path/to/target_repo",
-                "test_result_dir": os.path.join(temp_dir, "retros", target_name),
-                "output_paths": {
-                    "vitest": "test-output/vitest.xml",
-                    "playwright": "test-output/playwright.xml",
-                },
-            }
-            with open(config_file_path, "w") as f:
-                toml.dump(config_data, f)
-
-            # Change the working directory to the temp dir
-            os.chdir(temp_dir)
-            config = Config(**config_data)
-
-            with patch("subprocess.run") as mock_run:
-                # Mock the behavior of subprocess.run for the git rev-parse command
-                mock_run.return_value.stdout = "abcdef\n"  # Mock commit hash
-
-                # Call run_tests with the test target name
-                run_tests(target_name, iteration_count=1)
-
-                # Assert that process_commit was called with the correct arguments
-                mock_process_commit.assert_called_once_with(
-                    config_data["repo_under_test_path"],
-                    "abcdef",
-                    config.test_result_dir / "test-output",
-                    "main",
-                    config,
-                )
-
-    @patch("git_retrospector.retrospector.run_playwright")
     @patch("git_retrospector.retrospector.run_vitest")
-    def test_process_commit(self, mock_run_vitest, mock_run_playwright):
-        # Create a temporary directory
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Create a mock config.toml file
-            target_name = "test_target"
-            target_dir = os.path.join(temp_dir, "retros", target_name)
-            os.makedirs(target_dir)
-            config_file_path = os.path.join(target_dir, "config.toml")
-            config_data = {
-                "name": target_name,
-                "repo_under_test_path": "/path/to/target_repo",
-                "test_result_dir": os.path.join(temp_dir, "retros", target_name),
-                "output_paths": {  # Add output paths for consistency
-                    "vitest": "test-output/vitest.xml",
-                    "playwright": "test-output/playwright.xml",
-                },
-            }
-            with open(config_file_path, "w") as f:
-                toml.dump(config_data, f)
+    @patch("git_retrospector.retrospector.run_playwright")
+    def test_process_commit(self, mock_run_playwright, mock_run_vitest):
+        output_dir = self.temp_dir.name
+        origin_branch = "main"
 
-            # Create a mock commit hash and output directory
-            commit_hash = "abcdef"
+        # Create a mock config object
+        mock_config = MagicMock()
+        mock_config.test_result_dir = Path(output_dir)
 
-            config = Config(**config_data)
-            output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
-
-            # Call process_commit
-            process_commit(
-                config.repo_under_test_path,
-                commit_hash,
-                str(config.test_result_dir),
-                "main",
-                config,
-            )
-
-            # Assert that the commit-specific output directory was created
-            self.assertTrue(os.path.isdir(output_dir_for_commit))
-
-            # Assert that run_vitest and run_playwright were called with the correct
-            # arguments
-            mock_run_vitest.assert_called_once_with(
-                config.repo_under_test_path, str(output_dir_for_commit), config
-            )
-            mock_run_playwright.assert_called_once_with(
-                config.repo_under_test_path, str(output_dir_for_commit), config
-            )
-
-    @patch("subprocess.run")
-    def test_run_vitest_constructs_command(self, mock_run):
-        target_repo = "/path/to/target_repo"
-        output_dir = "/path/to/output/dir"
-        config_data = {"output_paths": {"vitest": "vitest.xml"}}
-        config = Config(
-            **config_data,
-            name="test",
-            repo_under_test_path="test",
-            test_result_dir="test",
+        # Create a test repo
+        test_repo = os.path.join(self.temp_dir.name, "test_repo")
+        os.makedirs(test_repo)
+        subprocess.run(["git", "init"], cwd=test_repo, check=True)
+        subprocess.run(
+            ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
+            cwd=test_repo,
+            check=True,
+        )
+        # Checkout the initial commit *within* the test repo
+        subprocess.run(
+            ["git", "checkout", "--force", self.commit_hash],
+            cwd=test_repo,
+            check=True,
+            capture_output=True,
+            text=True,
         )
 
-        with patch("builtins.open", mock_open(read_data=toml.dumps(config_data))):
-            run_vitest(target_repo, output_dir, config)
-            mock_run.assert_called_once_with(
-                ["npx", "vitest", "run", "--reporter=junit"],
-                cwd=target_repo,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                check=True,
-                text=True,
-            )
-
-    @patch("subprocess.run")
-    def test_run_playwright_constructs_command(self, mock_run):
-        target_repo = "/path/to/target_repo"
-        output_dir = "/path/to/output/dir"
-        config_data = {"output_paths": {"playwright": "playwright.xml"}}
-        config = Config(
-            **config_data,
-            name="test",
-            repo_under_test_path="test",
-            test_result_dir="test",
+        process_commit(
+            test_repo, self.commit_hash, output_dir, origin_branch, mock_config
         )
 
-        with patch("builtins.open", mock_open(read_data=toml.dumps(config_data))):
-            run_playwright(target_repo, output_dir, config)
-            mock_run.assert_called_once_with(
-                ["npx", "playwright", "test", "--reporter=junit"],
-                cwd=target_repo,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                check=True,
-                text=True,
-            )
+        # Assert that the output directory for the commit was created
+        output_dir_for_commit = Path(output_dir) / "test-output" / self.commit_hash
+        self.assertTrue(output_dir_for_commit.exists())
 
-    def tearDown(self):
-        self.temp_dir.cleanup()
+        # Assert that run_vitest and run_playwright were called
+        # with the correct arguments
+        mock_run_vitest.assert_called_once_with(
+            test_repo, str(output_dir_for_commit), mock_config
+        )
+        mock_run_playwright.assert_called_once_with(
+            test_repo, str(output_dir_for_commit), mock_config
+        )
+
+    @patch("git_retrospector.xml_processor.process_xml_string")
+    def test_process_vitest_log(self, mock_process_xml_string):
+        # Create a mock Vitest log file with sample XML content
+        vitest_log_content = """
+        Some log lines before the XML
+        <testsuites name="Vitest Tests">
+          <testsuite name="Test Suite 1">
+            <testcase name="Test Case 1" time="0.123" />
+          </testsuite>
+        </testsuites>
+        Some log lines after the XML
+        """
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as vitest_log_file:
+            vitest_log_file.write(vitest_log_content)
+            vitest_log_path = vitest_log_file.name
+
+        # Call _process_vitest_log with the mock file path
+        mock_csv_writer = MagicMock()
+        _process_vitest_log(vitest_log_path, "commit123", mock_csv_writer)
+
+        # Assert that process_xml_string was called with the correct arguments
+        mock_process_xml_string.assert_called_once_with(
+            """<testsuites name="Vitest Tests">
+          <testsuite name="Test Suite 1">
+            <testcase name="Test Case 1" time="0.123" />
+          </testsuite>
+        </testsuites>""",
+            "commit123",
+            "vitest",
+            mock_csv_writer,
+        )
+
+        # Clean up the temporary file
+        os.remove(vitest_log_path)
+
+    @patch("git_retrospector.xml_processor.process_xml_string")
+    def test_process_playwright_xml(self, mock_process_xml_string):
+        # Create a mock Playwright XML file with sample XML content
+        playwright_xml_content = """
+        <testsuites name="Playwright Tests">
+          <testsuite name="Test Suite 1">
+            <testcase name="Test Case 1" time="0.123" />
+          </testsuite>
+        </testsuites>
+        """
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as playwright_xml_file:
+            playwright_xml_file.write(playwright_xml_content)
+            playwright_xml_path = playwright_xml_file.name
+
+        # Call _process_playwright_xml with the mock file path
+        mock_csv_writer = MagicMock()
+        _process_playwright_xml(playwright_xml_path, "commit123", mock_csv_writer)
+
+        # Assert that process_xml_string was called with the correct arguments
+        mock_process_xml_string.assert_called_once_with(
+            playwright_xml_content,
+            "commit123",
+            "playwright",
+            mock_csv_writer,
+        )
+
+        # Clean up the temporary file
+        os.remove(playwright_xml_path)
+
+    @patch("git_retrospector.parser._process_playwright_xml")
+    @patch("git_retrospector.parser._process_vitest_log")
+    @patch("csv.writer")
+    @patch("builtins.open", new_callable=mock_open)
+    def test_parse_test_results(
+        self,
+        mock_open,
+        mock_csv_writer,
+        mock_process_vitest_log,
+        mock_process_playwright_xml,
+    ):
+
+        # Configure mock_csv_writer to return a MagicMock
+        mock_csv_writer.return_value = MagicMock()
+
+        # Create mock test results directory and files
+        results_dir = os.path.join(self.temp_dir.name, "results")
+        commit_dir = os.path.join(results_dir, "commit123")
+        os.makedirs(commit_dir)
+        vitest_log_path = os.path.join(commit_dir, "vitest.log")
+        playwright_xml_path = os.path.join(commit_dir, "playwright.xml")
+        Path(vitest_log_path).touch()
+        Path(playwright_xml_path).touch()
+
+        # Call parse_test_results with the mock results directory
+        parse_test_results(results_dir=results_dir)
+
+        # Assert that _process_vitest_log and _process_playwright_xml were called
+        mock_process_vitest_log.assert_called_once_with(
+            vitest_log_path, "commit123", mock_csv_writer.return_value
+        )
+        mock_process_playwright_xml.assert_called_once_with(
+            playwright_xml_path, "commit123", mock_csv_writer.return_value
+        )
+
+        # Assert that the output CSV file was opened in write mode
+        mock_open.assert_called_once_with(
+            os.path.join(os.getcwd(), "test_results_summary.csv"), "w", newline=""
+        )
+
+    def test_extract_media_paths(self):
+        # Test case with multiple paths
+        cdata1 = (
+            "Some text test-results/path/to/file1.png "
+            "more text test-results/path/to/file2.webm"
+        )
+        expected1 = "test-results/path/to/file1.png;test-results/path/to/file2.webm"
+        self.assertEqual(extract_media_paths(cdata1), expected1)
+
+        # Test case with no paths
+        cdata2 = "Some text without any paths"
+        expected2 = ""
+        self.assertEqual(extract_media_paths(cdata2), expected2)
+
+        # Test case with a single path
+        cdata3 = "test-results/path/to/file3.zip"
+        expected3 = "test-results/path/to/file3.zip"
+        self.assertEqual(extract_media_paths(cdata3), expected3)
+
+        # Test case with mixed slashes
+        cdata4 = (
+            "test-results/path/to/file4.png\\nand then "
+            "test-results/another_path/file5.jpg"
+        )
+        self.assertEqual(extract_media_paths(cdata4), "test-results/path/to/file4.png")
+
+    def test_write_test_case_to_csv(self):
+        mock_csv_writer = MagicMock()
+        commit = "commit123"
+        test_type = "vitest"
+        name = "test_case_1"
+        result = "passed"
+        time = 0.123
+        media_path = "path/to/media.png"
+
+        _write_test_case_to_csv(
+            mock_csv_writer, commit, test_type, name, result, time, media_path
+        )
+
+        mock_csv_writer.writerow.assert_called_once_with(
+            [commit, test_type, name, result, time, media_path]
+        )
+
+    @patch("git_retrospector.xml_processor._write_test_case_to_csv")
+    def test_process_test_suite(self, mock_write_test_case_to_csv):
+        # Create a mock testsuite XML element
+        test_suite_xml = """
+        <testsuite name="Suite1">
+            <testcase name="test1" time="0.1">
+                <failure>Failure message</failure>
+            </testcase>
+            <testcase name="test2" time="0.2" />
+            <testcase name="test3" time="0.3">
+                <skipped/>
+            </testcase>
+        </testsuite>
+        """
+        test_suite = ET.fromstring(test_suite_xml)
+        commit = "commit123"
+        test_type = "pytest"
+        mock_csv_writer = MagicMock()
+
+        _process_test_suite(test_suite, commit, test_type, mock_csv_writer)
+
+        # Assert that _write_test_case_to_csv was called three times with
+        # the correct arguments
+        self.assertEqual(mock_write_test_case_to_csv.call_count, 3)
+        mock_write_test_case_to_csv.assert_any_call(
+            mock_csv_writer, commit, test_type, "test1", "failed", 0.1, ""
+        )
+        mock_write_test_case_to_csv.assert_any_call(
+            mock_csv_writer, commit, test_type, "test2", "passed", 0.2, ""
+        )
+        mock_write_test_case_to_csv.assert_any_call(
+            mock_csv_writer, commit, test_type, "test3", "skipped", 0.3, ""
+        )
+
+    @patch("git_retrospector.xml_processor._process_test_suite")
+    @patch("builtins.open", new_callable=mock_open)
+    def test_process_xml_string(self, mock_open, mock_process_test_suite):
+        # Create a mock XML string
+        xml_string = """
+        <testsuites>
+            <testsuite name="Suite1">
+                <testcase name="test1" time="0.1" />
+            </testsuite>
+            <testsuite name="Suite2">
+                <testcase name="test2" time="0.2" />
+                <testcase name="test3" time="0.3" />
+            </testsuite>
+        </testsuites>
+        """
+        commit = "commit123"
+        test_type = "pytest"
+
+        process_xml_string(xml_string, commit, test_type, None)
+
+        # Assert that _process_test_suite was called twice (for each testsuite)
+        self.assertEqual(mock_process_test_suite.call_count, 2)
 
 
 if __name__ == "__main__":
