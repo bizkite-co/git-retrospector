@@ -20,7 +20,8 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
         config (Config): The configuration object.
     """
     output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
-    output_dir_for_commit.mkdir(parents=True, exist_ok=True)
+    tool_summary_dir = output_dir_for_commit / "tool-summary"
+    tool_summary_dir.mkdir(parents=True, exist_ok=True)
 
     if origin_branch is None:
         return
@@ -36,27 +37,18 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
     except subprocess.CalledProcessError:
         return
 
-    run_vitest(target_repo, str(output_dir_for_commit), config)
-    run_playwright(target_repo, str(output_dir_for_commit), config)
+    run_vitest(target_repo, str(tool_summary_dir), config)
+    run_playwright(target_repo, str(tool_summary_dir), config)
 
-    # Move Playwright output to the correct location
+    # Move vitest.csv and playwright.csv
     try:
-        source_dir = Path(target_repo) / "test-results"
+        source_dir = Path(target_repo)
         if source_dir.exists():
-            for item in os.listdir(source_dir):
+            for item in ["vitest.csv", "playwright.csv"]:
                 s = os.path.join(source_dir, item)
-                d = os.path.join(output_dir_for_commit, item)
-                if os.path.isdir(s):
+                d = os.path.join(tool_summary_dir, item)
+                if os.path.exists(s):
                     shutil.move(s, d)
-                else:
-                    shutil.move(s, d)
-            shutil.rmtree(source_dir)  # Remove the source directory after moving
-
-        # Rename playwright.log to playwright.xml
-        playwright_log_path = os.path.join(output_dir_for_commit, "playwright.log")
-        playwright_xml_path = os.path.join(output_dir_for_commit, "playwright.xml")
-        if os.path.exists(playwright_log_path):
-            os.rename(playwright_log_path, playwright_xml_path)
 
     except Exception:
         pass

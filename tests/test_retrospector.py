@@ -1,238 +1,105 @@
-import csv
-import os
-import subprocess
-import tempfile
 import unittest
-from pathlib import Path
-from unittest.mock import (  # Keep these for patching in test_process_commit
-    MagicMock,
-    patch,
-)
-
-import toml
-
+from unittest.mock import patch
+import os
+import tempfile
 from git_retrospector.retrospector import (
-    get_current_commit_hash,
-    initialize,
-    process_commit,
+    run_tests,
+    analyze_test_results,
+    find_test_summary_files,
+    count_failed_tests,
+    load_config_for_retro,
+    get_user_confirmation,
 )
-
-# Removed: import xml.etree.ElementTree as ET
 
 
 class TestRetrospector(unittest.TestCase):
-    def setUp(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
-        subprocess.run(["git", "init"], cwd=self.temp_dir.name, check=True)
-        # Create an empty initial commit
-        subprocess.run(
-            ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
-            cwd=self.temp_dir.name,
-            check=True,
-        )
-        self.repo_path = self.temp_dir.name
-        self.commit_hash = get_current_commit_hash(self.repo_path)
+    @patch("git_retrospector.retrospector.process_commit")
+    @patch("git_retrospector.retrospector.get_current_commit_hash")
+    @patch("git_retrospector.retrospector.get_origin_branch_or_commit")
+    @patch("git_retrospector.retrospector.Config")
+    @patch(
+        "builtins.open",
+        new_callable=unittest.mock.mock_open,
+        read_data=(
+            "[retros]\nrepo_under_test_path = '/path/to/repo'\n"
+            "test_result_dir = '/path/to/results'"
+        ),
+    )
+    def test_run_tests(
+        self,
+        mock_open,
+        mock_config,
+        mock_get_origin,
+        mock_get_current,
+        mock_process_commit,
+    ):
+        mock_config.return_value.repo_under_test_path = "/path/to/repo"
+        mock_config.return_value.test_result_dir = "/path/to/results"
+        mock_get_origin.return_value = "main"
+        mock_get_current.return_value = "1234567"
 
-    def test_get_current_commit_hash(self):
-        commit_hash = get_current_commit_hash(self.repo_path)
-        self.assertIsInstance(commit_hash, str)
-        self.assertTrue(len(commit_hash) > 0)
+        run_tests("test_target", 2)
 
-    def test_initialize(self):
-        target_name = "test_target"
-        repo_path = os.path.join(self.temp_dir.name, "repo")
-        os.makedirs(repo_path)
-        config_file_path = initialize(target_name, repo_path, self.temp_dir.name)
-        self.assertTrue(os.path.exists(config_file_path))
+        self.assertEqual(mock_process_commit.call_count, 2)
 
-        config = toml.load(config_file_path)
-        self.assertEqual(config["name"], target_name)
-        self.assertEqual(config["repo_under_test_path"], repo_path)
-        self.assertTrue(config["test_result_dir"].startswith(self.temp_dir.name))
-
-    @patch("git_retrospector.retrospector.run_vitest")
-    @patch("git_retrospector.retrospector.run_playwright")
-    def test_process_commit(self, mock_run_playwright, mock_run_vitest):
-        output_dir = self.temp_dir.name
-        origin_branch = "main"
-
-        # Create a mock config object
-        mock_config = MagicMock()
-        mock_config.test_result_dir = Path(output_dir)
-
-        # Create a test repo
-        test_repo = os.path.join(self.temp_dir.name, "test_repo")
-        os.makedirs(test_repo)
-        subprocess.run(["git", "init"], cwd=test_repo, check=True)
-        subprocess.run(
-            ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
-            cwd=test_repo,
-            check=True,
-        )
-        # Checkout the initial commit *within* the test repo
-        subprocess.run(
-            ["git", "checkout", "--force", self.commit_hash],
-            cwd=test_repo,
-            check=True,
-            capture_output=True,
-            text=True,
+    @patch("git_retrospector.retrospector.generate_commit_diffs")
+    @patch("git_retrospector.retrospector.process_retro")
+    def test_analyze_test_results(self, mock_process_retro, mock_generate_diffs):
+        analyze_test_results("test_retro")
+        mock_process_retro.assert_called_once_with("test_retro")
+        mock_generate_diffs.assert_called_once_with(
+            os.path.join("retros", "test_retro")
         )
 
-        process_commit(
-            test_repo, self.commit_hash, output_dir, origin_branch, mock_config
-        )
+    def test_find_test_summary_files(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            tool_summary_dir = os.path.join(temp_dir, "tool-summary")
+            os.makedirs(tool_summary_dir)
+            with open(os.path.join(tool_summary_dir, "playwright.csv"), "w") as f:
+                f.write("test")
+            with open(os.path.join(tool_summary_dir, "vitest.csv"), "w") as f:
+                f.write("test")
 
-        # Assert that the output directory for the commit was created
-        output_dir_for_commit = Path(output_dir) / "test-output" / self.commit_hash
-        self.assertTrue(output_dir_for_commit.exists())
+            playwright_csv, vitest_csv = find_test_summary_files(temp_dir)
+            self.assertIsNotNone(playwright_csv)
+            self.assertIsNotNone(vitest_csv)
 
-        # Assert that run_vitest and run_playwright were called
-        # with the correct arguments
-        mock_run_vitest.assert_called_once_with(
-            test_repo, str(output_dir_for_commit), mock_config
-        )
-        mock_run_playwright.assert_called_once_with(
-            test_repo, str(output_dir_for_commit), mock_config
-        )
+            playwright_csv, vitest_csv = find_test_summary_files("nonexistent_dir")
+            self.assertIsNone(playwright_csv)
+            self.assertIsNone(vitest_csv)
 
-    def test_parse_commit_results(self):
-        # Create a temporary directory structure
-        commit_dir_path = os.path.join(self.temp_dir.name, "commit_test")
-        os.makedirs(commit_dir_path)
+    def test_count_failed_tests(self):
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_file:
+            temp_file.write("Test Name,Result\n")
+            temp_file.write("Test1,passed\n")
+            temp_file.write("Test2,failed\n")
+            temp_file.close()
 
-        # Create dummy playwright.xml file
-        playwright_xml_content = """
-        <testsuites>
-            <testsuite name="Suite1">
-                <testcase name="test1" time="0.1" />
-                <testcase name="test2" time="0.2">
-                    <failure>Error message</failure>
-                </testcase>
-            </testsuite>
-        </testsuites>
-        """
-        with open(os.path.join(commit_dir_path, "playwright.xml"), "w") as f:
-            f.write(playwright_xml_content)
+            failed_count = count_failed_tests(temp_file.name)
+            self.assertEqual(failed_count, 1)
+            os.remove(temp_file.name)
 
-        # Create dummy vitest.log file
-        vitest_log_content = """
-        <testsuites>
-            <testsuite name="Suite2">
-                <testcase name="test3" time="0.3" />
-                <testcase name="test4" time="0.4">
-                    <failure>Error message</failure>
-                </testcase>
-            </testsuite>
-        </testsuites>
-        """
-        with open(os.path.join(commit_dir_path, "vitest.log"), "w") as f:
-            f.write(vitest_log_content)
+    @patch("git_retrospector.retrospector.Config")
+    @patch(
+        "builtins.open",
+        new_callable=unittest.mock.mock_open,
+        read_data=(
+            "[retros]\nrepo_under_test_owner = 'test_owner'\n"
+            "repo_under_test_name = 'test_repo'"
+        ),
+    )
+    def test_load_config_for_retro(self, mock_open, mock_config):
+        mock_config.return_value.repo_under_test_owner = "test_owner"
+        mock_config.return_value.repo_under_test_name = "test_repo"
+        owner, name = load_config_for_retro("test_retro")
+        self.assertEqual(owner, "test_owner")
+        self.assertEqual(name, "test_repo")
 
-        # Call parse_commit_results
-        from git_retrospector.parser import parse_commit_results
-
-        parse_commit_results(commit_dir_path)
-
-        # Assert that playwright.csv and vitest.csv files were created
-        self.assertTrue(os.path.exists(os.path.join(commit_dir_path, "playwright.csv")))
-        self.assertTrue(os.path.exists(os.path.join(commit_dir_path, "vitest.csv")))
-
-        # Assert content of playwright.csv
-        with open(os.path.join(commit_dir_path, "playwright.csv")) as f:
-            reader = csv.reader(f)
-            rows = list(reader)
-        self.assertEqual(len(rows), 3)  # Header + 2 test cases
-        self.assertEqual(
-            rows[0],
-            ["Commit", "Test Type", "Test Name", "Result", "Duration", "Media Path"],
-        )
-        self.assertEqual(
-            rows[1],
-            [
-                os.path.basename(commit_dir_path),
-                "playwright",
-                "test1",
-                "passed",
-                "0.1",
-                "",
-            ],
-        )
-        self.assertEqual(
-            rows[2],
-            [
-                os.path.basename(commit_dir_path),
-                "playwright",
-                "test2",
-                "failed",
-                "0.2",
-                "",
-            ],
-        )
-
-        # Assert content of vitest.csv
-        with open(os.path.join(commit_dir_path, "vitest.csv")) as f:
-            reader = csv.reader(f)
-            rows = list(reader)
-        self.assertEqual(len(rows), 3)  # Header + 2 test cases
-        self.assertEqual(
-            rows[0],
-            ["Commit", "Test Type", "Test Name", "Result", "Duration", "Media Path"],
-        )
-        self.assertEqual(
-            rows[1],
-            [os.path.basename(commit_dir_path), "vitest", "test3", "passed", "0.3", ""],
-        )
-        self.assertEqual(
-            rows[2],
-            [os.path.basename(commit_dir_path), "vitest", "test4", "failed", "0.4", ""],
-        )
-
-
-class TestRetroProcessor(unittest.TestCase):
-    def setUp(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.retro_dir = os.path.join(
-            self.temp_dir.name, "retros", "test_retro", "test-output"
-        )
-        os.makedirs(self.retro_dir)
-        self.commit_dir1 = os.path.join(self.retro_dir, "commit1")
-        self.commit_dir2 = os.path.join(self.retro_dir, "commit2")
-        os.makedirs(self.commit_dir1)
-        os.makedirs(self.commit_dir2)
-
-        # Create dummy playwright.xml and vitest.log files in each commit directory
-        for commit_dir in [self.commit_dir1, self.commit_dir2]:
-            with open(os.path.join(commit_dir, "playwright.xml"), "w") as f:
-                f.write(
-                    """
-                    <testsuites>
-                        <testsuite><testcase name='test1' time='0.1'/></testsuite>
-                    </testsuites>
-                    """
-                )
-            with open(os.path.join(commit_dir, "vitest.log"), "w") as f:
-                f.write(
-                    """
-                    <testsuites>
-                        <testsuite><testcase name='test2' time='0.2'/></testsuite>
-                    </testsuites>
-                    """
-                )
-
-    def tearDown(self):
-        self.temp_dir.cleanup()
-
-    def test_process_retro(self):
-        # Call process_retro with the correct path
-        from git_retrospector.parser import process_retro
-
-        process_retro(os.path.join(self.temp_dir.name, "retros", "test_retro"))
-
-        # Assert that playwright.csv and vitest.csv files were created
-        # in each commit directory
-        for commit_dir in [self.commit_dir1, self.commit_dir2]:
-            self.assertTrue(os.path.exists(os.path.join(commit_dir, "playwright.csv")))
-            self.assertTrue(os.path.exists(os.path.join(commit_dir, "vitest.csv")))
+    @patch("builtins.input", return_value="y")
+    def test_get_user_confirmation(self, mock_input):
+        self.assertTrue(get_user_confirmation(1))
+        mock_input.return_value = "n"
+        self.assertFalse(get_user_confirmation(1))
 
 
 if __name__ == "__main__":

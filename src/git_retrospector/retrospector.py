@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import csv
 import os
 import subprocess
 
@@ -64,7 +65,6 @@ def run_tests(target_name, iteration_count):
                 if not commit_hash:
                     continue  # Skip this iteration
 
-                print(f"Processing commit: {commit_hash}")  # noqa: T201
                 process_commit(
                     target_repo, commit_hash, test_output_dir, origin_branch, config
                 )
@@ -84,6 +84,163 @@ def analyze_test_results(retro_name):
 
     process_retro(retro_name)
     generate_commit_diffs(os.path.join("retros", retro_name))
+
+
+def find_test_summary_files(commit_dir):
+    """
+    Locates the playwright.csv and vitest.csv files within the tool-summary
+    subdirectory.
+    """
+    tool_summary_dir = os.path.join(commit_dir, "tool-summary")
+    if not os.path.exists(tool_summary_dir):
+        return None, None
+
+    playwright_csv = os.path.join(tool_summary_dir, "playwright.csv")
+    vitest_csv = os.path.join(tool_summary_dir, "vitest.csv")
+
+    if not os.path.exists(playwright_csv):
+        playwright_csv = None
+    if not os.path.exists(vitest_csv):
+        vitest_csv = None
+
+    return playwright_csv, vitest_csv
+
+
+def count_failed_tests(csv_file):
+    """Counts the number of failed tests in a given CSV file."""
+    failed_count = 0
+    try:
+        with open(csv_file) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row.get("Result") == "failed":
+                    failed_count += 1
+    except Exception:
+        return -1  # Indicate an error
+    return failed_count
+
+
+def load_config_for_retro(retro_name):
+    """Loads the configuration for a given retro."""
+    config_file_path = os.path.join("retros", retro_name, "config.toml")
+    try:
+        with open(config_file_path) as config_file:
+            config_data = toml.load(config_file)
+        config = Config(**config_data)
+        return config.repo_under_test_owner, config.repo_under_test_name
+    except (FileNotFoundError, KeyError, toml.TomlDecodeError, ValidationError):
+        return None, None
+
+
+def get_user_confirmation(failed_count):
+    """Gets user confirmation to proceed with creating issues."""
+    while True:
+        user_input = input(
+            f"Found {failed_count} failed tests. Create GitHub issues? (y/n): "
+        ).lower()
+        if user_input in ["y", "n"]:
+            return user_input == "y"
+
+
+def process_csv_files(repo, playwright_csv, vitest_csv):
+    """Processes CSV files and creates issues for failed tests."""
+    for csv_file in [playwright_csv, vitest_csv]:
+        if csv_file:
+            with open(csv_file) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row.get("Result") == "failed":
+                        title = row.get("Test Name", "Unnamed Test")
+                        body = (
+                            f"Error: {row.get('Error', 'No error message')}\n"
+                            f"Stack Trace: {row.get('Stack Trace', 'No stack trace')}\n"
+                            # TODO: Add screenshot link if available
+                        )
+                        try:
+                            repo.create_issue(title=title, body=body)
+                        except Exception:
+                            pass
+
+
+def should_create_issues(retro_name, commit_hash):
+    """Checks if conditions are met to create GitHub issues."""
+    commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
+    if not os.path.exists(commit_dir):
+        return False
+
+    playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+    if not playwright_csv and not vitest_csv:
+        return False
+
+    failed_count = 0
+    for csv_file in [playwright_csv, vitest_csv]:
+        if csv_file:
+            count = count_failed_tests(csv_file)
+            if count == -1:
+                return False  # Stop if there was an error reading a file
+            failed_count += count
+
+    if failed_count == 0:
+        return False
+
+    return get_user_confirmation(failed_count)
+
+
+def handle_failed_tests(retro_name, commit_hash):
+    """Handles the process of finding and reporting failed tests."""
+    commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
+    if not os.path.exists(commit_dir):
+        return
+
+    playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+    if not playwright_csv and not vitest_csv:
+        return
+
+    failed_count = 0
+    for csv_file in [playwright_csv, vitest_csv]:
+        if csv_file:
+            count = count_failed_tests(csv_file)
+            if count == -1:
+                return  # Stop if there was an error reading a file
+            failed_count += count
+
+    if failed_count == 0:
+        return
+
+    return failed_count
+
+
+def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
+    """Creates GitHub issues based on failed test data."""
+    token = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
+    if not token:
+        return
+
+    from github import Github
+
+    g = Github(token)
+
+    try:
+        repo = g.get_user(repo_owner).get_repo(repo_name)
+    except Exception:
+        return
+
+    process_csv_files(repo, playwright_csv, vitest_csv)
+
+
+def create_issues_for_commit(retro_name, commit_hash):
+    """
+    Creates GitHub issues for failed tests in a specific commit.
+    """
+    if not should_create_issues(retro_name, commit_hash):
+        return
+
+    repo_owner, repo_name = load_config_for_retro(retro_name)
+    if not repo_owner or not repo_name:
+        return
+
+    commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
+    create_github_issues(repo_owner, repo_name, *find_test_summary_files(commit_dir))
 
 
 if __name__ == "__main__":
@@ -114,6 +271,13 @@ if __name__ == "__main__":
         "-c", "--commit_dir", help="Specific commit directory to process"
     )
 
+    # 'issues' command
+    issues_parser = subparsers.add_parser(
+        "issues", help="Create GitHub issues for failed tests in a specific commit"
+    )
+    issues_parser.add_argument("retro_name", help="Name of the retro")
+    issues_parser.add_argument("commit_hash", help="Commit hash to analyze")
+
     args = parser.parse_args()
 
     if args.command == "init":
@@ -121,5 +285,7 @@ if __name__ == "__main__":
     elif args.command == "run":
         run_tests(args.target_name, args.iterations)
         analyze_test_results(args.target_name)
+    elif args.command == "issues":
+        create_issues_for_commit(args.retro_name, args.commit_hash)
     else:
         parser.print_help()
