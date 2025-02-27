@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-import argparse
 import csv
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
+import click
 import toml
 from github import Github, GithubException
 from pydantic import ValidationError
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
 
 from git_retrospector.commit_processor import process_commit
 from git_retrospector.config import Config
@@ -42,7 +45,7 @@ def run_tests(target_name, iteration_count):
         target_repo = str(config.repo_under_test_path)
         test_output_dir = str(config.test_result_dir)
     except FileNotFoundError:
-        print(  # noqa: T201, TODO: Convert to CLI
+        click.echo(
             f"Error: Config file not found: {config_file_path}\n"
             f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
         )
@@ -233,8 +236,6 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
     if not token:
         return
 
-    from github import Github
-
     g = Github(token)
 
     try:
@@ -318,49 +319,121 @@ def create_issues_for_commit(retro_name, commit_hash):
     create_github_issues(repo_owner, repo_name, *find_test_summary_files(commit_dir))
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run tests on a range of commits and parse results."
+def handle_no_command():
+    command_completer = WordCompleter(["init", "run", "issues"], ignore_case=True)
+    command_str = prompt(
+        "Enter a command (or press Ctrl-D to exit): ", completer=command_completer
     )
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    if command_str:
+        command_parts = command_str.split()
+        command_name = command_parts[0]
+        if command_name == "init":
+            handle_init_command(command_parts)
+        elif command_name == "run":
+            handle_run_command(command_parts)
+        elif command_name == "issues":
+            handle_issues_command(command_parts)
+        else:
+            click.echo(f"Unknown command: {command_name}")
 
-    # 'init' command
-    init_parser = subparsers.add_parser("init", help="Initialize a target repository")
-    init_parser.add_argument("target_name", help="Name of the target repository")
-    init_parser.add_argument("target_repo_path", help="Path to the target repository")
 
-    # 'run' command
-    run_parser = subparsers.add_parser("run", help="Run tests on a target repository")
-    run_parser.add_argument(
-        "target_name",
-        help="Name of the target repository (must be initialized first)",
-    )
-    run_parser.add_argument(
-        "-i",
-        "--iterations",
-        type=int,
-        default=10,
-        help="Number of iterations (default: 10)",
-    )
-    run_parser.add_argument(
-        "-c", "--commit_dir", help="Specific commit directory to process"
-    )
-
-    # 'issues' command
-    issues_parser = subparsers.add_parser(
-        "issues", help="Create GitHub issues for failed tests in a specific commit"
-    )
-    issues_parser.add_argument("retro_name", help="Name of the retro")
-    issues_parser.add_argument("commit_hash", help="Commit hash to analyze")
-
-    args = parser.parse_args()
-
-    if args.command == "init":
-        Config.initialize(args.target_name, args.target_repo_path)
-    elif args.command == "run":
-        run_tests(args.target_name, args.iterations)
-        analyze_test_results(args.target_name)
-    elif args.command == "issues":
-        create_issues_for_commit(args.retro_name, args.commit_hash)
+def handle_init_command(command_parts):
+    if len(command_parts) == 3:
+        target_name = command_parts[1]
+        target_repo_path = command_parts[2]
+        init(target_name, target_repo_path)
     else:
-        parser.print_help()
+        click.echo("Usage: init <target_name> <target_repo_path>")
+
+
+def handle_run_command(command_parts):
+    if len(command_parts) >= 2:
+        target_name = command_parts[1]
+        #  Handle optional arguments for run
+        iterations = 10
+        commit_dir = None
+        if "-i" in command_parts:
+            try:
+                iterations_index = command_parts.index("-i") + 1
+                iterations = int(command_parts[iterations_index])
+            except (ValueError, IndexError):
+                click.echo("Invalid value for iterations.")
+                return
+        if "-c" in command_parts:
+            try:
+                commit_dir_index = command_parts.index("-c") + 1
+                commit_dir = command_parts[commit_dir_index]
+            except IndexError:
+                click.echo("Invalid value for commit_dir")
+                return
+        run(target_name, iterations, commit_dir)
+
+    else:
+        click.echo("Usage: run <target_name> [-i iterations] [-c commit_dir]")
+
+
+def handle_issues_command(command_parts):
+    if len(command_parts) == 3:
+        retro_name = command_parts[1]
+        commit_hash = command_parts[2]
+        issues(retro_name, commit_hash)
+    else:
+        click.echo("Usage: issues <retro_name> <commit_hash>")
+
+
+@click.group()
+def cli():
+    """Run tests on a range of commits and parse results."""
+    if not any(arg in sys.argv for arg in ["init", "run", "issues"]):
+        handle_no_command()
+
+
+@cli.command()
+@click.argument("target_name")
+@click.argument("target_repo_path")
+def init(target_name, target_repo_path):
+    """Initialize a target repository."""
+    Config.initialize(target_name, target_repo_path)
+
+
+@cli.command()
+@click.argument("target_name")
+@click.option(
+    "-i",
+    "--iterations",
+    type=int,
+    default=10,
+    help="Number of iterations (default: 10)",
+)
+@click.option("-c", "--commit_dir", help="Specific commit directory to process")
+def run(target_name, iterations, commit_dir):
+    """Run tests on a target repository."""
+    if not any(arg in sys.argv for arg in ["-i", "--iterations", "-c", "--commit_dir"]):
+        config_file_path = os.path.join("retros", target_name, "config.toml")
+        try:
+            with open(config_file_path) as config_file:
+                config_data = toml.load(config_file)
+            click.echo(f"Retro config for '{target_name}':")
+            click.echo(toml.dumps(config_data))  # Display the config
+        except FileNotFoundError:
+            click.echo(
+                f"Error: Config file not found: {config_file_path}\n"
+                f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
+            )
+        except (KeyError, toml.TomlDecodeError, ValidationError) as e:
+            click.echo(f"Error reading or validating config file: {e}")
+    else:
+        run_tests(target_name, iterations)
+        analyze_test_results(target_name)
+
+
+@cli.command()
+@click.argument("retro_name")
+@click.argument("commit_hash")
+def issues(retro_name, commit_hash):
+    """Create GitHub issues for failed tests in a specific commit."""
+    create_issues_for_commit(retro_name, commit_hash)
+
+
+if __name__ == "__main__":
+    cli()

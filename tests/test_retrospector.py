@@ -81,13 +81,14 @@ class TestRetrospector(unittest.TestCase):
 
                 self.assertEqual(mock_process_commit.call_count, 2)
 
-    @patch("builtins.print")
-    def test_run_tests_no_config(self, mock_print):
-        # Call run_tests with a non-existent target name
-        run_tests("nonexistent_target", 2)
-
-        # Assert that the expected error message is printed
-        mock_print.assert_called_with(
+    @patch("os.path.exists")
+    @patch("git_retrospector.retrospector.get_origin_branch_or_commit")
+    @patch("click.echo")
+    def test_run_tests_no_config(self, mock_click_echo, mock_get_origin, mock_exists):
+        mock_get_origin.return_value = "main"
+        mock_exists.return_value = True
+        run_tests("nonexistent_target", 10)
+        mock_click_echo.assert_called_with(
             "Error: Config file not found: retros/nonexistent_target/config.toml\n"
             "Please run: './retrospector.py init nonexistent_target <target_repo_path>'"
         )

@@ -74,14 +74,16 @@ class TestCreateIssues(unittest.TestCase):
     )
     @patch("git_retrospector.retrospector.input", return_value="y")
     @patch("os.environ.get", return_value="dummy_token")
-    @patch("github.Github")
+    @patch("git_retrospector.retrospector.Github")
     def test_create_issues_for_commit_success(
-        self, mock_github, mock_env_get, mock_input, mock_load_config
+        self, mock_github_class, mock_env_get, mock_input, mock_load_config
     ):
 
         # Mock the Github object and its methods *returned by* create_github_issues
         mock_repo = MagicMock()
-        mock_github.return_value.get_user.return_value.get_repo.return_value = mock_repo
+        mock_github = MagicMock()  # Mock the Github object itself
+        mock_github_class.return_value = mock_github
+        mock_github.get_user.return_value.get_repo.return_value = mock_repo
 
         # Test successful issue creation
         os.makedirs(self.tool_summary_dir, exist_ok=True)
