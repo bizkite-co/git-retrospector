@@ -1,59 +1,229 @@
-# Plan to Fix Failing Tests and Improve Error Handling
+# Plan to Address GitHub Issue #16
 
-## Objective
+## Goal
 
-Fix the failing `test_create_issues_for_commit_success` test in `tests/test_create_issues.py` and improve error handling in `src/git_retrospector/retrospector.py` to prevent silent failures.
-
-## Current Issues
-
-1.  **Silent Failure in `find_test_summary_files`:** The function returns `None, None` if the `tool-summary` directory or expected CSV files are not found. This leads to the test failing silently without clear indication of the root cause.
-2.  **Incorrect Mocking:** The mocking strategy in `test_create_issues_for_commit_success` has been inconsistent, leading to the test not correctly simulating the intended behavior.
-3.  **Lack of Explicit Error Handling:** The code doesn't explicitly handle potential errors like missing directories or files, making it harder to debug and maintain.
-4. **Test waits for input:** The test gets stuck waiting for user input because of the call to the `input()` function.
-
-## Proposed Solution
-
-### 1. Improve Error Handling in `find_test_summary_files`
-
-*   [ ] **Modify `find_test_summary_files`:**
-    *   Instead of returning `None, None`, raise a `FileNotFoundError` with a descriptive message if the `tool-summary` directory or the expected CSV files (`playwright.csv`, `vitest.csv`) are not found.
-
-### 2. Improve Error Handling in `should_create_issues`
-
-*   [ ] **Modify `should_create_issues`:**
-    *   Add a `try-except` block around the call to `find_test_summary_files`.
-    *   Catch the `FileNotFoundError` and handle it appropriately (e.g., log an error message, return `False`).
-
-### 3. Fix Mocking and Assertions in `test_create_issues_for_commit_success`
-
-*   [ ] **Modify `test_create_issues_for_commit_success`:**
-    *   Remove the `@patch("git_retrospector.retrospector.create_issues_for_commit")` decorator from all test methods.
-    *   Add `@patch("git_retrospector.retrospector.create_github_issues")` to `test_create_issues_for_commit_success`.
-    *   Inside the test, create a `mock_github = MagicMock()`.
-    *   Set `mock_create_github_issues.return_value = mock_github`.
-    *   Set `mock_github.get_user.return_value.get_repo.return_value = mock_repo`.
-    *   Keep the existing test setup (creating the directory and CSV files).
-    *   Keep the assertion that `mock_repo.create_issue.call_count` is 2.
-    *   Keep the assertions that check the arguments passed to `create_issue`.
-* [ ] Remove duplicate test.
-
-### 4. Address the input() call
-
-* [x] The `input()` call in `get_user_confirmation` is correctly mocked in the test using `@patch("git_retrospector.retrospector.input", return_value="y")`. The issue was that the test was failing *before* reaching that point. With the corrected mocking and error handling, this should no longer be a problem.
+Implement robust logging and address error handling concerns in the `git-retrospector` project, as per GitHub Issue #16.
 
 ## Steps
 
-1.  [ ] Modify `src/git_retrospector/retrospector.py`:
-    *   Update `find_test_summary_files` to raise `FileNotFoundError`.
-    *   Update `should_create_issues` to handle `FileNotFoundError`.
-    *   Remove debugging print statements.
-2.  [ ] Modify `tests/test_create_issues.py`:
-    *   Adjust mocking in `test_create_issues_for_commit_success` as described above.
-3.  [ ] Run tests and ensure they pass.
+1.  **Add Logging to `retrospector.py`:**
+    *   Import the `logging` module.
+    *   Configure a basic logger at the beginning of the file, including a formatter for timestamps and log levels. Start with logging to the console and consider adding file logging later.
+    *   Replace `print` statements used for error reporting with `logging.error`.
+    *   Add `logging.info` statements for key events (e.g., starting a run, processing a commit).
+    *   Add `logging.debug` statements for detailed information (e.g., config values, Git command output).
+2.  **Enhance Error Messages:**
+    *   Modify the `except` blocks to include more context in the log messages.
+3.  **Ask User about AWS Integration:**
+    *   Ask the user if they intend to use AWS Step Functions or CloudWatch with this project.
+4.  **Refactor `process_commit`:**
+    *   Add a try-except block in `src/git_retrospector/commit_processor.py` around the main logic of the `process_commit` function to catch and log any exceptions.
+5.  **Improve `count_failed_tests`:**
+    *   Log the exception that occurs when reading the CSV and consider raising a custom exception.
+6.  **Improve `create_github_issues`:**
+    *   Log the exception that occurs when getting the repository.
 
-## Future Considerations (Beyond this immediate task)
+## Implementation (in Code Mode)
 
-*   **Ruff Configuration:** Review and configure Ruff to enforce stricter error checking and prevent similar issues.
-*   **Type Hinting:** Add type hints throughout the codebase and use a type checker (like MyPy) to catch potential type errors.
-*   **Code Reviews:** Emphasize error handling and test coverage during code reviews.
-* **Review Issue #14:** Check if the issue on GitHub already covers the need for creating the `tool-summary` folder and add information if necessary.
+The following changes will be made in Code mode:
+
+**1. `src/git_retrospector/retrospector.py`:**
+
+```diff
+--- a/src/git_retrospector/retrospector.py
++++ b/src/git_retrospector/retrospector.py
+@@ -3,11 +3,19 @@
+ import csv
+ import os
+ import subprocess
++import logging
+ from pathlib import Path
+
+ import toml
+ from pydantic import ValidationError
+
++# Configure logging
++logging.basicConfig(
++    level=logging.INFO,
++    format="%(asctime)s - %(levelname)s - %(message)s",
++)
++
+ from git_retrospector.config import Config
+ from git_retrospector.git_utils import (
+     get_current_commit_hash,
+@@ -36,15 +44,15 @@
+          test_output_dir = str(config.test_result_dir)
+      except FileNotFoundError:
+          print(  # noqa: T201
+-             f"Error: Config file not found: {config_file_path}\n"
++             f"Error: Config file not found: {config_file_path}\\n"
+              f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
+          )
++         logging.error(f"Config file not found: {config_file_path}")
+          return
+      except (KeyError, toml.TomlDecodeError) as e:
+-         print(f"Error reading config file: {e}")  # noqa: T201
++         logging.error(f"Error reading config file: {e}")
+          return
+      except ValidationError as e:
+-         print(f"Error validating config file: {e}")  # noqa: T201
++         logging.error(f"Error validating config file: {e}")
+          return
+
+      commits_log_path = Path(config.test_result_dir) / "commits.log"
+@@ -57,12 +65,14 @@
+              "repository or does not exist"
+          )
+
++        logging.info(f"Running tests for {target_name} ({iteration_count} iterations)")
++
+          # Use get_current_commit_hash to get the initial HEAD *before* the loop
+          current_commit = get_current_commit_hash(target_repo)
+          if current_commit is None:
+              return
+          for i in range(iteration_count):
+-             print(f"Iteration: {i}")  # noqa: T201
++             logging.info(f"Iteration: {i}")
+              try:
+                  commit_hash_result = subprocess.run(
+                      ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
+@@ -71,7 +81,7 @@
+                      text=True,
+                      check=True,
+                  )
+-                 print(f"rev-parse result: {commit_hash_result}")  # noqa: T201
++                 logging.debug(f"rev-parse result: {commit_hash_result.stdout.strip()}")
+                  commit_hash = commit_hash_result.stdout.strip()
+                  if not commit_hash:
+                      continue  # Skip this iteration
+@@ -81,7 +91,8 @@
+                      origin_branch, config
+                  )
+                  commits_log.write(f"{commit_hash}\\n")
+-             except subprocess.CalledProcessError:
++             except subprocess.CalledProcessError as e:
++                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
+                  continue
+
+
+@@ -127,7 +138,8 @@
+              reader = csv.DictReader(f)
+              for row in reader:
+                  if row.get("Result") == "failed":
+-                     failed_count += 1
++                    failed_count += 1
++
+      except Exception:
+          return -1  # Indicate an error
+      return failed_count
+@@ -297,3 +309,4 @@
+          create_issues_for_commit(args.retro_name, args.commit_hash)
+      else:
+          parser.print_help()
++
+```
+
+**2. `src/git_retrospector/commit_processor.py`:**
+
+```diff
+--- a/src/git_retrospector/commit_processor.py
++++ b/src/git_retrospector/commit_processor.py
+@@ -1,6 +1,7 @@
+ #!/usr/bin/env python3
+ import os
+ import subprocess
++import logging
+
+
+ def process_commit(target_repo, commit_hash, test_output_dir, origin_branch, config):
+@@ -13,30 +14,34 @@
+         origin_branch (str): The name of the origin branch.
+         config (Config): The configuration object.
+     """
+-    # Checkout the specific commit
+-    subprocess.run(
+-        ["git", "checkout", commit_hash], cwd=target_repo, check=True, capture_output=True
+-    )
++    try:
++        # Checkout the specific commit
++        subprocess.run(
++            ["git", "checkout", commit_hash], cwd=target_repo, check=True, capture_output=True
++        )
+
+-    # Run tests and capture output
+-    test_command = [
+-        "npm",
+-        "test",
+-        "--",
+-        "--testNamePattern",
+-        f"retro_commit_hash={commit_hash}",
+-        "--outputFile",
+-        f"{test_output_dir}/{commit_hash}/test-results.json",
+-    ]
+-    subprocess.run(test_command, cwd=target_repo, check=True, capture_output=True)
++        # Run tests and capture output
++        test_command = [
++            "npm",
++            "test",
++            "--",
++            "--testNamePattern",
++            f"retro_commit_hash={commit_hash}",
++            "--outputFile",
++            f"{test_output_dir}/{commit_hash}/test-results.json",
++        ]
++        subprocess.run(test_command, cwd=target_repo, check=True, capture_output=True)
+
+-    # Checkout back to the origin branch
+-    subprocess.run(
+-        ["git", "checkout", origin_branch],
+-        cwd=target_repo,
+-        check=True,
+-        capture_output=True,
+-    )
++        # Checkout back to the origin branch
++        subprocess.run(
++            ["git", "checkout", origin_branch],
++            cwd=target_repo,
++            check=True,
++            capture_output=True,
++        )
++    except subprocess.CalledProcessError as e:
++        logging.error(f"Error processing commit {commit_hash}: {e}")
++    except Exception as e:
++        logging.error(f"An unexpected error occurred processing commit {commit_hash}: {e}")
+
+```
+
+**3. Improve `count_failed_tests` (in `src/git_retrospector/retrospector.py`):**
+
+```diff
+--- a/src/git_retrospector/retrospector.py
++++ b/src/git_retrospector/retrospector.py
+@@ -127,8 +127,9 @@
+              reader = csv.DictReader(f)
+              for row in reader:
+                  if row.get("Result") == "failed":
+-                     failed_count += 1
+-     except Exception:
++                    failed_count += 1
++     except Exception as e:
++         logging.error(f"Error reading CSV file {csv_file}: {e}")
+          return -1  # Indicate an error
+      return failed_count
+
+```
+
+**4. Improve `create_github_issues` (in `src/git_retrospector/retrospector.py`):**
+
+```diff
+--- a/src/git_retrospector/retrospector.py
++++ b/src/git_retrospector/retrospector.py
+@@ -229,7 +229,8 @@
+
+      try:
+          repo = g.get_user(repo_owner).get_repo(repo_name)
+-     except Exception:
++     except Exception as e:
++         logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
+          return
+      process_csv_files(repo, playwright_csv, vitest_csv)

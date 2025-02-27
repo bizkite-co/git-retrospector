@@ -4,6 +4,7 @@ import csv
 import os
 import subprocess
 from pathlib import Path
+import logging
 
 import toml
 from pydantic import ValidationError
@@ -15,6 +16,12 @@ from git_retrospector.git_utils import (
 )
 from git_retrospector.commit_processor import process_commit
 from git_retrospector.diff_generator import generate_commit_diffs
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def run_tests(target_name, iteration_count):
@@ -38,12 +45,13 @@ def run_tests(target_name, iteration_count):
             f"Error: Config file not found: {config_file_path}\n"
             f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
         )
+        logging.error(f"Config file not found: {config_file_path}")
         return
     except (KeyError, toml.TomlDecodeError) as e:
-        print(f"Error reading config file: {e}")  # noqa: T201
+        logging.error(f"Error reading config file: {e}")
         return
     except ValidationError as e:
-        print(f"Error validating config file: {e}")  # noqa: T201
+        logging.error(f"Error validating config file: {e}")
         return
 
     commits_log_path = Path(config.test_result_dir) / "commits.log"
@@ -56,12 +64,14 @@ def run_tests(target_name, iteration_count):
             "repository or does not exist"
         )
 
+        logging.info(f"Running tests for {target_name} ({iteration_count} iterations)")
+
         # Use get_current_commit_hash to get the initial HEAD *before* the loop
         current_commit = get_current_commit_hash(target_repo)
         if current_commit is None:
             return
         for i in range(iteration_count):
-            print(f"Iteration: {i}")  # noqa: T201
+            logging.info(f"Iteration: {i}")
             try:
                 commit_hash_result = subprocess.run(
                     ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
@@ -70,7 +80,7 @@ def run_tests(target_name, iteration_count):
                     text=True,
                     check=True,
                 )
-                print(f"rev-parse result: {commit_hash_result}")  # noqa: T201
+                logging.debug(f"rev-parse result: {commit_hash_result.stdout.strip()}")
                 commit_hash = commit_hash_result.stdout.strip()
                 if not commit_hash:
                     continue  # Skip this iteration
@@ -78,8 +88,9 @@ def run_tests(target_name, iteration_count):
                 process_commit(
                     target_repo, commit_hash, test_output_dir, origin_branch, config
                 )
-                commits_log.write(f"{commit_hash}\n")
-            except subprocess.CalledProcessError:
+                commits_log.write(f"{commit_hash}\\n")
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Error processing commit {current_commit}~{i}: {e}")
                 continue
 
 
@@ -87,9 +98,8 @@ def analyze_test_results(retro_name):
     """
     Analyzes test results for a given retro.
     """
-    from git_retrospector.parser import process_retro  # Import here to
-
-    # avoid circular dependency
+    # Import here to avoid circular dependency
+    from git_retrospector.parser import process_retro
 
     process_retro(retro_name)
     generate_commit_diffs(os.path.join("retros", retro_name))
@@ -125,7 +135,8 @@ def count_failed_tests(csv_file):
             for row in reader:
                 if row.get("Result") == "failed":
                     failed_count += 1
-    except Exception:
+    except Exception as e:
+        logging.error(f"Error reading CSV file {csv_file}: {e}")
         return -1  # Indicate an error
     return failed_count
 
@@ -227,7 +238,8 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
 
     try:
         repo = g.get_user(repo_owner).get_repo(repo_name)
-    except Exception:
+    except Exception as e:
+        logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
         return
     process_csv_files(repo, playwright_csv, vitest_csv)
 

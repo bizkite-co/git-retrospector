@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
+import logging
 
 from git_retrospector.runners import run_playwright, run_vitest
 
@@ -19,7 +20,7 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
         origin_branch (str): The original branch to return to.
         config (Config): The configuration object.
     """
-    print(f"process_commit called with hash: {commit_hash}")  # noqa: T201
+    logging.info(f"process_commit called with hash: {commit_hash}")
     output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
     tool_summary_dir = output_dir_for_commit / "tool-summary"
     tool_summary_dir.mkdir(parents=True, exist_ok=True)
@@ -35,8 +36,8 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
             capture_output=True,
             text=True,
         )
-    except subprocess.CalledProcessError:
-        return
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error during git checkout {commit_hash}: {e}")
 
     run_vitest(target_repo, str(tool_summary_dir), config)
     run_playwright(target_repo, str(tool_summary_dir), config)
@@ -51,7 +52,8 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
                 if os.path.exists(s):
                     shutil.move(s, d)
 
-    except Exception:
+    except Exception as e:
+        logging.error(f"Error moving CSV files: {e}")
         pass
 
     try:
@@ -62,5 +64,8 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
             capture_output=True,
             text=True,
         )
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error during git checkout {origin_branch}: {e}")
         return
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")

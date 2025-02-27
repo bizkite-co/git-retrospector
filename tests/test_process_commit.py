@@ -38,18 +38,12 @@ class TestProcessCommit(unittest.TestCase):
         test_repo = os.path.join(self.temp_dir.name, "test_repo")
         os.makedirs(test_repo)
         subprocess.run(["git", "init"], cwd=test_repo, check=True)
+        # Add a file and commit it
+        with open(os.path.join(test_repo, "file1.txt"), "w") as f:
+            f.write("Initial commit")
+        subprocess.run(["git", "add", "."], cwd=test_repo, check=True)
         subprocess.run(
-            ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
-            cwd=test_repo,
-            check=True,
-        )
-        # Checkout the initial commit *within* the test repo
-        subprocess.run(
-            ["git", "checkout", "--force", self.commit_hash],
-            cwd=test_repo,
-            check=True,
-            capture_output=True,
-            text=True,
+            ["git", "commit", "-m", "Initial commit"], cwd=test_repo, check=True
         )
 
         process_commit(
