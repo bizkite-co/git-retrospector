@@ -62,7 +62,6 @@ class Config(BaseModel):
                     "playwright": "test-output/playwright.xml",
                 },
             )
-            config.print_full_paths()  # Print the full paths
             # Convert Path objects to strings for TOML serialization
             config_data = config.model_dump()
             config_data["repo_under_test_path"] = str(

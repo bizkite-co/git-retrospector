@@ -384,7 +384,9 @@ def handle_issues_command(command_parts):
 @click.group()
 def cli():
     """Run tests on a range of commits and parse results."""
-    if not any(arg in sys.argv for arg in ["init", "run", "issues"]):
+    if not os.environ.get("TEST_ENVIRONMENT") and not any(
+        arg in sys.argv for arg in ["init", "run", "issues"]
+    ):
         handle_no_command()
 
 
