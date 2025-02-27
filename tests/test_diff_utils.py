@@ -47,9 +47,9 @@ class TestGenerateDiff(unittest.TestCase):
             check=True,
         ).stdout.strip()
 
-    # def tearDown(self):
-    #     # Clean up the temporary directory
-    #     subprocess.run(["rm", "-rf", str(self.test_dir)], check=True)
+    def tearDown(self):
+        # Clean up the temporary directory
+        subprocess.run(["rm", "-rf", str(self.test_dir)], check=True)
 
     def test_generate_diff(self):
         # Create a temporary output file

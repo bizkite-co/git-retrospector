@@ -2,7 +2,7 @@ import unittest
 import os
 import tempfile
 import toml
-from git_retrospector.retrospector import initialize
+from git_retrospector.config import Config
 
 
 class TestInitialize(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestInitialize(unittest.TestCase):
         target_name = "test_target"
         repo_path = os.path.join(self.temp_dir.name, "repo")
         os.makedirs(repo_path)
-        config_file_path = initialize(target_name, repo_path, self.temp_dir.name)
+        config_file_path = Config.initialize(target_name, repo_path, self.temp_dir.name)
         self.assertTrue(os.path.exists(config_file_path))
 
         config = toml.load(config_file_path)

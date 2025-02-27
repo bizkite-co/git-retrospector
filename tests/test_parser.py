@@ -27,9 +27,11 @@ class TestParser(unittest.TestCase):
         # Create a temporary directory for the commit
         commit_dir_path = os.path.join(self.temp_dir.name, "commit123")
         os.makedirs(commit_dir_path)
+        tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
+        os.makedirs(tool_summary_dir)
 
         with tempfile.NamedTemporaryFile(
-            delete=False, mode="w", dir=self.temp_dir.name
+            delete=False, mode="w", dir=tool_summary_dir
         ) as vitest_log_file:
             vitest_log_path = vitest_log_file.name
             vitest_log_file.write(vitest_log_content)
@@ -38,7 +40,7 @@ class TestParser(unittest.TestCase):
         _process_vitest_log(vitest_log_path, commit_dir_path)
 
         # Check that vitest.csv is created
-        csv_output_path = os.path.join(commit_dir_path, "vitest.csv")
+        csv_output_path = os.path.join(tool_summary_dir, "vitest.csv")
         self.assertTrue(os.path.exists(csv_output_path))
 
         # Read and check the content of vitest.csv (optional, but good practice)
@@ -76,9 +78,11 @@ class TestParser(unittest.TestCase):
         # Create a temporary directory for the commit
         commit_dir_path = os.path.join(self.temp_dir.name, "commit123")
         os.makedirs(commit_dir_path)
+        tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
+        os.makedirs(tool_summary_dir)
 
         with tempfile.NamedTemporaryFile(
-            delete=False, mode="w", dir=self.temp_dir.name
+            delete=False, mode="w", dir=tool_summary_dir
         ) as playwright_xml_file:  # specify dir
             playwright_xml_path = playwright_xml_file.name
             playwright_xml_file.write(playwright_xml_content)
@@ -87,7 +91,7 @@ class TestParser(unittest.TestCase):
         _process_playwright_xml(playwright_xml_path, commit_dir_path)
 
         # Check that playwright.csv is created
-        csv_output_path = os.path.join(commit_dir_path, "playwright.csv")
+        csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
         self.assertTrue(os.path.exists(csv_output_path))
 
         # Read and check the content of playwright.csv (optional, but good practice)

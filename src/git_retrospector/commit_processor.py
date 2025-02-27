@@ -19,6 +19,7 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
         origin_branch (str): The original branch to return to.
         config (Config): The configuration object.
     """
+    print(f"process_commit called with hash: {commit_hash}")  # noqa: T201
     output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
     tool_summary_dir = output_dir_for_commit / "tool-summary"
     tool_summary_dir.mkdir(parents=True, exist_ok=True)

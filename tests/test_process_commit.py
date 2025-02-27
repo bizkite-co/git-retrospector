@@ -24,8 +24,8 @@ class TestProcessCommit(unittest.TestCase):
     def tearDown(self):
         self.temp_dir.cleanup()
 
-    @patch("git_retrospector.retrospector.run_vitest")
-    @patch("git_retrospector.retrospector.run_playwright")
+    @patch("git_retrospector.commit_processor.run_vitest")
+    @patch("git_retrospector.commit_processor.run_playwright")
     def test_process_commit(self, mock_run_playwright, mock_run_vitest):
         output_dir = self.temp_dir.name
         origin_branch = "main"

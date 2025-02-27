@@ -15,7 +15,8 @@ def _process_vitest_log(vitest_log_path, commit_dir_path):
             match = re.search(r"<testsuites.+?</testsuites>", log_content, re.DOTALL)
             if match:
                 vitest_xml_string = match.group(0)
-                csv_output_path = os.path.join(commit_dir_path, "vitest.csv")
+                tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
+                csv_output_path = os.path.join(tool_summary_dir, "vitest.csv")
                 with open(csv_output_path, "w", newline="") as individual_csvfile:
                     csv_writer = csv.writer(individual_csvfile)
                     csv_writer.writerow([
@@ -43,10 +44,13 @@ def _process_vitest_log(vitest_log_path, commit_dir_path):
 
 def _process_playwright_xml(playwright_xml_path, commit_dir_path):
     """Processes a Playwright XML file and extracts test results."""
+    print(f"Processing Playwright XML: {playwright_xml_path}")  # noqa: T201
     try:
         with open(playwright_xml_path) as playwright_xml_file:
             playwright_xml_string = playwright_xml_file.read()
-            csv_output_path = os.path.join(commit_dir_path, "playwright.csv")
+            tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
+            csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
+            print(f"Writing Playwright CSV to: {csv_output_path}")  # noqa: T201
             with open(csv_output_path, "w", newline="") as individual_csvfile:
                 csv_writer = csv.writer(individual_csvfile)
                 csv_writer.writerow([
@@ -63,11 +67,10 @@ def _process_playwright_xml(playwright_xml_path, commit_dir_path):
                     "playwright",
                     csv_writer,
                 )
-    except Exception:
-        # print(
-        #     f"Error processing Playwright XML file {playwright_xml_path}: {e}"
-        # )
-        pass
+    except Exception as e:
+        print(
+            f"Error processing Playwright XML file {playwright_xml_path}: {e}"
+        )  # noqa: T201
 
 
 def parse_commit_results(commit_dir_path):
@@ -77,8 +80,9 @@ def parse_commit_results(commit_dir_path):
 
         commit_dir_path (str): The full path to the commit directory.
     """
-    vitest_log_path = os.path.join(commit_dir_path, "vitest.log")
-    playwright_xml_path = os.path.join(commit_dir_path, "playwright.xml")
+    tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
+    vitest_log_path = os.path.join(tool_summary_dir, "vitest.log")
+    playwright_xml_path = os.path.join(tool_summary_dir, "playwright.xml")
 
     # Process Vitest log (extract XML from log)
     if os.path.exists(vitest_log_path):

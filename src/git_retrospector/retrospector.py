@@ -3,6 +3,7 @@ import argparse
 import csv
 import os
 import subprocess
+from pathlib import Path
 
 import toml
 from pydantic import ValidationError
@@ -32,12 +33,20 @@ def run_tests(target_name, iteration_count):
         config = Config(**config_data)
         target_repo = str(config.repo_under_test_path)
         test_output_dir = str(config.test_result_dir)
-    except (FileNotFoundError, KeyError, toml.TomlDecodeError):
+    except FileNotFoundError:
+        print(  # noqa: T201
+            f"Error: Config file not found: {config_file_path}\n"
+            f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
+        )
         return
-    except ValidationError:
+    except (KeyError, toml.TomlDecodeError) as e:
+        print(f"Error reading config file: {e}")  # noqa: T201
+        return
+    except ValidationError as e:
+        print(f"Error validating config file: {e}")  # noqa: T201
         return
 
-    commits_log_path = config.test_result_dir / "commits.log"
+    commits_log_path = Path(config.test_result_dir) / "commits.log"
     with open(commits_log_path, "w") as commits_log:
         origin_branch = get_origin_branch_or_commit(target_repo)
 
@@ -51,8 +60,8 @@ def run_tests(target_name, iteration_count):
         current_commit = get_current_commit_hash(target_repo)
         if current_commit is None:
             return
-
         for i in range(iteration_count):
+            print(f"Iteration: {i}")  # noqa: T201
             try:
                 commit_hash_result = subprocess.run(
                     ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
@@ -61,6 +70,7 @@ def run_tests(target_name, iteration_count):
                     text=True,
                     check=True,
                 )
+                print(f"rev-parse result: {commit_hash_result}")  # noqa: T201
                 commit_hash = commit_hash_result.stdout.strip()
                 if not commit_hash:
                     continue  # Skip this iteration
@@ -69,7 +79,6 @@ def run_tests(target_name, iteration_count):
                     target_repo, commit_hash, test_output_dir, origin_branch, config
                 )
                 commits_log.write(f"{commit_hash}\n")
-
             except subprocess.CalledProcessError:
                 continue
 
@@ -90,10 +99,11 @@ def find_test_summary_files(commit_dir):
     """
     Locates the playwright.csv and vitest.csv files within the tool-summary
     subdirectory.
+    Raises FileNotFoundError if the directory or files don't exist.
     """
     tool_summary_dir = os.path.join(commit_dir, "tool-summary")
     if not os.path.exists(tool_summary_dir):
-        return None, None
+        raise FileNotFoundError(f"Tool summary directory not found: {tool_summary_dir}")
 
     playwright_csv = os.path.join(tool_summary_dir, "playwright.csv")
     vitest_csv = os.path.join(tool_summary_dir, "vitest.csv")
@@ -123,13 +133,10 @@ def count_failed_tests(csv_file):
 def load_config_for_retro(retro_name):
     """Loads the configuration for a given retro."""
     config_file_path = os.path.join("retros", retro_name, "config.toml")
-    try:
-        with open(config_file_path) as config_file:
-            config_data = toml.load(config_file)
-        config = Config(**config_data)
-        return config.repo_under_test_owner, config.repo_under_test_name
-    except (FileNotFoundError, KeyError, toml.TomlDecodeError, ValidationError):
-        return None, None
+    with open(config_file_path) as config_file:
+        config_data = toml.load(config_file)
+    config = Config(**config_data)
+    return config.repo_under_test_owner, config.repo_under_test_name
 
 
 def get_user_confirmation(failed_count):
@@ -156,10 +163,7 @@ def process_csv_files(repo, playwright_csv, vitest_csv):
                             f"Stack Trace: {row.get('Stack Trace', 'No stack trace')}\n"
                             # TODO: Add screenshot link if available
                         )
-                        try:
-                            repo.create_issue(title=title, body=body)
-                        except Exception:
-                            pass
+                        repo.create_issue(title=title, body=body)
 
 
 def should_create_issues(retro_name, commit_hash):
@@ -169,6 +173,7 @@ def should_create_issues(retro_name, commit_hash):
         return False
 
     playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+
     if not playwright_csv and not vitest_csv:
         return False
 
@@ -224,7 +229,6 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
         repo = g.get_user(repo_owner).get_repo(repo_name)
     except Exception:
         return
-
     process_csv_files(repo, playwright_csv, vitest_csv)
 
 
@@ -233,10 +237,12 @@ def create_issues_for_commit(retro_name, commit_hash):
     Creates GitHub issues for failed tests in a specific commit.
     """
     if not should_create_issues(retro_name, commit_hash):
+        print("should_create_issues returned False")  # noqa: T201
         return
 
     repo_owner, repo_name = load_config_for_retro(retro_name)
     if not repo_owner or not repo_name:
+        print("Could not load repo owner or name")  # noqa: T201
         return
 
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
