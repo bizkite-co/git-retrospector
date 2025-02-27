@@ -22,8 +22,7 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
     """
     logging.info(f"process_commit called with hash: {commit_hash}")
     output_dir_for_commit = config.test_result_dir / "test-output" / commit_hash
-    tool_summary_dir = output_dir_for_commit / "tool-summary"
-    tool_summary_dir.mkdir(parents=True, exist_ok=True)
+    output_dir_for_commit.mkdir(parents=True, exist_ok=True)
 
     if origin_branch is None:
         return
@@ -39,18 +38,27 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, config):
     except subprocess.CalledProcessError as e:
         logging.error(f"Error during git checkout {commit_hash}: {e}")
 
-    run_vitest(target_repo, str(tool_summary_dir), config)
-    run_playwright(target_repo, str(tool_summary_dir), config)
+    run_vitest(target_repo, str(output_dir_for_commit), config)
+    run_playwright(target_repo, str(output_dir_for_commit), config)
 
-    # Move vitest.csv and playwright.csv
+    # Move Playwright output to the correct location
     try:
-        source_dir = Path(target_repo)
+        source_dir = Path(target_repo) / "test-results"
         if source_dir.exists():
-            for item in ["vitest.csv", "playwright.csv"]:
+            for item in os.listdir(source_dir):
                 s = os.path.join(source_dir, item)
-                d = os.path.join(tool_summary_dir, item)
-                if os.path.exists(s):
+                d = os.path.join(output_dir_for_commit, item)
+                if os.path.isdir(s):
                     shutil.move(s, d)
+                else:
+                    shutil.move(s, d)
+            shutil.rmtree(source_dir)  # Remove the source directory after moving
+
+        # Rename playwright.log to playwright.xml
+        playwright_log_path = os.path.join(output_dir_for_commit, "playwright.log")
+        playwright_xml_path = os.path.join(output_dir_for_commit, "playwright.xml")
+        if os.path.exists(playwright_log_path):
+            os.rename(playwright_log_path, playwright_xml_path)
 
     except Exception as e:
         logging.error(f"Error moving CSV files: {e}")
