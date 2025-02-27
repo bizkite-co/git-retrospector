@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 import argparse
 import csv
+import logging
 import os
 import subprocess
 from pathlib import Path
-import logging
 
 import toml
+from github import Github, GithubException
 from pydantic import ValidationError
 
+from git_retrospector.commit_processor import process_commit
 from git_retrospector.config import Config
+from git_retrospector.diff_generator import generate_commit_diffs
 from git_retrospector.git_utils import (
     get_current_commit_hash,
     get_origin_branch_or_commit,
 )
-from git_retrospector.commit_processor import process_commit
-from git_retrospector.diff_generator import generate_commit_diffs
 
 # Configure logging
 logging.basicConfig(
@@ -242,6 +243,62 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
         logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
         return
     process_csv_files(repo, playwright_csv, vitest_csv)
+
+
+def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
+    """
+    Uploads a screenshot to the GitHub repository.
+
+    Args:
+        screenshot_path (str): The absolute path to the screenshot file.
+        repo_owner (str): The owner of the GitHub repository.
+        repo_name (str): The name of the GitHub repository.
+
+    Returns:
+        str: The URL of the uploaded screenshot, or None if the upload fails.
+    """
+    token = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
+    if not token:
+        logging.error("GitHub personal access token not found.")
+        return None
+
+    g = Github(token)
+
+    try:
+        repo = g.get_user(repo_owner).get_repo(repo_name)
+        with open(screenshot_path, "rb") as f:
+            content = f.read()
+
+        # Create a unique file name for the screenshot
+        screenshot_name = os.path.basename(screenshot_path)
+        upload_path = f"screenshots/{screenshot_name}"
+
+        try:
+            # Check if the file already exists
+            repo.get_contents(upload_path)
+            logging.warning(f"Screenshot already exists at {upload_path}")
+            return (
+                f"https://github.com/{repo_owner}/{repo_name}/blob/main/{upload_path}"
+            )
+        except GithubException as e:
+            if e.status == 404:  # File does not exist, proceed with upload
+                repo.create_file(
+                    upload_path,
+                    f"Upload screenshot {screenshot_name}",
+                    content,
+                    branch="main",
+                )
+                return f"""
+                    https://github.com/{
+                    repo_owner}/{repo_name
+                    }/blob/main/{upload_path}"""  # Raw URL
+            else:
+                logging.error(f"Error checking for existing screenshot: {e}")
+                return None
+
+    except Exception as e:
+        logging.error(f"Error uploading screenshot: {e}")
+        return None
 
 
 def create_issues_for_commit(retro_name, commit_hash):
