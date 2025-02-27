@@ -2,3 +2,6 @@ commit-test-results
 test-output
 .venv
 __pycache__
+*.log
+retros/*/commits.log
+test_repo
