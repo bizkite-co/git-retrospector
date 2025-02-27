@@ -1,5 +1,6 @@
 commit-test-results
 test-output
+test-output-debug
 .venv
 __pycache__
 *.log

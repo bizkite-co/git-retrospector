@@ -2,6 +2,7 @@
 import csv
 import os
 import re  # Import the regular expression module
+import logging
 
 from git_retrospector import xml_processor  # Import the updated module
 
@@ -68,9 +69,9 @@ def _process_playwright_xml(playwright_xml_path, commit_dir_path):
                     csv_writer,
                 )
     except Exception as e:
-        print(
-            f"Error processing Playwright XML file {playwright_xml_path}: {e}"
-        )  # noqa: T201
+        logging.error(
+            f"ERROR processing Playwright XML file {playwright_xml_path}: {e}"
+        )
 
 
 def parse_commit_results(commit_dir_path):
