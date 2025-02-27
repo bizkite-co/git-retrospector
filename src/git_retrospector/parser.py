@@ -45,13 +45,13 @@ def _process_vitest_log(vitest_log_path, commit_dir_path):
 
 def _process_playwright_xml(playwright_xml_path, commit_dir_path):
     """Processes a Playwright XML file and extracts test results."""
-    print(f"Processing Playwright XML: {playwright_xml_path}")  # noqa: T201
+    logging.info(f"Processing Playwright XML: {playwright_xml_path}")
     try:
         with open(playwright_xml_path) as playwright_xml_file:
             playwright_xml_string = playwright_xml_file.read()
             tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
             csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
-            print(f"Writing Playwright CSV to: {csv_output_path}")  # noqa: T201
+            logging.info(f"Writing Playwright CSV to: {csv_output_path}")
             with open(csv_output_path, "w", newline="") as individual_csvfile:
                 csv_writer = csv.writer(individual_csvfile)
                 csv_writer.writerow([

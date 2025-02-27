@@ -42,7 +42,7 @@ def run_tests(target_name, iteration_count):
         target_repo = str(config.repo_under_test_path)
         test_output_dir = str(config.test_result_dir)
     except FileNotFoundError:
-        print(  # noqa: T201
+        print(  # noqa: T201, TODO: Convert to CLI
             f"Error: Config file not found: {config_file_path}\n"
             f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
         )
@@ -89,7 +89,7 @@ def run_tests(target_name, iteration_count):
                 process_commit(
                     target_repo, commit_hash, test_output_dir, origin_branch, config
                 )
-                commits_log.write(f"{commit_hash}\\n")
+                commits_log.write(f"{commit_hash}\n")
             except subprocess.CalledProcessError as e:
                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
                 continue
@@ -306,12 +306,12 @@ def create_issues_for_commit(retro_name, commit_hash):
     Creates GitHub issues for failed tests in a specific commit.
     """
     if not should_create_issues(retro_name, commit_hash):
-        print("should_create_issues returned False")  # noqa: T201
+        logging.info("should_create_issues returned False")  # TODO: Convert to CLI
         return
 
     repo_owner, repo_name = load_config_for_retro(retro_name)
     if not repo_owner or not repo_name:
-        print("Could not load repo owner or name")  # noqa: T201
+        logging.info("Could not load repo owner or name")  # TODO: Convert to CLI
         return
 
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)

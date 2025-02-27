@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import logging
 import os
 import toml
 from pydantic import ValidationError
@@ -22,7 +23,7 @@ def generate_commit_diffs(retro_dir: str) -> None:
         repo_path = str(config.repo_under_test_path)  # Correct repo path
         test_output_dir = config.test_result_dir
     except (FileNotFoundError, KeyError, toml.TomlDecodeError, ValidationError):
-        print(f"Error: Could not load config from {config_file_path}")  # noqa T201
+        logging.error(f"Error: Could not load config from {config_file_path}")
         return
 
     try:
@@ -44,13 +45,13 @@ def generate_commit_diffs(retro_dir: str) -> None:
                 f"{previous_commit}_{current_commit}.diff",
             )
             try:
-                print(  # noqa: T201
+                logging.debug(
                     f"repo_path: {repo_path}, commit1: {previous_commit}, "
                     f"commit2: {current_commit}, output_path: {output_path}"
                 )
                 generate_diff(repo_path, previous_commit, current_commit, output_path)
             except Exception as e:
-                print(  # noqa: T201
+                logging.error(
                     f"Error: diff for {previous_commit} -> {current_commit}: {e}"
                 )
         previous_commit = current_commit
