@@ -1,229 +1,169 @@
-# Plan to Address GitHub Issue #16
+# Plan to Address Issue #18: Convert print statements to logging
 
 ## Goal
 
-Implement robust logging and address error handling concerns in the `git-retrospector` project, as per GitHub Issue #16.
+Migrate all `print` statements in the `src/` directory to use the `logging` library, optimizing for performance and clarity. Differentiate between debug/informational messages and user-facing output (tagging the latter with `# TODO: Convert to CLI`).
 
 ## Steps
 
-1.  **Add Logging to `retrospector.py`:**
-    *   Import the `logging` module.
-    *   Configure a basic logger at the beginning of the file, including a formatter for timestamps and log levels. Start with logging to the console and consider adding file logging later.
-    *   Replace `print` statements used for error reporting with `logging.error`.
-    *   Add `logging.info` statements for key events (e.g., starting a run, processing a commit).
-    *   Add `logging.debug` statements for detailed information (e.g., config values, Git command output).
-2.  **Enhance Error Messages:**
-    *   Modify the `except` blocks to include more context in the log messages.
-3.  **Ask User about AWS Integration:**
-    *   Ask the user if they intend to use AWS Step Functions or CloudWatch with this project.
-4.  **Refactor `process_commit`:**
-    *   Add a try-except block in `src/git_retrospector/commit_processor.py` around the main logic of the `process_commit` function to catch and log any exceptions.
-5.  **Improve `count_failed_tests`:**
-    *   Log the exception that occurs when reading the CSV and consider raising a custom exception.
-6.  **Improve `create_github_issues`:**
-    *   Log the exception that occurs when getting the repository.
+1.  **Identify `print` statements:** Use `search_files` to locate all instances of `print(` within the `src/` directory.
+2.  **Analyze context:** Examine each `print` statement and its surrounding code to determine the appropriate logging level (debug, info, warning, error).
+3.  **Replace with `logging` calls:** Use `apply_diff` to replace `print` statements with corresponding `logging` calls.
+    *   Use `logging.debug()` for detailed debugging information.
+    *   Use `logging.info()` for general informational messages.
+    *   Use `logging.warning()` for potential issues.
+    *   Use `logging.error()` for error messages.
+    *   Add `# TODO: Convert to CLI` to `print` statements that seem to be intended for user interaction.
+4.  **Review logging configuration:** Ensure the existing logging configuration in `src/git_retrospector/retrospector.py` is appropriate.
+5.  **Run tests:** Execute the test suite (`tests/`) to verify that the changes haven't introduced any regressions.
+6.  **Commit changes:** Commit the changes with a descriptive message, referencing issue #18.
+7.  **Update issue (on GitHub):** Add a comment to issue #18, summarizing the changes and marking it as ready for review/testing.
 
-## Implementation (in Code Mode)
+## Detailed Changes
 
-The following changes will be made in Code mode:
+The following changes will be made using `apply_diff` (file paths are relative to the project root):
 
-**1. `src/git_retrospector/retrospector.py`:**
+**src/git_retrospector/diff_generator.py:**
 
-```diff
---- a/src/git_retrospector/retrospector.py
-+++ b/src/git_retrospector/retrospector.py
-@@ -3,11 +3,19 @@
- import csv
- import os
- import subprocess
-+import logging
- from pathlib import Path
+*   Change 1:
+    ```diff
+    <<<<<<< SEARCH
+            print(f"Error: Could not load config from {config_file_path}")  # noqa T201
+            return
+    =======
+            logging.error(f"Error: Could not load config from {config_file_path}")
+            return
+    >>>>>>> REPLACE
+    ```
 
- import toml
- from pydantic import ValidationError
+*   Change 2:
+    ```diff
+    <<<<<<< SEARCH
+                    print(  # noqa: T201
+                        f"repo_path: {repo_path}, commit1: {previous_commit}, "
+                except Exception as e:
+    =======
+                    logging.debug(
+                        f"repo_path: {repo_path}, commit1: {previous_commit}, "
+                    )
+                except Exception as e:
+    >>>>>>> REPLACE
+    ```
 
-+# Configure logging
-+logging.basicConfig(
-+    level=logging.INFO,
-+    format="%(asctime)s - %(levelname)s - %(message)s",
-+)
-+
- from git_retrospector.config import Config
- from git_retrospector.git_utils import (
-     get_current_commit_hash,
-@@ -36,15 +44,15 @@
-          test_output_dir = str(config.test_result_dir)
-      except FileNotFoundError:
-          print(  # noqa: T201
--             f"Error: Config file not found: {config_file_path}\n"
-+             f"Error: Config file not found: {config_file_path}\\n"
-              f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
-          )
-+         logging.error(f"Config file not found: {config_file_path}")
-          return
-      except (KeyError, toml.TomlDecodeError) as e:
--         print(f"Error reading config file: {e}")  # noqa: T201
-+         logging.error(f"Error reading config file: {e}")
-          return
-      except ValidationError as e:
--         print(f"Error validating config file: {e}")  # noqa: T201
-+         logging.error(f"Error validating config file: {e}")
-          return
+*   Change 3:
+    ```diff
+    <<<<<<< SEARCH
+                    print(  # noqa: T201
+                        f"Error: diff for {previous_commit} -> {current_commit}: {e}"
+    =======
+                    logging.error(
+                        f"Error: diff for {previous_commit} -> {current_commit}: {e}"
+                    )
+    >>>>>>> REPLACE
+    ```
 
-      commits_log_path = Path(config.test_result_dir) / "commits.log"
-@@ -57,12 +65,14 @@
-              "repository or does not exist"
-          )
+**src/git_retrospector/retrospector.py:**
 
-+        logging.info(f"Running tests for {target_name} ({iteration_count} iterations)")
-+
-          # Use get_current_commit_hash to get the initial HEAD *before* the loop
-          current_commit = get_current_commit_hash(target_repo)
-          if current_commit is None:
-              return
-          for i in range(iteration_count):
--             print(f"Iteration: {i}")  # noqa: T201
-+             logging.info(f"Iteration: {i}")
-              try:
-                  commit_hash_result = subprocess.run(
-                      ["git", "rev-parse", "--short", f"{current_commit}~{i}"],
-@@ -71,7 +81,7 @@
-                      text=True,
-                      check=True,
-                  )
--                 print(f"rev-parse result: {commit_hash_result}")  # noqa: T201
-+                 logging.debug(f"rev-parse result: {commit_hash_result.stdout.strip()}")
-                  commit_hash = commit_hash_result.stdout.strip()
-                  if not commit_hash:
-                      continue  # Skip this iteration
-@@ -81,7 +91,8 @@
-                      origin_branch, config
-                  )
-                  commits_log.write(f"{commit_hash}\\n")
--             except subprocess.CalledProcessError:
-+             except subprocess.CalledProcessError as e:
-+                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
-                  continue
+*   Change 1:
+    ```diff
+    <<<<<<< SEARCH
+            print(  # noqa: T201
+                f"Error: Config file not found: {config_file_path}\n"
+        if not should_create_issues(retro_name, commit_hash):
+    =======
+            print(  # noqa: T201, TODO: Convert to CLI
+                f"Error: Config file not found: {config_file_path}\n"
+                f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
+            )
+            logging.error(f"Config file not found: {config_file_path}")
+        if not should_create_issues(retro_name, commit_hash):
+    >>>>>>> REPLACE
+    ```
+* Change 2:
+    ```diff
+    <<<<<<< SEARCH
+            print("should_create_issues returned False")  # noqa: T201
+            return
+        if not repo_owner or not repo_name:
+    =======
+            logging.info("should_create_issues returned False")  # TODO: Convert to CLI
+            return
+        if not repo_owner or not repo_name:
+    >>>>>>> REPLACE
+    ```
 
+*   Change 3:
+    ```diff
+    <<<<<<< SEARCH
+            print("Could not load repo owner or name")  # noqa: T201
+            return
+    =======
+            logging.info("Could not load repo owner or name")  # TODO: Convert to CLI
+            return
+    >>>>>>> REPLACE
+    ```
 
-@@ -127,7 +138,8 @@
-              reader = csv.DictReader(f)
-              for row in reader:
-                  if row.get("Result") == "failed":
--                     failed_count += 1
-+                    failed_count += 1
-+
-      except Exception:
-          return -1  # Indicate an error
-      return failed_count
-@@ -297,3 +309,4 @@
-          create_issues_for_commit(args.retro_name, args.commit_hash)
-      else:
-          parser.print_help()
-+
-```
+**src/git_retrospector/config.py:**
 
-**2. `src/git_retrospector/commit_processor.py`:**
+*No changes needed (already commented out).*
 
-```diff
---- a/src/git_retrospector/commit_processor.py
-+++ b/src/git_retrospector/commit_processor.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- import os
- import subprocess
-+import logging
+**src/git_retrospector/runners.py:**
 
+*No changes needed (already commented out).*
 
- def process_commit(target_repo, commit_hash, test_output_dir, origin_branch, config):
-@@ -13,30 +14,34 @@
-         origin_branch (str): The name of the origin branch.
-         config (Config): The configuration object.
-     """
--    # Checkout the specific commit
--    subprocess.run(
--        ["git", "checkout", commit_hash], cwd=target_repo, check=True, capture_output=True
--    )
-+    try:
-+        # Checkout the specific commit
-+        subprocess.run(
-+            ["git", "checkout", commit_hash], cwd=target_repo, check=True, capture_output=True
-+        )
+**src/git_retrospector/parser.py:**
 
--    # Run tests and capture output
--    test_command = [
--        "npm",
--        "test",
--        "--",
--        "--testNamePattern",
--        f"retro_commit_hash={commit_hash}",
--        "--outputFile",
--        f"{test_output_dir}/{commit_hash}/test-results.json",
--    ]
--    subprocess.run(test_command, cwd=target_repo, check=True, capture_output=True)
-+        # Run tests and capture output
-+        test_command = [
-+            "npm",
-+            "test",
-+            "--",
-+            "--testNamePattern",
-+            f"retro_commit_hash={commit_hash}",
-+            "--outputFile",
-+            f"{test_output_dir}/{commit_hash}/test-results.json",
-+        ]
-+        subprocess.run(test_command, cwd=target_repo, check=True, capture_output=True)
+*   Change 1 (already commented out, no change needed)
+*   Change 2 (already commented out, no change needed)
 
--    # Checkout back to the origin branch
--    subprocess.run(
--        ["git", "checkout", origin_branch],
--        cwd=target_repo,
--        check=True,
--        capture_output=True,
--    )
-+        # Checkout back to the origin branch
-+        subprocess.run(
-+            ["git", "checkout", origin_branch],
-+            cwd=target_repo,
-+            check=True,
-+            capture_output=True,
-+        )
-+    except subprocess.CalledProcessError as e:
-+        logging.error(f"Error processing commit {commit_hash}: {e}")
-+    except Exception as e:
-+        logging.error(f"An unexpected error occurred processing commit {commit_hash}: {e}")
+*   Change 3:
+    ```diff
+    <<<<<<< SEARCH
+        print(f"Processing Playwright XML: {playwright_xml_path}")  # noqa: T201
+        try:
+                csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
+    =======
+        logging.info(f"Processing Playwright XML: {playwright_xml_path}")
+        try:
+                csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
+    >>>>>>> REPLACE
+    ```
 
-```
+*   Change 4:
+    ```diff
+    <<<<<<< SEARCH
+                print(f"Writing Playwright CSV to: {csv_output_path}")  # noqa: T201
+                with open(csv_output_path, "w", newline="") as individual_csvfile:
+    =======
+                logging.info(f"Writing Playwright CSV to: {csv_output_path}")
+                with open(csv_output_path, "w", newline="") as individual_csvfile:
+    >>>>>>> REPLACE
+    ```
 
-**3. Improve `count_failed_tests` (in `src/git_retrospector/retrospector.py`):**
+**src/git_retrospector/git_utils.py:**
 
-```diff
---- a/src/git_retrospector/retrospector.py
-+++ b/src/git_retrospector/retrospector.py
-@@ -127,8 +127,9 @@
-              reader = csv.DictReader(f)
-              for row in reader:
-                  if row.get("Result") == "failed":
--                     failed_count += 1
--     except Exception:
-+                    failed_count += 1
-+     except Exception as e:
-+         logging.error(f"Error reading CSV file {csv_file}: {e}")
-          return -1  # Indicate an error
-      return failed_count
-
-```
-
-**4. Improve `create_github_issues` (in `src/git_retrospector/retrospector.py`):**
-
-```diff
---- a/src/git_retrospector/retrospector.py
-+++ b/src/git_retrospector/retrospector.py
-@@ -229,7 +229,8 @@
-
-      try:
-          repo = g.get_user(repo_owner).get_repo(repo_name)
--     except Exception:
-+     except Exception as e:
-+         logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
-          return
-      process_csv_files(repo, playwright_csv, vitest_csv)
+*   Change 1:
+    ```diff
+    <<<<<<< SEARCH
+            print(f"Error getting original branch: {e}", file=sys.stderr)  # noqa T201
+            return None
+        except subprocess.CalledProcessError as e:
+    =======
+            logging.error(f"Error getting original branch: {e}")
+            return None
+        except subprocess.CalledProcessError as e:
+    >>>>>>> REPLACE
+    ```
+* Change 2:
+    ```diff
+    <<<<<<< SEARCH
+            print(f"Error getting current commit hash: {e}", file=sys.stderr)  # noqa T201
+            return None
+        except subprocess.CalledProcessError:
+    =======
+            logging.error(f"Error getting current commit hash: {e}")
+            return None
+        except subprocess.CalledProcessError:
+    >>>>>>> REPLACE
+    ```
+* Change 3 (already commented out, no change needed)

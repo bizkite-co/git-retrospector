@@ -20,9 +20,17 @@ class TestGenerateDiff(unittest.TestCase):
         # Create an initial file and commit
         with open(self.test_dir / "file1.txt", "w") as f:
             f.write("Initial content")
-        subprocess.run(["git", "add", "file1.txt"], cwd=self.test_dir, check=True)
         subprocess.run(
-            ["git", "commit", "-m", "Initial commit"], cwd=self.test_dir, check=True
+            ["git", "add", "file1.txt"],
+            cwd=self.test_dir,
+            check=True,
+            capture_output=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "Initial commit"],
+            cwd=self.test_dir,
+            check=True,
+            capture_output=True,
         )
         self.commit1 = subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
@@ -35,9 +43,17 @@ class TestGenerateDiff(unittest.TestCase):
         # Modify the file and commit again
         with open(self.test_dir / "file1.txt", "w") as f:
             f.write("Modified content")
-        subprocess.run(["git", "add", "file1.txt"], cwd=self.test_dir, check=True)
         subprocess.run(
-            ["git", "commit", "-m", "Second commit"], cwd=self.test_dir, check=True
+            ["git", "add", "file1.txt"],
+            cwd=self.test_dir,
+            check=True,
+            capture_output=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "Second commit"],
+            cwd=self.test_dir,
+            check=True,
+            capture_output=True,
         )
         self.commit2 = subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
@@ -49,7 +65,9 @@ class TestGenerateDiff(unittest.TestCase):
 
     def tearDown(self):
         # Clean up the temporary directory
-        subprocess.run(["rm", "-rf", str(self.test_dir)], check=True)
+        subprocess.run(
+            ["rm", "-rf", str(self.test_dir)], check=True, capture_output=True
+        )
 
     def test_generate_diff(self):
         # Create a temporary output file
@@ -62,13 +80,14 @@ class TestGenerateDiff(unittest.TestCase):
         self.assertTrue(output_file.exists())
 
         # Generate the expected diff using git diff
-        expected_diff = subprocess.run(
+        result = subprocess.run(
             ["git", "diff", self.commit1, self.commit2],
             cwd=self.test_dir,
             capture_output=True,
             text=True,
             check=True,
-        ).stdout
+        )
+        expected_diff = result.stdout
 
         # Compare the generated diff with the expected diff
         with open(output_file) as f:

@@ -8,12 +8,18 @@ from git_retrospector.git_utils import get_current_commit_hash, find_screenshot
 class TestGitUtils(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
-        subprocess.run(["git", "init"], cwd=self.temp_dir.name, check=True)
+        subprocess.run(
+            ["git", "init"],
+            cwd=self.temp_dir.name,
+            check=True,
+            capture_output=True,
+        )
         # Create an empty initial commit
         subprocess.run(
             ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
             cwd=self.temp_dir.name,
             check=True,
+            capture_output=True,
         )
         self.repo_path = self.temp_dir.name
         self.commit_hash = get_current_commit_hash(self.repo_path)

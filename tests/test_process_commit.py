@@ -9,12 +9,18 @@ from git_retrospector.retrospector import get_current_commit_hash
 class TestProcessCommit(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
-        subprocess.run(["git", "init"], cwd=self.temp_dir.name, check=True)
+        subprocess.run(
+            ["git", "init"],
+            cwd=self.temp_dir.name,
+            check=True,
+            capture_output=True,
+        )
         # Create an empty initial commit
         subprocess.run(
             ["git", "commit", "--allow-empty", "-m", "Initial empty commit"],
             cwd=self.temp_dir.name,
             check=True,
+            capture_output=True,
         )
         self.repo_path = self.temp_dir.name
         self.commit_hash = get_current_commit_hash(self.repo_path)
@@ -27,7 +33,12 @@ class TestProcessCommit(unittest.TestCase):
         # Create a test repo
         test_repo = os.path.join(self.temp_dir.name, "test_repo")
         os.makedirs(test_repo)
-        subprocess.run(["git", "init"], cwd=test_repo, check=True)
+        subprocess.run(
+            ["git", "init"],
+            cwd=test_repo,
+            check=True,
+            capture_output=True,
+        )
 
         # Create a package.json file
         package_json_path = os.path.join(test_repo, "package.json")
@@ -49,16 +60,25 @@ class TestProcessCommit(unittest.TestCase):
             )
 
         # Install Playwright
+        # Adding a comment to force a file change
         subprocess.run(
-            ["npm", "install", "@playwright/test"], cwd=test_repo, check=True
+            ["npm", "install", "@playwright/test"],
+            cwd=test_repo,
+            check=True,
+            capture_output=True,
         )
 
         # Add a file and commit it
         with open(os.path.join(test_repo, "file1.txt"), "w") as f:
             f.write("Initial commit")
-        subprocess.run(["git", "add", "."], cwd=test_repo, check=True)
         subprocess.run(
-            ["git", "commit", "-m", "Initial commit"], cwd=test_repo, check=True
+            ["git", "add", "."], cwd=test_repo, check=True, capture_output=True
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "Initial commit"],
+            cwd=test_repo,
+            check=True,
+            capture_output=True,
         )
 
         # Add Playwright setup

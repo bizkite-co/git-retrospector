@@ -8,7 +8,7 @@
 * Use the GitHub MCP to read, add, and update GitHub issues on this repo.
 * Comments on progress should be added as comments on the Issue, not as edits to the issue.
 * Be sure to set the Issue Type: [Featur, Bug, Task], depending on it's type.
-* Add the issues to the "Git Retrospector" project with `--owner bizkite-co`.
+* Add the issues to the "Git Retro" project with `--owner bizkite-co`.
 * Add the Issue to the project by switching to Code mode and executing a command of this format:
     `gh project item-add 3 --url https://github.com/bizkite-co/git-retrospector/issues/<issue number> --owner bizkite-co`
 * Use the GH Project Number, not the ID, to refer to the project.
