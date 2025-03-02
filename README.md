@@ -53,3 +53,40 @@ The module is organized as follows:
 *   `parser.py`: Contains the logic for parsing XML test results and generating a summary CSV.
 *   `xml_processor.py`: Contains the logic for processing a single XML test result file.
 *   `tests/`: Contains unit tests.
+
+## Workflow
+
+```mermaid
+graph TD
+    A[User runs git-retrospector] --> B(Clone/Checkout Remote Repo);
+    B --> C{Iterate through Commits};
+    C --> D[Checkout Commit];
+    D --> E[Run Tests (Vitest/Playwright)];
+    E --> F(Test Output to Remote Repo's test-results/);
+    F --> G[Move Test Results to Local Retro Directory];
+    G --> H{Next Commit?};
+    H -- Yes --> C;
+    H -- No --> I[Analyze Results];
+    I --> J[Generate Reports/Create Issues];
+```
+
+## Directory Structure
+
+```
+retros/
+├── <remote_name_1>/       # Directory for a remote repo
+│   ├── config.toml        # Configuration file for this remote
+│   └── test-output/       # Directory for test output
+│       └── <commit_hash>/  # Directory for a specific commit
+│           ├── playwright.xml # Playwright JUnit-schema test output
+│           ├── vitest.xml # Vitest JUnit-schema test output
+│           └── tool-summary/   # Summary of test results
+│               ├── playwright.csv   # CSV file with Playwright test results
+│               └── vitest.csv      # CSV file with Vitest test results (if applicable)
+│           └── playwright.xml # Raw Playwright XML output
+│           └── ...            # Other output files (screenshots, videos, traces)
+├── <remote_name_2>/       # Another remote repository
+│   ├── config.toml
+│   └── test-output/
+│       └── ...
+└── ...

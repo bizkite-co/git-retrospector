@@ -1,131 +1,117 @@
-# Git Retrospector Improvement Plan: Issue #7 (Revised)
+# Plan to Resolve Test Output Copying Issue and Update README
 
-This plan addresses the remaining work for GitHub Issue #7 (Create Issue for Failed Tests with Media) in the bizkite-co/git-retrospector repository, taking into account the feedback and difficulties encountered during implementation.
+## Problem
 
-## Goals
+The test output from remote retro runs is not being copied to the local `retros/<remote_name>/test-output/<commit_hash>` directory as expected. The test runners (`vitest` and `playwright`) are being called with incorrect output paths, overriding the configuration within the remote repository and preventing the correct generation of JUnit XML reports. The standard output of the test runners is also being suppressed.
 
-1.  **Fix Failing Test:** Correct the `test_parse_playwright_xml` test in `tests/test_xml_processor.py` and ensure the `parse_playwright_xml` function in `src/git_retrospector/xml_processor.py` correctly handles media paths. Simplify the test to focus on core functionality.
-2.  **Implement `process-results` Command:** Add a new command-line command to `retrospector.py` that allows processing of existing XML test results without re-running the tests.
-3.  **Integrate Screenshot Upload (Issue #7 Core):** Integrate the screenshot upload functionality into the issue creation process.
-4.  **Address Config File Deletion:** Prevent the test suite from deleting the `retros/handterm/config.toml` file.
-5. **Verify and Add Unit Tests:** Add new unit tests and run all tests to ensure everything works as expected and no regressions were introduced.
-6. **Refactor:** Look for opportunities to refactor and simplify the code, including using a JSON file for test data if appropriate.
+## Proposed Solution
 
-## Detailed Steps
+1.  **Correct the Test Output Redirection (High Priority):**
 
-### 1. Fix Failing Test (`test_parse_playwright_xml`)
+    *   **Modify `runners.py`:**
+        *   In `run_vitest`, remove the `--outputFile` argument.  Vitest should use its internal configuration to determine the output file.
+        *   In `run_playwright`, remove the `--output` argument. Playwright should use its internal configuration.
+        *   In both functions, remove `capture_output=True`.  This will allow the test output to be handled by the test runners' internal configuration.
 
-*   **Switch to Code Mode:**
-*   **Modify `tests/test_xml_processor.py`:**
-    *   Remove the `test_parse_playwright_xml_handterm` method.
-    *   In `test_parse_playwright_xml`:
-        *   Revert the change from "media_path" back to "screenshot_path" in the `expected_result`.
-        *   Simplify the `xml_content` to include only necessary test cases (e.g., a test case with a screenshot, a test case without a screenshot, and potentially a test case with an invalid path).
-        *   Update the `expected_result` to match the simplified `xml_content`, using relative paths and the `os.getcwd()` for constructing the expected absolute paths.
-    *   Ensure there are no syntax errors (missing closing braces/brackets).
-    *   Address line length issues.
-* **Create `tests/fixtures/playwright_results.json` (Later):** After the basic test is working, consider moving the test data to a JSON file for better organization.
-* **Run Tests:** After making these changes, run the tests to ensure they pass.
+        ```python
+        def run_vitest(target_repo, output_dir, retro):
+            """Runs vitest tests."""
+            command = [
+                "npm",
+                "run",
+                "test",
+                "--",
+                "--run",
+            ]
+            try:
+                # Explicitly change directory
+                logging.info(f"Running vitest with command: {command}")
+                original_cwd = os.getcwd()
+                logging.info(f"Original cwd: {original_cwd}")
+                os.chdir(target_repo)
+                logging.info(f"Changed cwd to: {os.getcwd()}")
+                subprocess.run(command, check=True, text=True) # Removed capture_output
 
-### 2. Implement `process-results` Command
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Error running vitest: {e}")
+                logging.error(f"stdout: {e.stdout}")
+                logging.error(f"stderr: {e.stderr}")
+                raise e
+            finally:
+                # Change back to the original directory
+                logging.info(f"Changing cwd back to: {original_cwd}")
+                os.chdir(original_cwd)
 
-*   **Add CLI Command (in `src/git_retrospector/retrospector.py`):**
-    *   Add `@cli.command("process-results")` above a new function named `process_results_command`.
-    *   Use `@click.argument("path", type=click.Path(exists=True))` to accept a path (file or directory) as input.
-    *   Call a helper function (e.g., `process_xml_results(path)`) to handle the processing.
-*   **Create `process_xml_results(path)` (in `src/git_retrospector/retrospector.py`):**
-    *   Check if `path` is a file or directory using `os.path.isfile()` and `os.path.isdir()`.
-    *   **If `path` is a file:**
-        *   Read the file content.
-        *   Call `process_xml_string` (from `xml_processor.py`) to process the XML.
-    *   **If `path` is a directory:**
-        *   Use `os.walk()` or `glob.glob()` to find all `.xml` files.
-        *   For each XML file:
-            *   Read the file content.
-            *   Call `process_xml_string`.
-*  **Add to `handle_no_command`:** Add "process-results" to the `WordCompleter` in the `handle_no_command` function, and add a clause to the `if/elif/else` block to call `process_results_command` when the user types "process-results".
+        def run_playwright(target_repo, output_dir, retro):
+            """Runs playwright tests."""
+            command = [
+                "npx",
+                "playwright",
+                "test",
+                "--reporter=junit",
+            ]
 
-### 3. Integrate Screenshot Upload (Issue #7 Core)
+            try:
+                logging.info(f"Running playwright with command: {command}")
+                result = subprocess.run(
+                    command, cwd=target_repo, check=True, text=True # Removed capture_output
+                )
+                logging.info(f"Playwright output: {result.stdout}")
 
-*   **Review Existing Code:** Examine `src/git_retrospector/retrospector.py` and related files (especially `commit_processor.py` and potentially `parser.py`) to understand how failed tests are currently handled and where issue creation logic resides.
-*   **Modify Issue Creation:**  Locate the code that creates GitHub issues (likely within `create_github_issues` or a similar function).
-    *   Modify this code to:
-        *   Check if a `media_path` key exists and is not empty in the data for a failed test.
-        *   If `media_path` exists, split it by semicolons to get individual file paths.
-        *   For each file path:
-            *   Check if the file exists.
-            *   If it exists and is an image (check extension, e.g., `.png`, `.jpg`), call `upload_screenshot_to_github` to upload it.
-            *   Include the returned URL in the GitHub issue body (using Markdown image syntax: `![alt text](url)`).
-        * If it exists and is a video, include the path in the GitHub issue body.
-        * If it exists and is a trace, include the path in the GitHub issue body.
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Error running playwright: {e}")
+                logging.error(f"stdout: {e.stdout}")
+                logging.error(f"stderr: {e.stderr}")
+                raise e
+        ```
 
-### 4. Address Config File Deletion
+    *   **Modify `commit_processor.py`:**
+        *   Remove the renaming of `playwright.log` to `playwright.xml`. The test runner should handle the correct naming.
 
-*   **Examine Test Suite:**  Investigate the test suite setup and teardown logic, likely in `tests/test_retrospector.py` or a common test configuration file.
-*   **Identify Deletion:** Find where `retros/handterm/config.toml` is being removed.
-*   **Prevent Deletion:** Modify the test suite to either:
-    *   Not delete the file.
-    *   Copy the file to a temporary location before the tests and restore it afterward.
-    *   Recreate the file if it's deleted.
+        ```python
+        # Remove this section:
+        # # Rename playwright.log to playwright.xml (now in the correct location)
+        # playwright_log_path = retro.get_playwright_log_path(commit_hash)
+        # logging.info(f"playwright_log_path: {playwright_log_path}")
+        # if playwright_log_path.exists():
+        #     logging.info(f"Renaming {playwright_log_path} to playwright.xml")
+        #     retro.rename_file(str(playwright_log_path), "playwright.xml")
+        ```
 
-### 5. Verify and Add Unit Tests
+2.  **Add Mermaid Diagram to `README.md` (Medium Priority):**
 
-*   **Run All Tests:** After making changes, run all tests (`python -m unittest discover tests`) to ensure no regressions.
-*   **Add Unit Tests:**
-    *   Add new unit tests for `process_xml_results` in `tests/test_retrospector.py` (or a new test file).
-    *   Test cases:
-        *   Processing a single valid XML file.
-        *   Processing a directory with multiple XML files.
-        *   Processing a directory with no XML files.
-        *   Processing an invalid XML file (should handle the error gracefully).
-        *   Processing an XML file with no failed tests.
-        *   Processing an XML file with failed tests and media.
-    * Add new unit tests for `parse_playwright_xml` in `tests/test_xml_processor.py`
-    *   Test cases:
-        *   Processing an XML file with failed tests and media in `<system-out>`.
-        *   Processing an XML file with no failed tests.
-        *   Processing an XML file with failed tests and no media.
+    *   Create a Mermaid diagram illustrating the workflow:
 
-### 6. Refactor
+    ```mermaid
+    graph TD
+        A[User runs git-retrospector] --> B(Clone/Checkout Remote Repo);
+        B --> C{Iterate through Commits};
+        C --> D[Checkout Commit];
+        D --> E[Run Tests (Vitest/Playwright)];
+        E --> F(Test Output to Remote Repo's test-results/);
+        F --> G[Move Test Results to Local Retro Directory];
+        G --> H{Next Commit?};
+        H -- Yes --> C;
+        H -- No --> I[Analyze Results];
+        I --> J[Generate Reports/Create Issues];
+    ```
 
-* Look for opportunities to refactor the existing code to avoid duplication. For example, the logic for finding XML files might be shared between the `run` command and the new `process-results` command.
+    *   Add this diagram to `README.md`.
 
-## GitHub Issue Update
+3.  **Add Link/Content to `README.md` (Medium Priority):**
 
-I will update the body of Issue #7 with a summary of the completed work and the remaining tasks, referencing this plan.
+    *   Embed the content of `docs/retro-tree-structure.md` into `README.md`.
 
-## `retros` Directory Structure
+4.  **Modify `retro.py`:**
+    *   Change the `move_test_results` function to use `shutil.move` instead of `shutil.copytree`.
+    *   Remove the destination directory if it exists before moving.
+    *   Add logging statements.
 
-The `retros` directory is the base directory for storing retrospective data for different target repositories.  Its structure is as follows:
+5.  **Modify `tests/test_retro.py`:**
+    *   Update the `test_move_test_results` test.
 
-```
-retros/
-├── <target_name_1>/       # Directory for a specific target (e.g., handterm, test_target)
-│   ├── config.toml        # Configuration file for this target
-│   └── test-output/       # Directory for test output
-│       └── <commit_hash>/  # Directory for a specific commit
-│           ├── playwright.xml # Playwright JUnit-schema test output
-│           ├── vitest.xml # Vitest JUnit-schema test output
-│           └── tool-summary/   # Summary of test results
-│               ├── playwright.csv   # CSV file with Playwright test results
-│               └── vitest.csv      # CSV file with Vitest test results (if applicable)
-│           └── playwright.xml # Raw Playwright XML output
-│           └── ...            # Other output files (screenshots, videos, traces)
-├── <target_name_2>/       # Another target repository
-│   ├── config.toml
-│   └── test-output/
-│       └── ...
-└── ...
-```
+6.  **Modify `tests/test_retrospector_cli.py`:**
+    *   Update the `test_init_command` to explicitly create the retro config file.
 
-*   **`<target_name>`:**  This is the name of the target repository being analyzed (e.g., "handterm", "test_target").  It's specified when running the `init` command.
-*   **`config.toml`:**  This file contains the configuration for a specific target, including the repository path, test result directory, and output paths for different testing tools.
-*   **`test-output`:** This directory stores the output of test runs.
-*   **`<commit_hash>`:**  A directory named after the short commit hash, containing the test results for that specific commit.
-* **`tool-summary`**: Contains a summary of test results in CSV format.
-*   **`playwright.csv`:**  A CSV file containing parsed Playwright test results.
-*   **`vitest.csv`:** A CSV file containing parsed Vitest test results (if Vitest is used in the target project).
-* **`playwright.xml`:** The raw XML output from Playwright.
-*   **`...`:** Other files and directories might be present within the commit directory, such as screenshots, videos, and traces generated by Playwright.
-
-The `Config.initialize` method is responsible for creating the `retros/<target_name>` directory and the `config.toml` file within it. The `run` command then creates the `test-output/<commit_hash>` directories and their contents when tests are executed for a specific commit.
+7.  **Switch to Code Mode:**
+    *   Implement the changes.

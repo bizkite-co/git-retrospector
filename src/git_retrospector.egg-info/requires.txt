@@ -1,3 +1,6 @@
 pydantic
 argparse
 toml
+PyGithub
+click
+prompt_toolkit
