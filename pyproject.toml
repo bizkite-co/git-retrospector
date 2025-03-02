@@ -11,7 +11,18 @@ requires-python = ">=3.7"
 dependencies = [
     "pydantic",
     "argparse",
+    "toml",
+    "PyGithub",
+    "click",
+    "prompt_toolkit"
 ]
+
+[tool.hatch.envs.default]
+[tool.hatch.envs.default.scripts]
+test = "TEST_ENVIRONMENT=true python3 -m unittest discover -s tests"
+test-cov = "TEST_ENVIRONMENT=true coverage run -m unittest discover -s tests && coverage report"
+test-save = "TEST_ENVIRONMENT=true python3 -m unittest discover -s tests > latest-test-results.txt 2>&1"
+test-cov-save = "TEST_ENVIRONMENT=true coverage run -m unittest discover -s tests > latest-test-results.txt 2>&1"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

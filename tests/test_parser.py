@@ -1,14 +1,22 @@
 import unittest
 import tempfile
-import os
 import csv
+import os
 from git_retrospector.parser import _process_vitest_log, _process_playwright_xml
+from git_retrospector.retro import Retro
+from TestConfig import BaseTest
 
 
-class TestParser(unittest.TestCase):
+class TestParser(BaseTest):
 
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
+        # Create a basic retro for testing
+        self.retro = Retro(
+            name="test_target", repo_under_test_path=self.temp_dir.name, output_paths={}
+        )
+        self.commit_hash = "commit123"
+        self.retro.create_commit_hash_dir(self.commit_hash)
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -24,24 +32,22 @@ class TestParser(unittest.TestCase):
         </testsuites>
         Some log lines after the XML
         """
-        # Create a temporary directory for the commit
-        commit_dir_path = os.path.join(self.temp_dir.name, "commit123")
-        os.makedirs(commit_dir_path)
-        tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
-        os.makedirs(tool_summary_dir)
 
-        with tempfile.NamedTemporaryFile(
-            delete=False, mode="w", dir=tool_summary_dir
-        ) as vitest_log_file:
-            vitest_log_path = vitest_log_file.name
+        vitest_log_path = self.retro.get_vitest_log_path(self.commit_hash)
+        with open(vitest_log_path, "w") as vitest_log_file:
             vitest_log_file.write(vitest_log_content)
 
-        # Call _process_vitest_log with the mock file path
-        _process_vitest_log(vitest_log_path, commit_dir_path)
+        # Call _process_vitest_log with the mock file path and retro
+        _process_vitest_log(self.retro, vitest_log_path, self.commit_hash)
 
         # Check that vitest.csv is created
-        csv_output_path = os.path.join(tool_summary_dir, "vitest.csv")
-        self.assertTrue(os.path.exists(csv_output_path))
+        csv_output_path = self.retro.get_vitest_csv_path(self.commit_hash)
+
+        self.assertTrue(
+            self.retro.path_exists(
+                os.path.relpath(csv_output_path, self.retro.get_retro_dir())
+            )
+        )
 
         # Read and check the content of vitest.csv (optional, but good practice)
         with open(csv_output_path, newline="") as csvfile:
@@ -63,9 +69,6 @@ class TestParser(unittest.TestCase):
                 rows[1], ["commit123", "vitest", "Test Case 1", "passed", "0.123", ""]
             )
 
-        # Clean up the temporary file and directory
-        os.remove(vitest_log_path)
-
     def test_process_playwright_xml(self):
         # Create a mock Playwright XML file with sample XML content
         playwright_xml_content = """
@@ -75,24 +78,21 @@ class TestParser(unittest.TestCase):
           </testsuite>
         </testsuites>
         """
-        # Create a temporary directory for the commit
-        commit_dir_path = os.path.join(self.temp_dir.name, "commit123")
-        os.makedirs(commit_dir_path)
-        tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
-        os.makedirs(tool_summary_dir)
 
-        with tempfile.NamedTemporaryFile(
-            delete=False, mode="w", dir=tool_summary_dir
-        ) as playwright_xml_file:  # specify dir
-            playwright_xml_path = playwright_xml_file.name
+        playwright_xml_path = self.retro.get_playwright_xml_path(self.commit_hash)
+        with open(playwright_xml_path, "w") as playwright_xml_file:
             playwright_xml_file.write(playwright_xml_content)
 
-        # Call _process_playwright_xml with the mock file path and a temporary directory
-        _process_playwright_xml(playwright_xml_path, commit_dir_path)
+        # Call _process_playwright_xml with the mock file path and retro
+        _process_playwright_xml(self.retro, playwright_xml_path, self.commit_hash)
 
         # Check that playwright.csv is created
-        csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
-        self.assertTrue(os.path.exists(csv_output_path))
+        csv_output_path = self.retro.get_playwright_csv_path(self.commit_hash)
+        self.assertTrue(
+            self.retro.path_exists(
+                os.path.relpath(csv_output_path, self.retro.get_retro_dir())
+            )
+        )
 
         # Read and check the content of playwright.csv (optional, but good practice)
         with open(csv_output_path, newline="") as csvfile:
@@ -114,8 +114,6 @@ class TestParser(unittest.TestCase):
                 rows[1],
                 ["commit123", "playwright", "Test Case 1", "passed", "0.123", ""],
             )
-        # Clean up the temporary file
-        os.remove(playwright_xml_path)
 
 
 if __name__ == "__main__":

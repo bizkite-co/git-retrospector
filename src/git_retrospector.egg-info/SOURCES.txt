@@ -2,12 +2,13 @@ README.md
 pyproject.toml
 src/git_retrospector/__init__.py
 src/git_retrospector/commit_processor.py
-src/git_retrospector/config.py
 src/git_retrospector/diff_generator.py
 src/git_retrospector/diff_utils.py
 src/git_retrospector/git_utils.py
 src/git_retrospector/parser.py
+src/git_retrospector/retro.py
 src/git_retrospector/retrospector.py
+src/git_retrospector/run_tests.py
 src/git_retrospector/runners.py
 src/git_retrospector/xml_processor.py
 src/git_retrospector.egg-info/PKG-INFO
@@ -23,7 +24,7 @@ tests/test_parse_commit_results.py
 tests/test_parser.py
 tests/test_process_commit.py
 tests/test_process_csv.py
+tests/test_retro.py
 tests/test_retro_processor.py
 tests/test_retrospector.py
 tests/test_retrospector_cli.py
-tests/test_xml_processor.py

@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 import csv
-import os
 import re  # Import the regular expression module
 import logging
+import os
 
 from git_retrospector import xml_processor  # Import the updated module
+from git_retrospector.retro import Retro  # Use new class name
 
 
-def _process_vitest_log(vitest_log_path, commit_dir_path):
+def _process_vitest_log(retro: Retro, vitest_log_path, commit_hash):
     """Processes a Vitest log file and extracts test results."""
     try:
+        # Check if the file exists before trying to open it
+        if not os.path.exists(vitest_log_path):
+            logging.warning(f"Vitest log file not found: {vitest_log_path}")
+            return
+
         with open(vitest_log_path) as vitest_log_file:
             log_content = vitest_log_file.read()
             # Extract XML content using regex
             match = re.search(r"<testsuites.+?</testsuites>", log_content, re.DOTALL)
             if match:
                 vitest_xml_string = match.group(0)
-                tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
-                csv_output_path = os.path.join(tool_summary_dir, "vitest.csv")
+                csv_output_path = retro.get_vitest_csv_path(commit_hash)
                 with open(csv_output_path, "w", newline="") as individual_csvfile:
                     csv_writer = csv.writer(individual_csvfile)
                     csv_writer.writerow([
@@ -30,27 +35,29 @@ def _process_vitest_log(vitest_log_path, commit_dir_path):
                     ])
                     xml_processor.process_xml_string(
                         vitest_xml_string,
-                        os.path.basename(commit_dir_path),
+                        commit_hash,
                         "vitest",
                         csv_writer,
                     )
             else:
-                # print(f"Warning: No XML content found in {vitest_log_path}")
-                pass
+                logging.warning(f"No XML content found in {vitest_log_path}")
 
-    except Exception:
-        # print(f"Error processing Vitest log file {vitest_log_path}: {e}")
-        pass
+    except Exception as e:
+        logging.error(f"Error processing Vitest log file {vitest_log_path}: {e}")
 
 
-def _process_playwright_xml(playwright_xml_path, commit_dir_path):
+def _process_playwright_xml(retro: Retro, playwright_xml_path, commit_hash):
     """Processes a Playwright XML file and extracts test results."""
     logging.info(f"Processing Playwright XML: {playwright_xml_path}")
     try:
+        # Check if the file exists before trying to open it
+        if not os.path.exists(playwright_xml_path):
+            logging.warning(f"Playwright XML file not found: {playwright_xml_path}")
+            return
+
         with open(playwright_xml_path) as playwright_xml_file:
             playwright_xml_string = playwright_xml_file.read()
-            tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
-            csv_output_path = os.path.join(tool_summary_dir, "playwright.csv")
+            csv_output_path = retro.get_playwright_csv_path(commit_hash)
             logging.info(f"Writing Playwright CSV to: {csv_output_path}")
             with open(csv_output_path, "w", newline="") as individual_csvfile:
                 csv_writer = csv.writer(individual_csvfile)
@@ -64,7 +71,7 @@ def _process_playwright_xml(playwright_xml_path, commit_dir_path):
                 ])
                 xml_processor.process_xml_string(
                     playwright_xml_string,
-                    os.path.basename(commit_dir_path),
+                    commit_hash,
                     "playwright",
                     csv_writer,
                 )
@@ -74,35 +81,37 @@ def _process_playwright_xml(playwright_xml_path, commit_dir_path):
         )
 
 
-def parse_commit_results(commit_dir_path):
+def parse_commit_results(retro: Retro, commit_hash: str):
     """
     Parses test results from log files (for Vitest) and XML files (for Playwright)
     in a specified commit directory and writes summaries to CSV files.
 
-        commit_dir_path (str): The full path to the commit directory.
+        retro (Retro): The configuration object.
+        commit_hash (str): The hash of the commit to parse results for.
     """
-    tool_summary_dir = os.path.join(commit_dir_path, "tool-summary")
-    vitest_log_path = os.path.join(tool_summary_dir, "vitest.log")
-    playwright_xml_path = os.path.join(tool_summary_dir, "playwright.xml")
+    # XML/log files are in the commit dir, *next* to tool-summary
+    vitest_log_path = retro.get_vitest_log_path(commit_hash)
+    playwright_xml_path = retro.get_playwright_xml_path(commit_hash)
 
     # Process Vitest log (extract XML from log)
-    if os.path.exists(vitest_log_path):
-        _process_vitest_log(vitest_log_path, commit_dir_path)
+    if retro.path_exists(vitest_log_path):
+        _process_vitest_log(retro, vitest_log_path, commit_hash)
+    else:
+        logging.error(f"Vitest log file not found: {vitest_log_path}")
 
     # Process Playwright XML
-    if os.path.exists(playwright_xml_path):
-        _process_playwright_xml(playwright_xml_path, commit_dir_path)
+    if retro.path_exists(playwright_xml_path):
+        _process_playwright_xml(retro, playwright_xml_path, commit_hash)
+    else:
+        logging.error(f"Playwright XML file not found: {playwright_xml_path}")
 
 
-def process_retro(retro_name):
+def process_retro(retro: Retro):
     """
     Processes all commits within a retro's test output directory.
 
     Args:
-        retro_name: The name of the retro (e.g., "handterm").
+        retro (Retro): The configuration object.
     """
-    retro_dir = os.path.join("retros", retro_name, "test-output")
-    for commit_dir in os.listdir(retro_dir):
-        commit_dir_path = os.path.join(retro_dir, commit_dir)
-        if os.path.isdir(commit_dir_path):
-            parse_commit_results(commit_dir_path)
+    for commit_hash in retro.list_commit_dirs():
+        parse_commit_results(retro, commit_hash)

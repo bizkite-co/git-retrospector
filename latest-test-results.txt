@@ -1,0 +1,112 @@
+2025-03-01 18:39:17,182 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpiv65fq8e/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,183 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpiv65fq8e/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpiv65fq8e/test_repo/test-output'}
+2025-03-01 18:39:17,183 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpiv65fq8e/test_repo
+2025-03-01 18:39:17,183 - INFO - Temporary directory: /tmp/tmpiv65fq8e
+2025-03-01 18:39:17,186 - INFO - create_issues_for_commit called with retro_name: test_retro, commit_hash: abcdef123456
+2025-03-01 18:39:17,186 - INFO - should_create_issues called with retro_name: test_retro, commit_hash: abcdef123456
+2025-03-01 18:39:17,186 - INFO - Commit directory does not exist: retros/test_retro/test-output/abcdef123456
+2025-03-01 18:39:17,186 - INFO - should_create_issues returned False
+.2025-03-01 18:39:17,187 - INFO - create_issues_for_commit called with retro_name: test_retro, commit_hash: nonexistent_hash
+2025-03-01 18:39:17,187 - INFO - should_create_issues called with retro_name: test_retro, commit_hash: nonexistent_hash
+2025-03-01 18:39:17,188 - INFO - Commit directory does not exist: retros/test_retro/test-output/nonexistent_hash
+2025-03-01 18:39:17,188 - INFO - should_create_issues returned False
+.2025-03-01 18:39:17,189 - INFO - create_issues_for_commit called with retro_name: test_retro, commit_hash: abcdef123456
+2025-03-01 18:39:17,189 - INFO - should_create_issues called with retro_name: test_retro, commit_hash: abcdef123456
+2025-03-01 18:39:17,190 - INFO - Commit directory does not exist: retros/test_retro/test-output/abcdef123456
+2025-03-01 18:39:17,190 - INFO - should_create_issues returned False
+.2025-03-01 18:39:17,192 - INFO - create_issues_for_commit called with retro_name: test_retro, commit_hash: abcdef123456
+.2025-03-01 18:39:17,194 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpllkkx8k3/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,194 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpllkkx8k3/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpllkkx8k3/test_repo/test-output'}
+2025-03-01 18:39:17,194 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpllkkx8k3/test_repo
+2025-03-01 18:39:17,194 - INFO - Temporary directory: /tmp/tmpllkkx8k3
+.2025-03-01 18:39:17,243 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpx188zd6x/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,244 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpx188zd6x/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpx188zd6x/test_repo/test-output'}
+2025-03-01 18:39:17,244 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpx188zd6x/test_repo
+2025-03-01 18:39:17,244 - INFO - Temporary directory: /tmp/tmpx188zd6x
+.2025-03-01 18:39:17,259 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpw6z0vxdh/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,259 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpw6z0vxdh/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpw6z0vxdh/test_repo/test-output'}
+2025-03-01 18:39:17,259 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpw6z0vxdh/test_repo
+2025-03-01 18:39:17,259 - INFO - Temporary directory: /tmp/tmpw6z0vxdh
+.2025-03-01 18:39:17,260 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp11z30r_w/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,260 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp11z30r_w/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmp11z30r_w/test_repo/test-output'}
+2025-03-01 18:39:17,260 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmp11z30r_w/test_repo
+2025-03-01 18:39:17,260 - INFO - Temporary directory: /tmp/tmp11z30r_w
+2025-03-01 18:39:17,261 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpr1iq_7je', 'output_paths': {}}
+2025-03-01 18:39:17,261 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpr1iq_7je', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpr1iq_7je/test-output'}
+2025-03-01 18:39:17,261 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpr1iq_7je
+2025-03-01 18:39:17,262 - INFO - Processing Playwright XML: /tmp/tmpr1iq_7je/test-output/commit_test/playwright.xml
+2025-03-01 18:39:17,263 - INFO - Writing Playwright CSV to: /tmp/tmpr1iq_7je/test-output/commit_test/tool-summary/playwright.csv
+.2025-03-01 18:39:17,264 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpmdull16p/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,264 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpmdull16p/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpmdull16p/test_repo/test-output'}
+2025-03-01 18:39:17,265 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpmdull16p/test_repo
+2025-03-01 18:39:17,265 - INFO - Temporary directory: /tmp/tmpmdull16p
+2025-03-01 18:39:17,265 - INFO - create_and_resolve_paths: values={'name': 'test_target', 'repo_under_test_path': '/tmp/tmpwh49_jus', 'output_paths': {}}
+2025-03-01 18:39:17,265 - INFO - create_and_resolve_paths: returning values={'name': 'test_target', 'repo_under_test_path': '/tmp/tmpwh49_jus', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpwh49_jus/test-output'}
+2025-03-01 18:39:17,266 - INFO - Retro init: name=test_target, repo_under_test_path=/tmp/tmpwh49_jus
+2025-03-01 18:39:17,266 - INFO - Processing Playwright XML: /tmp/tmpwh49_jus/test-output/commit123/playwright.xml
+2025-03-01 18:39:17,266 - INFO - Writing Playwright CSV to: /tmp/tmpwh49_jus/test-output/commit123/tool-summary/playwright.csv
+.2025-03-01 18:39:17,268 - INFO - create_and_resolve_paths: values={'name': 'test_target', 'repo_under_test_path': '/tmp/tmpek7ytziq', 'output_paths': {}}
+2025-03-01 18:39:17,268 - INFO - create_and_resolve_paths: returning values={'name': 'test_target', 'repo_under_test_path': '/tmp/tmpek7ytziq', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpek7ytziq/test-output'}
+2025-03-01 18:39:17,269 - INFO - Retro init: name=test_target, repo_under_test_path=/tmp/tmpek7ytziq
+.2025-03-01 18:39:17,272 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp0tg3yr8a/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,272 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp0tg3yr8a/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmp0tg3yr8a/test_repo/test-output'}
+2025-03-01 18:39:17,272 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmp0tg3yr8a/test_repo
+2025-03-01 18:39:17,273 - INFO - Temporary directory: /tmp/tmp0tg3yr8a
+2025-03-01 18:39:17,274 - INFO - process_csv_files called with repo: <MagicMock id='140575195598384'>, playwright_csv: /tmp/tmp_lc2dvq7/playwright.csv, vitest_csv: /tmp/tmp_lc2dvq7/vitest.csv
+2025-03-01 18:39:17,275 - INFO - Creating issue with title: test1
+2025-03-01 18:39:17,277 - INFO - Creating issue with title: test2
+.2025-03-01 18:39:17,279 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpoz1s_28t/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,279 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpoz1s_28t/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpoz1s_28t/test_repo/test-output'}
+2025-03-01 18:39:17,279 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpoz1s_28t/test_repo
+2025-03-01 18:39:17,280 - INFO - Temporary directory: /tmp/tmpoz1s_28t
+2025-03-01 18:39:17,280 - INFO - create_and_resolve_paths: values={'name': 'test_retro_instance', 'repo_under_test_path': '/tmp/tmpnrgeqcgk', 'output_paths': {}}
+2025-03-01 18:39:17,280 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro_instance', 'repo_under_test_path': '/tmp/tmpnrgeqcgk', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpnrgeqcgk/test-output'}
+2025-03-01 18:39:17,281 - INFO - Retro init: name=test_retro_instance, repo_under_test_path=/tmp/tmpnrgeqcgk
+2025-03-01 18:39:17,281 - INFO - create_and_resolve_paths: values={'name': 'test_retro_tree', 'repo_under_test_path': '/tmp/tmpnrgeqcgk', 'output_paths': {}}
+2025-03-01 18:39:17,281 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro_tree', 'repo_under_test_path': '/tmp/tmpnrgeqcgk', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpnrgeqcgk/test-output'}
+2025-03-01 18:39:17,281 - INFO - Retro init: name=test_retro_tree, repo_under_test_path=/tmp/tmpnrgeqcgk
+.2025-03-01 18:39:17,284 - INFO - create_and_resolve_paths: values={'name': 'test_retro_instance', 'repo_under_test_path': '/tmp/tmpvmlm01fm', 'output_paths': {}}
+2025-03-01 18:39:17,284 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro_instance', 'repo_under_test_path': '/tmp/tmpvmlm01fm', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpvmlm01fm/test-output'}
+2025-03-01 18:39:17,284 - INFO - Retro init: name=test_retro_instance, repo_under_test_path=/tmp/tmpvmlm01fm
+/home/mstouffer/.local/share/uv/python/cpython-3.12.7-linux-x86_64-gnu/lib/python3.12/unittest/case.py:690: DeprecationWarning: It is deprecated to return a value that is not None from a test case (<bound method TestRetro.test_get_retro_dir of <test_retro.TestRetro testMethod=test_get_retro_dir>>)
+  return self.run(*args, **kwds)
+.2025-03-01 18:39:17,286 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpf03dlgqc/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,287 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpf03dlgqc/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpf03dlgqc/test_repo/test-output'}
+2025-03-01 18:39:17,288 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpf03dlgqc/test_repo
+2025-03-01 18:39:17,289 - INFO - Temporary directory: /tmp/tmpf03dlgqc
+2025-03-01 18:39:17,291 - INFO - Processing Playwright XML: /tmp/tmpf03dlgqc/test_repo/test-output/commit1/playwright.xml
+2025-03-01 18:39:17,291 - INFO - Writing Playwright CSV to: /tmp/tmpf03dlgqc/test_repo/test-output/commit1/tool-summary/playwright.csv
+2025-03-01 18:39:17,292 - INFO - Processing Playwright XML: /tmp/tmpf03dlgqc/test_repo/test-output/commit2/playwright.xml
+2025-03-01 18:39:17,292 - INFO - Writing Playwright CSV to: /tmp/tmpf03dlgqc/test_repo/test-output/commit2/tool-summary/playwright.csv
+.2025-03-01 18:39:17,294 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp35vo61yf/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,294 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp35vo61yf/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmp35vo61yf/test_repo/test-output'}
+2025-03-01 18:39:17,294 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmp35vo61yf/test_repo
+2025-03-01 18:39:17,295 - INFO - Temporary directory: /tmp/tmp35vo61yf
+2025-03-01 18:39:17,295 - INFO - Processing Playwright XML: /tmp/tmp35vo61yf/test_repo/test-output/test_commit/playwright.xml
+2025-03-01 18:39:17,296 - INFO - Writing Playwright CSV to: /tmp/tmp35vo61yf/test_repo/test-output/test_commit/tool-summary/playwright.csv
+.2025-03-01 18:39:17,297 - INFO - Processing Playwright XML: /tmp/tmp35vo61yf/test_repo/test-output/test_commit/playwright.xml
+2025-03-01 18:39:17,297 - WARNING - Playwright XML file not found: /tmp/tmp35vo61yf/test_repo/test-output/test_commit/playwright.xml
+.2025-03-01 18:39:17,299 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp8vaftuoi/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,299 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmp8vaftuoi/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmp8vaftuoi/test_repo/test-output'}
+2025-03-01 18:39:17,299 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmp8vaftuoi/test_repo
+2025-03-01 18:39:17,299 - INFO - Temporary directory: /tmp/tmp8vaftuoi
+.2025-03-01 18:39:17,300 - INFO - create_and_resolve_paths: values={'name': 'test_target', 'repo_under_test_path': 'invalid/path', 'output_paths': {}}
+2025-03-01 18:39:17,307 - INFO - create_and_resolve_paths: returning values={'name': 'test_target', 'repo_under_test_path': '/home/mstouffer/repos/handterm-proj/git-retrospector/invalid/path', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/home/mstouffer/repos/handterm-proj/git-retrospector/invalid/path/test-output'}
+.2025-03-01 18:39:17,309 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpha_npjcy/test_repo', 'output_paths': {}}
+2025-03-01 18:39:17,310 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': '/tmp/tmpha_npjcy/test_repo', 'output_paths': {}, 'test_output_dir': 'test-output', 'test_output_dir_full': '/tmp/tmpha_npjcy/test_repo/test-output'}
+2025-03-01 18:39:17,311 - INFO - Retro init: name=test_retro, repo_under_test_path=/tmp/tmpha_npjcy/test_repo
+2025-03-01 18:39:17,311 - INFO - Temporary directory: /tmp/tmpha_npjcy
+.2025-03-01 18:39:17,312 - INFO - create_issues_for_commit called with retro_name: test_retro, commit_hash: test_commit
+2025-03-01 18:39:17,312 - INFO - should_create_issues called with retro_name: test_retro, commit_hash: test_commit
+2025-03-01 18:39:17,313 - INFO - Commit directory does not exist: retros/test_retro/test-output/test_commit
+2025-03-01 18:39:17,313 - INFO - should_create_issues returned False
+.2025-03-01 18:39:17,313 - INFO - create_and_resolve_paths: values={'name': 'test_retro', 'repo_under_test_path': "PosixPath('/tmp/tmpebvt6112')", 'output_paths': {}, 'test_result_dir': '/tmp/tmpebvt6112', 'test_output_dir': 'test-output'}
+2025-03-01 18:39:17,314 - INFO - create_and_resolve_paths: returning values={'name': 'test_retro', 'repo_under_test_path': "/home/mstouffer/repos/handterm-proj/git-retrospector/PosixPath('/tmp/tmpebvt6112')", 'output_paths': {}, 'test_result_dir': '/tmp/tmpebvt6112', 'test_output_dir': 'test-output', 'test_output_dir_full': "/home/mstouffer/repos/handterm-proj/git-retrospector/PosixPath('/tmp/tmpebvt6112')/test-output"}
+2025-03-01 18:39:17,314 - ERROR - Error validating retro file: 1 validation error for Retro
+repo_under_test_path
+  Path does not point to a directory [type=path_not_directory, input_value="/home/mstouffer/repos/ha...ath('/tmp/tmpebvt6112')", input_type=str]
+.
+----------------------------------------------------------------------
+Ran 21 tests in 0.133s
+
+OK

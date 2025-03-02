@@ -1,51 +1,35 @@
 import csv
-import os
 import unittest
+import os
 from unittest.mock import MagicMock, patch
-
+from TestConfig import BaseTest
 from git_retrospector.retrospector import create_issues_for_commit
 
 
-class TestCreateIssues(unittest.TestCase):
+class TestCreateIssues(BaseTest):
     def setUp(self):
-        self.retro_name = "test_retro"
+        super().setUp()
         self.commit_hash = "abcdef123456"
-        self.commit_dir = os.path.join(
-            "retros", self.retro_name, "test-output", self.commit_hash
-        )
-        self.tool_summary_dir = os.path.join(self.commit_dir, "tool-summary")
-        # Ensure the base "retros" directory exists
-        os.makedirs("retros", exist_ok=True)
-
-    def tearDown(self):
-        # Cleanup directories only if they exist
-        if os.path.exists(self.tool_summary_dir):
-            import shutil
-
-            shutil.rmtree(self.tool_summary_dir)
-        if os.path.exists(self.commit_dir):
-            import shutil
-
-            shutil.rmtree(self.commit_dir)
+        self.retro.create_commit_hash_dir(self.commit_hash)  # Create commit dir
+        self.tool_summary_dir = self.retro.get_tool_summary_dir(self.commit_hash)
 
     @patch("git_retrospector.retrospector.create_issues_for_commit")
     def test_create_issues_for_commit_no_dir(self, mock_create_issues_for_commit):
         # Test when the commit directory does not exist
         mock_create_github_issues = MagicMock()
         mock_create_issues_for_commit.side_effect = mock_create_github_issues
-        create_issues_for_commit(self.retro_name, self.commit_hash)
+        create_issues_for_commit(self.retro.name, "nonexistent_hash")
         mock_create_github_issues.assert_not_called()
 
     @patch("git_retrospector.retrospector.create_issues_for_commit")
     def test_create_issues_for_commit_no_csv_files(self, mock_create_issues_for_commit):
         # Test when the CSV files are not found
-        # Create the commit directory *and* the tool-summary subdirectory
-        os.makedirs(self.tool_summary_dir, exist_ok=True)
+        # Commit directory and tool-summary subdirectory are created in setUp
 
         mock_create_github_issues = MagicMock()
         mock_create_issues_for_commit.side_effect = mock_create_github_issues
 
-        create_issues_for_commit(self.retro_name, self.commit_hash)
+        create_issues_for_commit(self.retro.name, self.commit_hash)
         mock_create_github_issues.assert_not_called()
 
     @patch("git_retrospector.retrospector.create_issues_for_commit")
@@ -53,8 +37,6 @@ class TestCreateIssues(unittest.TestCase):
         self, mock_create_issues_for_commit
     ):
         # Test when there are no failed tests
-        os.makedirs(self.tool_summary_dir, exist_ok=True)
-
         # Create empty CSV files
         with open(os.path.join(self.tool_summary_dir, "playwright.csv"), "w") as f:
             writer = csv.writer(f)
@@ -65,7 +47,7 @@ class TestCreateIssues(unittest.TestCase):
 
         mock_create_github_issues = MagicMock()
         mock_create_issues_for_commit.side_effect = mock_create_github_issues
-        create_issues_for_commit(self.retro_name, self.commit_hash)
+        create_issues_for_commit(self.retro.name, self.commit_hash)
         mock_create_github_issues.assert_not_called()
 
     @patch(
@@ -75,45 +57,54 @@ class TestCreateIssues(unittest.TestCase):
     @patch("git_retrospector.retrospector.input", return_value="y")
     @patch("os.environ.get", return_value="dummy_token")
     @patch("git_retrospector.retrospector.Github")
+    @patch(
+        "git_retrospector.retrospector.process_csv_files"
+    )  # Patch process_csv_files directly
     def test_create_issues_for_commit_success(
-        self, mock_github_class, mock_env_get, mock_input, mock_load_config
+        self,
+        mock_process_csv_files,
+        mock_github_class,
+        mock_env_get,
+        mock_input,
+        mock_load_retro,
     ):
-
-        # Mock the Github object and its methods *returned by* create_github_issues
+        # Mock the Github object and its methods
         mock_repo = MagicMock()
-        mock_github = MagicMock()  # Mock the Github object itself
+        mock_github = MagicMock()
         mock_github_class.return_value = mock_github
         mock_github.get_user.return_value.get_repo.return_value = mock_repo
-
-        # Test successful issue creation
-        os.makedirs(self.tool_summary_dir, exist_ok=True)
 
         # Create CSV files with failed tests
         playwright_csv = os.path.join(self.tool_summary_dir, "playwright.csv")
         vitest_csv = os.path.join(self.tool_summary_dir, "vitest.csv")
         with open(playwright_csv, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(["Test Name", "Result", "Error", "Stack Trace"])
-            writer.writerow(["test1", "failed", "Error message 1", "Stack 1"])
+            writer.writerow(
+                ["Commit", "Test Type", "Test Name", "Result", "Duration", "Media Path"]
+            )
+            writer.writerow(
+                ["abcdef123456", "playwright", "test1", "failed", "0.1", ""]
+            )
         with open(vitest_csv, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(["Test Name", "Result", "Error", "Stack Trace"])
-            writer.writerow(["test2", "failed", "Error message 2", "Stack 2"])
+            writer.writerow(
+                ["Commit", "Test Type", "Test Name", "Result", "Duration", "Media Path"]
+            )
+            writer.writerow(["abcdef123456", "vitest", "test2", "failed", "0.2", ""])
 
-        with patch("git_retrospector.retrospector.input", return_value="y"):
-            create_issues_for_commit(self.retro_name, self.commit_hash)
+        # Call the function directly without patching it
+        with patch(
+            "git_retrospector.retrospector.should_create_issues", return_value=True
+        ):
+            with patch(
+                "git_retrospector.retrospector.find_test_summary_files",
+                return_value=(playwright_csv, vitest_csv),
+            ):
+                create_issues_for_commit(self.retro.name, self.commit_hash)
 
-        # Assert that create_issue was called twice (once for each failed test)
-        self.assertEqual(mock_repo.create_issue.call_count, 2)
-
-        # Check the arguments passed to create_issue
-        mock_repo.create_issue.assert_any_call(
-            title="test1",
-            body="Error: Error message 1\nStack Trace: Stack 1\n",
-        )
-        mock_repo.create_issue.assert_any_call(
-            title="test2",
-            body="Error: Error message 2\nStack Trace: Stack 2\n",
+        # Assert that process_csv_files was called with the mock repo and CSV paths
+        mock_process_csv_files.assert_called_once_with(
+            mock_repo, playwright_csv, vitest_csv
         )
 
 

@@ -1,0 +1,115 @@
+2025-03-01 15:22:05,020 - INFO - Temporary directory: /tmp/tmp6quwqrm1
+2025-03-01 15:22:05,023 - INFO - should_create_issues returned False
+.2025-03-01 15:22:05,025 - INFO - should_create_issues returned False
+.2025-03-01 15:22:05,026 - INFO - should_create_issues returned False
+.2025-03-01 15:22:05,028 - INFO - should_create_issues returned False
+F2025-03-01 15:22:05,033 - INFO - Temporary directory: /tmp/tmpl8zg7a_j
+E2025-03-01 15:22:05,052 - INFO - Temporary directory: /tmp/tmpko32oyki
+.2025-03-01 15:22:05,076 - INFO - Temporary directory: /tmp/tmpsbyrv1pi
+E2025-03-01 15:22:05,079 - ERROR - Vitest log file not found: retros/test_retro/test-output/test-output/commit_test/vitest.log
+2025-03-01 15:22:05,079 - ERROR - Playwright XML file not found: retros/test_retro/test-output/test-output/commit_test/playwright.xml
+F2025-03-01 15:22:05,081 - INFO - Processing Playwright XML: retros/test_target/test-output/test-output/commit123/playwright.xml
+2025-03-01 15:22:05,081 - INFO - Writing Playwright CSV to: retros/test_target/test-output/test-output/commit123/tool-summary/playwright.csv
+...F/home/mstouffer/.local/share/uv/python/cpython-3.12.7-linux-x86_64-gnu/lib/python3.12/unittest/case.py:690: DeprecationWarning: It is deprecated to return a value that is not None from a test case (<bound method TestRetro.test_get_retro_dir of <test_retro.TestRetro testMethod=test_get_retro_dir>>)
+  return self.run(*args, **kwds)
+.F2025-03-01 15:22:05,096 - ERROR - Error validating retro file: 1 validation error for Retro
+repo_under_test_path
+  Path does not point to a directory [type=path_not_directory, input_value="PosixPath('/tmp/tmpo1wl6j52/test_repo')", input_type=str]
+F2025-03-01 15:22:05,101 - ERROR - Error validating retro file: 1 validation error for Retro
+repo_under_test_path
+  Path does not point to a directory [type=path_not_directory, input_value="PosixPath('/tmp/tmpo1wl6j52/test_repo')", input_type=str]
+.F.F2025-03-01 15:22:05,114 - INFO - should_create_issues returned False
+..F
+======================================================================
+ERROR: test_generate_diff (test_diff_utils.TestGenerateDiff.test_generate_diff)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_diff_utils.py", line 20, in setUp
+    with open(self.temp_dir / "file1.txt", "w") as f:
+              ~~~~~~~~~~~~~~^~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for /: 'str' and 'str'
+
+======================================================================
+ERROR: test_config_initialize (test_initialize.TestInitialize.test_config_initialize)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_initialize.py", line 12, in test_config_initialize
+    repo_under_test_path = self.temp_dir / "test_repo"
+                           ~~~~~~~~~~~~~~^~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for /: 'str' and 'str'
+
+======================================================================
+FAIL: test_create_issues_for_commit_success (test_create_issues.TestCreateIssues.test_create_issues_for_commit_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/.local/share/uv/python/cpython-3.12.7-linux-x86_64-gnu/lib/python3.12/unittest/mock.py", line 1395, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_create_issues.py", line 88, in test_create_issues_for_commit_success
+    self.assertEqual(mock_repo.create_issue.call_count, 2)
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_parse_commit_results (test_parse_commit_results.TestParseCommitResults.test_parse_commit_results)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_parse_commit_results.py", line 59, in test_parse_commit_results
+    self.assertTrue(
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_create_retro_tree (test_retro.TestRetro.test_create_retro_tree)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retro.py", line 42, in test_create_retro_tree
+    self.assertTrue(os.path.exists(os.path.join("retros", "test_retro_tree", "retro.toml")))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_process_retro (test_retro_processor.TestRetroProcessor.test_process_retro)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retro_processor.py", line 53, in test_process_retro
+    self.assertTrue(
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_csv_output_creation (test_retrospector.TestCSVOutput.test_csv_output_creation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retrospector.py", line 94, in test_csv_output_creation
+    self.assertTrue(
+AssertionError: False is not true : CSV file not found at retros/test_target/test-output/test-output/test_commit/tool-summary/playwright.csv
+
+======================================================================
+FAIL: test_config_initialize (test_retrospector.TestConfigInitialize.test_config_initialize)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retrospector.py", line 38, in test_config_initialize
+    self.assertEqual(config_data["repo_under_test_path"], str(repo_under_test_path.resolve())) # Ensure path is absolute
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PosixPath('/tmp/tmpo1wl6j52/test_repo')" != '/tmp/tmp5stnh2rz/test_repo'
+- PosixPath('/tmp/tmpo1wl6j52/test_repo')
++ /tmp/tmp5stnh2rz/test_repo
+
+
+======================================================================
+FAIL: test_init_command (test_retrospector_cli.TestRetrospectorCLI.test_init_command)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retrospector_cli.py", line 39, in test_init_command
+    self.assertEqual(result.exit_code, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_run_command (test_retrospector_cli.TestRetrospectorCLI.test_run_command)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstouffer/repos/handterm-proj/git-retrospector/tests/test_retrospector_cli.py", line 51, in test_run_command
+    self.assertEqual(result.exit_code, 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.107s
+
+FAILED (failures=8, errors=2)

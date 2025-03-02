@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 import subprocess
-import os
+from pathlib import Path
+from git_retrospector.retro import Retro
 
 
-def generate_diff(repo_path: str, commit1: str, commit2: str, output_path: str) -> None:
+def generate_diff(
+    retro: Retro, repo_path: str, commit1: str, commit2: str, output_path: str
+) -> None:
     """
     Generates a diff file between two commits and saves it to the specified output path.
 
     Args:
+        retro: The Retro object
         repo_path: The path to the Git repository.
         commit1: The hash of the first commit.
         commit2: The hash of the second commit.
@@ -37,7 +41,11 @@ def generate_diff(repo_path: str, commit1: str, commit2: str, output_path: str) 
         raise ValueError(f"Invalid commit hash: {e}") from e
 
     # Create the output directory if it doesn't exist
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    # output_path is something like:
+    # retros/test_retro_instance/test-output/hash2/hash1_hash2.diff
+    commit_hash = Path(output_path).parts[-2]
+    commit_hash_dir, _ = retro.get_commit_hash_dir(commit_hash)
+    retro.create_output_dirs(commit_hash=commit_hash)
 
     # Generate the diff
     try:

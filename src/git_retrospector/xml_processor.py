@@ -1,4 +1,3 @@
-import argparse
 import re
 import xml.etree.ElementTree as ET
 from typing import Any, List, Optional
@@ -107,20 +106,3 @@ def process_xml_string(
         pass
     except Exception:
         pass
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Process a single XML test results file."
-    )
-    parser.add_argument(
-        "xml_path", help="Path to the XML test results file"
-    )  # Keep this for compatibility
-    parser.add_argument("commit", help="Commit hash associated with the test results")
-    parser.add_argument("test_type", help="Type of test (e.g., 'vitest', 'playwright')")
-    args = parser.parse_args()
-
-    # Example of reading from a file (for the example usage)
-    with open(args.xml_path) as f:
-        xml_content = f.read()
-    process_xml_string(xml_content, args.commit, args.test_type)

@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
 import csv
 import logging
-import os
 import subprocess
 import sys
+import os  # Import the os module
 from pathlib import Path
 
 import click
-import toml
 from github import Github, GithubException
 from pydantic import ValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
 from git_retrospector.commit_processor import process_commit
-from git_retrospector.config import Config
-from git_retrospector.diff_generator import generate_commit_diffs
+from git_retrospector.retro import Retro
 from git_retrospector.git_utils import (
     get_current_commit_hash,
     get_origin_branch_or_commit,
 )
+from git_retrospector.parser import process_retro  # Import process_retro
+
+import toml
 
 # Configure logging
 logging.basicConfig(
@@ -33,32 +34,32 @@ def run_tests(target_name, iteration_count):
     Runs tests on a range of commits in the target repository.
 
         target_name (str): The name of the target repository (used to locate the
-            config file).
+            retro file).
         iteration_count (int): The number of commits to go back in history.
     """
-    # Load config
-    config_file_path = os.path.join("retros", target_name, "config.toml")
+    # Load retro
+    config_file_path = os.path.join("retros", target_name, "retro.toml")
     try:
         with open(config_file_path) as config_file:
             config_data = toml.load(config_file)
-        config = Config(**config_data)
-        target_repo = str(config.repo_under_test_path)
-        test_output_dir = str(config.test_result_dir)
+        retro = Retro(**config_data)
+        target_repo = str(retro.repo_under_test_path)
+        test_output_dir = str(retro.test_output_dir_full)
     except FileNotFoundError:
         click.echo(
-            f"Error: Config file not found: {config_file_path}\n"
+            f"Error: Retro file not found: {config_file_path}\n"
             f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
         )
-        logging.error(f"Config file not found: {config_file_path}")
+        logging.error(f"Retro file not found: {config_file_path}")
         return
     except (KeyError, toml.TomlDecodeError) as e:
-        logging.error(f"Error reading config file: {e}")
+        logging.error(f"Error reading retro file: {e}")
         return
     except ValidationError as e:
-        logging.error(f"Error validating config file: {e}")
+        logging.error(f"Error validating retro file: {e}")
         return
 
-    commits_log_path = Path(config.test_result_dir) / "commits.log"
+    commits_log_path = Path(retro.get_test_output_dir()) / "commits.log"
     with open(commits_log_path, "w") as commits_log:
         origin_branch = get_origin_branch_or_commit(target_repo)
 
@@ -69,6 +70,9 @@ def run_tests(target_name, iteration_count):
         )
 
         logging.info(f"Running tests for {target_name} ({iteration_count} iterations)")
+
+        # Create the base test-output directory
+        os.makedirs(retro.get_test_output_dir(), exist_ok=True)
 
         # Use get_current_commit_hash to get the initial HEAD *before* the loop
         current_commit = get_current_commit_hash(target_repo)
@@ -89,24 +93,24 @@ def run_tests(target_name, iteration_count):
                 if not commit_hash:
                     continue  # Skip this iteration
 
+                # Create commit-specific output and tool-summary directories
+                os.makedirs(retro.get_test_output_dir(commit_hash), exist_ok=True)
+                os.makedirs(retro.get_tool_summary_dir(commit_hash), exist_ok=True)
+
                 process_commit(
-                    target_repo, commit_hash, test_output_dir, origin_branch, config
+                    target_repo, commit_hash, test_output_dir, origin_branch, retro
                 )
-                commits_log.write(f"{commit_hash}\\n")
+                commits_log.write(f"{commit_hash}\n")
             except subprocess.CalledProcessError as e:
                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
                 continue
 
 
-def analyze_test_results(retro_name):
+def analyze_test_results(retro):
     """
-    Analyzes test results for a given retro.
+    Analyzes test results for a given retro. Now accepts a retro object.
     """
-    # Import here to avoid circular dependency
-    from git_retrospector.parser import process_retro
-
-    process_retro(retro_name)
-    generate_commit_diffs(os.path.join("retros", retro_name))
+    process_retro(retro)
 
 
 def find_test_summary_files(commit_dir):
@@ -147,11 +151,11 @@ def count_failed_tests(csv_file):
 
 def load_config_for_retro(retro_name):
     """Loads the configuration for a given retro."""
-    config_file_path = os.path.join("retros", retro_name, "config.toml")
+    config_file_path = os.path.join("retros", retro_name, "retro.toml")
     with open(config_file_path) as config_file:
         config_data = toml.load(config_file)
-    config = Config(**config_data)
-    return config.repo_under_test_owner, config.repo_under_test_name
+    retro = Retro(**config_data)
+    return retro.repo_under_test_owner, retro.repo_under_test_name
 
 
 def get_user_confirmation(failed_count):
@@ -166,6 +170,10 @@ def get_user_confirmation(failed_count):
 
 def process_csv_files(repo, playwright_csv, vitest_csv):
     """Processes CSV files and creates issues for failed tests."""
+    logging.info(
+        f"process_csv_files called with repo: {repo}, "
+        f"playwright_csv: {playwright_csv}, vitest_csv: {vitest_csv}"
+    )
     for csv_file in [playwright_csv, vitest_csv]:
         if csv_file:
             with open(csv_file) as f:
@@ -178,18 +186,30 @@ def process_csv_files(repo, playwright_csv, vitest_csv):
                             f"Stack Trace: {row.get('Stack Trace', 'No stack trace')}\n"
                             # TODO: Add screenshot link if available
                         )
+                        logging.info(f"Creating issue with title: {title}")
                         repo.create_issue(title=title, body=body)
 
 
 def should_create_issues(retro_name, commit_hash):
     """Checks if conditions are met to create GitHub issues."""
+    logging.info(
+        f"""should_create_issues called with retro_name: {
+            retro_name
+            }, commit_hash: {commit_hash}"""
+    )
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
     if not os.path.exists(commit_dir):
+        logging.info(f"Commit directory does not exist: {commit_dir}")
         return False
 
-    playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+    try:
+        playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+    except FileNotFoundError as e:
+        logging.info(f"Error finding test summary files: {e}")
+        return False
 
     if not playwright_csv and not vitest_csv:
+        logging.info("No CSV files found")
         return False
 
     failed_count = 0
@@ -197,10 +217,12 @@ def should_create_issues(retro_name, commit_hash):
         if csv_file:
             count = count_failed_tests(csv_file)
             if count == -1:
+                logging.info(f"Error reading CSV file: {csv_file}")
                 return False  # Stop if there was an error reading a file
             failed_count += count
 
     if failed_count == 0:
+        logging.info("No failed tests found")
         return False
 
     return get_user_confirmation(failed_count)
@@ -248,6 +270,8 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
 
 def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
     """
+    from github import Github, GithubException
+
     Uploads a screenshot to the GitHub repository.
 
     Args:
@@ -306,21 +330,28 @@ def create_issues_for_commit(retro_name, commit_hash):
     """
     Creates GitHub issues for failed tests in a specific commit.
     """
+    logging.info(
+        "create_issues_for_commit called with retro_name: "
+        f"{retro_name}, commit_hash: {commit_hash}"
+    )
     if not should_create_issues(retro_name, commit_hash):
-        logging.info("should_create_issues returned False")  # TODO: Convert to CLI
+        logging.info("should_create_issues returned False")
         return
 
     repo_owner, repo_name = load_config_for_retro(retro_name)
     if not repo_owner or not repo_name:
-        logging.info("Could not load repo owner or name")  # TODO: Convert to CLI
+        logging.info("Could not load repo owner or name")
         return
 
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
-    create_github_issues(repo_owner, repo_name, *find_test_summary_files(commit_dir))
+    playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
+    create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv)
 
 
 def handle_no_command():
-    command_completer = WordCompleter(["init", "run", "issues"], ignore_case=True)
+    command_completer = WordCompleter(
+        ["init", "run", "issues", "parse"], ignore_case=True
+    )
     command_str = prompt(
         "Enter a command (or press Ctrl-D to exit): ", completer=command_completer
     )
@@ -333,6 +364,8 @@ def handle_no_command():
             handle_run_command(command_parts)
         elif command_name == "issues":
             handle_issues_command(command_parts)
+        elif command_name == "parse":  # Add handling for the 'parse' command
+            handle_parse_command(command_parts)
         else:
             click.echo(f"Unknown command: {command_name}")
 
@@ -381,11 +414,28 @@ def handle_issues_command(command_parts):
         click.echo("Usage: issues <retro_name> <commit_hash>")
 
 
+def handle_parse_command(command_parts):  # New function to handle 'parse'
+    if len(command_parts) == 2:
+        retro_name = command_parts[1]
+        config_file_path = os.path.join("retros", retro_name, "retro.toml")
+        try:
+            with open(config_file_path) as config_file:
+                config_data = toml.load(config_file)
+            retro = Retro(**config_data)
+            process_retro(retro)  # Pass the retro object
+        except FileNotFoundError:
+            click.echo(f"Error: Retro file not found: {config_file_path}")
+        except (KeyError, toml.TomlDecodeError, ValidationError) as e:
+            click.echo(f"Error reading or validating retro file: {e}")
+    else:
+        click.echo("Usage: parse <retro_name>")
+
+
 @click.group()
 def cli():
     """Run tests on a range of commits and parse results."""
     if not os.environ.get("TEST_ENVIRONMENT") and not any(
-        arg in sys.argv for arg in ["init", "run", "issues"]
+        arg in sys.argv for arg in ["init", "run", "issues", "parse"]
     ):
         handle_no_command()
 
@@ -395,7 +445,7 @@ def cli():
 @click.argument("target_repo_path")
 def init(target_name, target_repo_path):
     """Initialize a target repository."""
-    Config.initialize(target_name, target_repo_path)
+    Retro.initialize(target_name, target_repo_path)
 
 
 @cli.command()
@@ -411,22 +461,40 @@ def init(target_name, target_repo_path):
 def run(target_name, iterations, commit_dir):
     """Run tests on a target repository."""
     if not any(arg in sys.argv for arg in ["-i", "--iterations", "-c", "--commit_dir"]):
-        config_file_path = os.path.join("retros", target_name, "config.toml")
+        config_file_path = os.path.join("retros", target_name, "retro.toml")
         try:
             with open(config_file_path) as config_file:
                 config_data = toml.load(config_file)
-            click.echo(f"Retro config for '{target_name}':")
-            click.echo(toml.dumps(config_data))  # Display the config
+            retro = Retro(**config_data)
+            click.echo(f"Retro retro for '{target_name}':")
+            click.echo(toml.dumps(config_data))  # Display the retro
         except FileNotFoundError:
             click.echo(
-                f"Error: Config file not found: {config_file_path}\n"
+                f"Error: Retro file not found: {config_file_path}\n"
                 f"Please run: './retrospector.py init {target_name} <target_repo_path>'"
             )
+            return  # Added return
         except (KeyError, toml.TomlDecodeError, ValidationError) as e:
-            click.echo(f"Error reading or validating config file: {e}")
+            click.echo(f"Error reading or validating retro file: {e}")
+            return  # Added return
     else:
+        config_file_path = os.path.join("retros", target_name, "retro.toml")
+        try:
+            with open(config_file_path) as config_file:  # Added retro loading
+                config_data = toml.load(config_file)
+            retro = Retro(**config_data)
+        except (
+            FileNotFoundError,
+            KeyError,
+            toml.TomlDecodeError,
+            ValidationError,
+        ) as e:
+            click.echo(f"Error loading retro: {e}")
+            return
+        # Create the base test-output directory
+        os.makedirs(retro.get_test_output_dir(), exist_ok=True)
         run_tests(target_name, iterations)
-        analyze_test_results(target_name)
+        analyze_test_results(retro)  # Pass retro
 
 
 @cli.command()
@@ -435,6 +503,22 @@ def run(target_name, iterations, commit_dir):
 def issues(retro_name, commit_hash):
     """Create GitHub issues for failed tests in a specific commit."""
     create_issues_for_commit(retro_name, commit_hash)
+
+
+@cli.command("parse")  # New 'parse' command
+@click.argument("retro_name")
+def parse(retro_name):
+    """Process test results for a given retro."""
+    config_file_path = os.path.join("retros", retro_name, "retro.toml")
+    try:
+        with open(config_file_path) as config_file:
+            config_data = toml.load(config_file)
+        retro = Retro(**config_data)
+        process_retro(retro)  # Pass the retro object
+    except FileNotFoundError:
+        click.echo(f"Error: Retro file not found: {config_file_path}")
+    except (KeyError, toml.TomlDecodeError, ValidationError) as e:
+        click.echo(f"Error reading or validating retro file: {e}")
 
 
 if __name__ == "__main__":

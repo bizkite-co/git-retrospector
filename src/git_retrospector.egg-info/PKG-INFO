@@ -6,3 +6,4 @@ Author-email: mstouffer <m.ztouffer@gmail.com>
 Requires-Python: >=3.7
 Requires-Dist: pydantic
 Requires-Dist: argparse
+Requires-Dist: toml
