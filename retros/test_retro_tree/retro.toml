@@ -1,6 +1,0 @@
-name = "test_retro_tree"
-repo_under_test_path = "PosixPath('/tmp/tmp7x_f0ex7')"
-test_result_dir = "retros/test_retro_tree/test-output"
-test_output_dir = "test-output"
-
-[output_paths]

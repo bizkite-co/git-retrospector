@@ -19,12 +19,11 @@ dependencies = [
 
 [tool.hatch.envs.default]
 [tool.hatch.envs.default.scripts]
-test = "TEST_ENVIRONMENT=true python3 -m unittest discover -s tests"
-test-cov = "TEST_ENVIRONMENT=true coverage run -m unittest discover -s tests && coverage report"
-test-save = "TEST_ENVIRONMENT=true python3 -m unittest discover -s tests > latest-test-results.txt 2>&1"
-test-cov-save = "TEST_ENVIRONMENT=true coverage run -m unittest discover -s tests > latest-test-results.txt 2>&1"
-handterm = "rm -rf repos/handterm/test-output && python src/git_retrospector/retrospector.py run handterm -i {args}"
-# handterm = "python src/git_retrospector/retrospector.py run {args}"
+test = "python3 -m unittest discover -s tests"
+test-cov = "coverage run -m unittest discover -s tests && coverage report"
+test-save = "python3 -m unittest discover -s tests > latest-test-results.txt 2>&1"
+test-cov-save = "coverage run -m unittest discover -s tests > latest-test-results.txt 2>&1"
+handterm = "rm -rf repos/handterm/test-output && python src/git_retrospector/retrospector.py run handterm -i {args} && tree retros/handterm"
 
 [[tool.hatch.envs.default.matrix]]
 python = ["3.12"]

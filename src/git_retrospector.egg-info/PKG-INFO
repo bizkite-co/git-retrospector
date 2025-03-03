@@ -7,3 +7,6 @@ Requires-Python: >=3.7
 Requires-Dist: pydantic
 Requires-Dist: argparse
 Requires-Dist: toml
+Requires-Dist: PyGithub
+Requires-Dist: click
+Requires-Dist: prompt_toolkit

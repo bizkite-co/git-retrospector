@@ -445,7 +445,24 @@ def cli():
 @click.argument("target_repo_path")
 def init(target_name, target_repo_path):
     """Initialize a target repository."""
-    Retro.initialize(target_name, target_repo_path)
+    try:
+        # Get project root from environment variable if available, otherwise use git
+        project_root = os.environ.get("PROJECT_ROOT")
+        logging.info(f"init: PROJECT_ROOT from env: {project_root}")
+        if not project_root:
+            project_root = subprocess.check_output(
+                ["git", "rev-parse", "--show-toplevel"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+            ).strip()
+            logging.info(f"init: project_root from git: {project_root}")
+        Retro.initialize(target_name, target_repo_path, project_root)
+    except subprocess.CalledProcessError:
+        raise click.ClickException(
+            "Not in a git repository. Run 'git init' in your project root."
+        ) from None
+    except ValueError as e:
+        raise click.ClickException(str(e)) from None
 
 
 @cli.command()

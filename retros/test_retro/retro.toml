@@ -1,6 +1,0 @@
-name = "test_retro"
-repo_under_test_path = "PosixPath('/tmp/tmpebvt6112')"
-test_result_dir = "/tmp/tmpebvt6112"
-test_output_dir = "test-output"
-
-[output_paths]

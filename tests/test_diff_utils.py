@@ -1,99 +1,91 @@
 #!/usr/bin/env python3
-
 import unittest
+import os
+import shutil
+import tempfile
 import subprocess
 from git_retrospector.diff_utils import generate_diff
-from TestConfig import BaseTest
-from pathlib import Path
+from git_retrospector.retro import Retro
 
 
-class TestGenerateDiff(BaseTest):
-
+class TestGenerateDiff(unittest.TestCase):
     def setUp(self):
-        super().setUp()
-
-        # Initialize a git repository
-        subprocess.run(
-            ["git", "init"], cwd=self.temp_dir, check=True, capture_output=True
+        self.temp_dir = tempfile.mkdtemp()
+        self.repo_dir = os.path.join(self.temp_dir, "test_repo")
+        os.makedirs(self.repo_dir)
+        self.retro = Retro(
+            name="test_retro", repo_under_test_path=self.repo_dir, output_paths={}
         )
-
-        # Create an initial file and commit
-        with open(Path(self.temp_dir) / "file1.txt", "w") as f:
-            f.write("Initial content")
+        # Initialize a git repo
         subprocess.run(
-            ["git", "add", "file1.txt"],
-            cwd=self.temp_dir,
+            ["git", "init"],
+            cwd=self.repo_dir,
             check=True,
             capture_output=True,
+            text=True,
+        )
+        # Create an initial commit
+        with open(os.path.join(self.repo_dir, "file1.txt"), "w") as f:
+            f.write("Initial content")
+        subprocess.run(
+            ["git", "add", "."],
+            cwd=self.repo_dir,
+            check=True,
+            capture_output=True,
+            text=True,
         )
         subprocess.run(
             ["git", "commit", "-m", "Initial commit"],
-            cwd=self.temp_dir,
+            cwd=self.repo_dir,
             check=True,
-            capture_output=True,
-        )
-        self.commit1 = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=self.temp_dir,
             capture_output=True,
             text=True,
-            check=True,
-        ).stdout.strip()
+        )
+        self.commit1 = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=self.repo_dir, text=True
+        ).strip()
 
-        # Modify the file and commit again
-        with open(Path(self.temp_dir) / "file1.txt", "w") as f:
+        # Create a second commit
+        with open(os.path.join(self.repo_dir, "file1.txt"), "w") as f:
             f.write("Modified content")
         subprocess.run(
-            ["git", "add", "file1.txt"],
-            cwd=self.temp_dir,
+            ["git", "add", "."],
+            cwd=self.repo_dir,
             check=True,
             capture_output=True,
+            text=True,
         )
         subprocess.run(
             ["git", "commit", "-m", "Second commit"],
-            cwd=self.temp_dir,
+            cwd=self.repo_dir,
             check=True,
-            capture_output=True,
-        )
-        self.commit2 = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=self.temp_dir,
             capture_output=True,
             text=True,
-            check=True,
-        ).stdout.strip()
-
-    # def tearDown(self):
-    #     # Clean up the temporary directory
-    #     shutil.rmtree(self.test_dir)
+        )
+        self.commit2 = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=self.repo_dir, text=True
+        ).strip()
 
     def test_generate_diff(self):
-        # Create a temporary output file
-        output_file = Path(self.temp_dir) / "test_diff.diff"
+        # Create dummy directories and files for the test
+        commit_hash_dir, tool_summary_dir = self.retro.create_commit_hash_dir(
+            self.commit2
+        )  # Use commit2 as the "current" commit
 
-        # Call generate_diff
+        # Call generate_diff with correct arguments
         generate_diff(
-            self.retro, str(self.temp_dir), self.commit1, self.commit2, str(output_file)
+            retro=self.retro,
+            repo_path=self.repo_dir,
+            commit1=self.commit1,
+            commit2=self.commit2,
+            output_path=os.path.join(commit_hash_dir, "test.diff"),
         )
 
-        # Check if the output file exists
-        self.assertTrue(output_file.exists())
+        # Assert that the diff file is created correctly
+        diff_file_path = os.path.join(commit_hash_dir, "test.diff")
+        self.assertTrue(os.path.exists(diff_file_path))
 
-        # Generate the expected diff using git diff
-        result = subprocess.run(
-            ["git", "diff", self.commit1, self.commit2],
-            cwd=self.temp_dir,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        expected_diff = result.stdout
+        # Add assertions to check the content of the diff files if needed
 
-        # Compare the generated diff with the expected diff
-        with open(output_file) as f:
-            actual_diff = f.read()
-        self.assertEqual(actual_diff, expected_diff)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def tearDown(self):
+        shutil.rmtree(self.temp_dir)

@@ -61,7 +61,7 @@ graph TD
     A[User runs git-retrospector] --> B(Clone/Checkout Remote Repo);
     B --> C{Iterate through Commits};
     C --> D[Checkout Commit];
-    D --> E[Run Tests (Vitest/Playwright)];
+    D --> E[Run Tests Vitest/Playwright];
     E --> F(Test Output to Remote Repo's test-results/);
     F --> G[Move Test Results to Local Retro Directory];
     G --> H{Next Commit?};
