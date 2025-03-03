@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
 import logging
-import os
 
 
 def process_commit(target_repo, commit_hash, output_dir, origin_branch, retro):
@@ -21,8 +20,6 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, retro):
     if origin_branch is None:
         return
 
-    original_cwd = os.getcwd()  # Store the original CWD
-
     try:
         # Use git --work-tree to checkout commit into the target_repo directory
         subprocess.run(
@@ -38,11 +35,10 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, retro):
         return  # need to return here, so we don't try to run tests if checkout failed
 
     try:
-        os.chdir(target_repo)  # Change to the target repo directory
         retro.run_tests("vitest", commit_hash)
         retro.run_tests("playwright", commit_hash)
     finally:
-        os.chdir(original_cwd)  # Restore original CWD
+        pass
 
     try:
         subprocess.run(

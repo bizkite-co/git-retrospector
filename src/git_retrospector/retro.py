@@ -20,7 +20,7 @@ class Retro(BaseModel):  # Renamed class
     output_paths: dict
     test_output_dir: str = "test-output"
     test_output_dir_full: str = Field(default="", exclude=True)
-    # original_cwd: str = "" # Removed
+    original_cwd: str = ""  # Removed
     test_result_dir: str = ""
 
     def __init__(
@@ -43,7 +43,7 @@ class Retro(BaseModel):  # Renamed class
         self.test_output_dir_full = str(
             Path(self.repo_under_test_path) / self.test_output_dir
         )
-        # self.original_cwd = os.getcwd()  # Store original CWD - NO LONGER NEEDED
+        self.original_cwd = os.getcwd()  # Store original CWD
 
         # Determine config file path
         if not Retro.is_test_environment():
