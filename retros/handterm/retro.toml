@@ -7,6 +7,12 @@ github_project_owner = "bizkite-co"
 test_result_dir = "retros/handterm"
 test_output_dir = "test-output"
 
-[output_paths]
-vitest = "test-output/vitest.xml"
-playwright = "test-output/playwright.xml"
+[[test_runners]]
+name = "vitest"
+command = "npm run test:vitest-log"
+output_dir = "vitest-output"
+
+[[test_runners]]
+name = "playwright"
+command = "npm run test:playwright-log"
+output_dir = "test-results"

@@ -1,4 +1,5 @@
 * USE SPACES INSTEAD OF TABS.
+* DON'T FIX LINTING ERRORS WHILE EDITING.
 * Read linting errors and _avoid making new_ linting errors, but don't fix existing linting errors until all tests pass.
 * This Python 3 project has a `./.venv` virtual environment that was created with `uv`.
 * We use `unittest` for unit tests. Create a unit test for each function and run the unit test.
