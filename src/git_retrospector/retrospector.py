@@ -5,6 +5,7 @@ import subprocess
 import sys
 import os  # Import the os module
 from pathlib import Path
+import time
 
 import click
 from github import Github, GithubException
@@ -29,13 +30,14 @@ logging.basicConfig(
 )
 
 
-def run_tests(target_name, iteration_count):
+def run_tests(target_name, iteration_count, keep=False):
     """
     Runs tests on a range of commits in the target repository.
 
         target_name (str): The name of the target repository (used to locate the
             retro file).
         iteration_count (int): The number of commits to go back in history.
+        keep (bool): Whether to keep the checked out commit.
     """
     # Load retro
     config_file_path = os.path.join("retros", target_name, "retro.toml")
@@ -44,7 +46,7 @@ def run_tests(target_name, iteration_count):
             config_data = toml.load(config_file)
         retro = Retro(**config_data)
         target_repo = str(retro.repo_under_test_path)
-        test_output_dir = str(retro.test_output_dir_full)
+        test_output_dir = str(retro.local_test_output_dir_full)
     except FileNotFoundError:
         click.echo(
             f"Error: Retro file not found: {config_file_path}\n"
@@ -93,17 +95,42 @@ def run_tests(target_name, iteration_count):
                 if not commit_hash:
                     continue  # Skip this iteration
 
-                # Create commit-specific output and tool-summary directories
-                os.makedirs(retro.get_test_output_dir(commit_hash), exist_ok=True)
-                os.makedirs(retro.get_tool_summary_dir(commit_hash), exist_ok=True)
-
                 process_commit(
                     target_repo, commit_hash, test_output_dir, origin_branch, retro
+                )
+                time.sleep(1)  # Added delay
+                os.sync()
+                logging.info(
+                    f"""Contents of {
+                        retro.get_test_output_dir(commit_hash)
+                    }: {
+                        list(retro.get_test_output_dir(commit_hash).glob('*'))
+                    }"""
+                )
+                logging.info(
+                    f"""Contents of {
+                        retro.get_test_output_dir(commit_hash)
+                        } using os.listdir: {
+                        os.listdir(retro.get_test_output_dir(commit_hash))
+                        }"""
                 )
                 commits_log.write(f"{commit_hash}\n")
             except subprocess.CalledProcessError as e:
                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
                 continue
+
+        if not keep:
+            try:
+                subprocess.run(
+                    ["git", "checkout", "--force", origin_branch],
+                    cwd=target_repo,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Error during git checkout {origin_branch}: {e}")
+                return
 
 
 def analyze_test_results(retro):
@@ -384,7 +411,6 @@ def handle_run_command(command_parts):
         target_name = command_parts[1]
         #  Handle optional arguments for run
         iterations = 10
-        commit_dir = None
         if "-i" in command_parts:
             try:
                 iterations_index = command_parts.index("-i") + 1
@@ -394,15 +420,21 @@ def handle_run_command(command_parts):
                 return
         if "-c" in command_parts:
             try:
-                commit_dir_index = command_parts.index("-c") + 1
-                commit_dir = command_parts[commit_dir_index]
+                # Removed unused variable assignment and index operation:
+                command_parts.index("-c")
             except IndexError:
                 click.echo("Invalid value for commit_dir")
                 return
-        run(target_name, iterations, commit_dir)
+        if "-k" in command_parts or "--keep" in command_parts:
+            keep = True
+        else:
+            keep = False
+        run_tests(target_name, iterations, keep)
 
     else:
-        click.echo("Usage: run <target_name> [-i iterations] [-c commit_dir]")
+        click.echo(
+            "Usage: run <target_name> [-i iterations] [-c commit_dir] [-k/--keep]"
+        )
 
 
 def handle_issues_command(command_parts):
@@ -475,7 +507,10 @@ def init(target_name, target_repo_path):
     help="Number of iterations (default: 10)",
 )
 @click.option("-c", "--commit_dir", help="Specific commit directory to process")
-def run(target_name, iterations, commit_dir):
+@click.option(
+    "-k", "--keep", is_flag=True, help="Keep checked out commit after running tests"
+)
+def run(target_name, iterations, commit_dir, keep):
     """Run tests on a target repository."""
     if not any(arg in sys.argv for arg in ["-i", "--iterations", "-c", "--commit_dir"]):
         config_file_path = os.path.join("retros", target_name, "retro.toml")
@@ -510,7 +545,7 @@ def run(target_name, iterations, commit_dir):
             return
         # Create the base test-output directory
         os.makedirs(retro.get_test_output_dir(), exist_ok=True)
-        run_tests(target_name, iterations)
+        run_tests(target_name, iterations, keep)
         analyze_test_results(retro)  # Pass retro
 
 

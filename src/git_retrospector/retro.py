@@ -17,20 +17,19 @@ class Retro(BaseModel):  # Renamed class
     name: str
     repo_under_test_path: DirectoryPath
     # test_result_dir: str  # Removed
-    output_paths: dict
+    # output_paths: dict # Removed
     test_output_dir: str = "test-output"
-    test_output_dir_full: str = Field(default="", exclude=True)
-    original_cwd: str = ""  # Removed
+    local_test_output_dir_full: str = Field(default="", exclude=True)
+    original_cwd: str = ""
     test_result_dir: str = ""
+    test_runners: list[dict] = Field(default=[], exclude=True)
 
-    def __init__(
-        self, *, name: str, repo_under_test_path: str, output_paths: dict, **data
-    ):
+    def __init__(self, *, name: str, repo_under_test_path: str, **data):
         # Initialize Pydantic model first
         super().__init__(
             name=name,
             repo_under_test_path=repo_under_test_path,
-            output_paths=output_paths,
+            # output_paths=output_paths, # Removed
             **data,
         )
         logging.info(
@@ -39,9 +38,9 @@ class Retro(BaseModel):  # Renamed class
             }, repo_under_test_path={self.repo_under_test_path}"""
         )
 
-        # Set the test_output_dir_full attribute
-        self.test_output_dir_full = str(
-            Path(self.repo_under_test_path) / self.test_output_dir
+        # Set the local_test_output_dir_full attribute
+        self.local_test_output_dir_full = str(
+            Path("retros") / self.name / self.test_output_dir
         )
         self.original_cwd = os.getcwd()  # Store original CWD
 
@@ -81,8 +80,8 @@ class Retro(BaseModel):  # Renamed class
 
         # Construct the full path to the test output directory
         # This is used internally by methods that need the absolute path
-        values["test_output_dir_full"] = str(
-            Path(values["repo_under_test_path"]) / values["test_output_dir"]
+        values["local_test_output_dir_full"] = str(
+            Path("retros") / values["name"] / values["test_output_dir"]
         )
 
         logging.info(f"create_and_resolve_paths: returning values={values}")
@@ -116,13 +115,13 @@ class Retro(BaseModel):  # Renamed class
     def print_full_paths(self):
         """Prints the full paths of repo_under_test_path and test_output_dir."""
         # print(f"Repository Under Test Path: {self.repo_under_test_path}")
-        # print(f"Test Output Directory: {self.test_output_dir_full}")
+        # print(f"Test Output Directory: {self.local_test_output_dir_full}")
 
     def get_test_output_dir(self, commit_hash=None):
         """Returns the test output directory path."""
         if commit_hash:
-            return Path(self.test_output_dir_full) / commit_hash
-        return Path(self.test_output_dir_full)
+            return Path(self.local_test_output_dir_full) / commit_hash
+        return Path(self.local_test_output_dir_full)
 
     def get_tool_summary_dir(self, commit_hash):
         """Returns the tool summary directory path for a specific commit."""
@@ -191,31 +190,46 @@ class Retro(BaseModel):  # Renamed class
         """Returns the path to the retro.toml file."""
         return Path(self.get_retro_dir()) / "retro.toml"
 
-    def move_test_results(self, commit_hash):
-        source = self.repo_under_test_path / "test-results"
-        destination = Path(self.get_retro_dir()) / "test-output" / commit_hash
-        logging.info(f"Moving test results from {source} to {destination}")
-        if destination.exists():
-            logging.info(f"Removing existing destination directory: {destination}")
-            shutil.rmtree(destination)
-        if source.exists():  # Only copy if the source exists
+    def move_test_results_to_local(self, commit_hash, output_dir):
+        """
+        Moves test results from the remote repository's test-results directory
+        to the local repository's test-output directory, organized by commit hash.
+        """
+        remote = (
+            self.repo_under_test_path / output_dir
+        )  # Expected location in remote repo
+        local = (
+            Path(self.get_retro_dir()) / "test-output" / commit_hash
+        )  # Local destination
+        logging.info(f"Moving test results from {remote} to {local}")
+        logging.info(f"Remote exists: {remote.exists()}")  # Added logging
+        logging.info(f"Remote contents: {list(remote.glob('*'))}")
+        # TODO: Clear the local hash only at creation
+        # if local.exists():
+        #     logging.info(f"Removing existing destination directory: {local}")
+        #     shutil.rmtree(local)
+        if remote.exists():  # Only copy if the source exists
             try:
-                shutil.copytree(str(source), str(destination), dirs_exist_ok=True)
-                shutil.rmtree(str(source))  # Remove source after copy
+                shutil.copytree(str(remote), str(local), dirs_exist_ok=True)
+                logging.info(f"Local contents after copy: {list(local.glob('*'))}")
+                shutil.rmtree(str(remote))  # Remove source after copy
+                logging.info(
+                    f"Local contents after rmtree of remote: {list(local.glob('*'))}"
+                )  # NEW LOG LINE
                 logging.info(
                     "Successfully moved test results from %s to %s",
-                    source,
-                    destination,
+                    remote,
+                    local,
                 )
             except Exception as e:
                 logging.error(
                     "Error moving test results: %s, %s, %s",
-                    source,
-                    destination,
+                    remote,
+                    local,
                     e,
                 )
         else:
-            logging.warning(f"Source directory {source} does not exist. Skipping copy.")
+            logging.warning(f"Source directory {remote} does not exist. Skipping copy.")
 
     def rename_file(self, old_path, new_name):
         new_path = Path(old_path).parent / new_name
@@ -241,58 +255,26 @@ class Retro(BaseModel):  # Renamed class
             text=True,
         )
 
-    def run_tests(self, test_type, commit_hash):
-        """Runs tests of the specified type."""
-        if test_type == "vitest":
-            command = [
-                "npm",
-                "run",
-                "test",
-                "--",
-                "--run",
-                "--reporter=junit",
-                f"--outputFile={self.repo_under_test_path}/test-results/vitest.xml",
-            ]
-        elif test_type == "playwright":
-            command = [
-                "npx",
-                "playwright",
-                "test",
-                "--reporter=junit",
-            ]
-            # Set environment variable for Playwright output
-            os.environ["PLAYWRIGHT_JUNIT_OUTPUT_NAME"] = str(
-                self.repo_under_test_path / "test-results" / "playwright.xml"
-            )
-        else:
-            raise ValueError(f"Unknown test type: {test_type}")
-
+    def run_tests(self, test_runner, commit_hash):
+        command = test_runner["command"]
         try:
-            logging.info(f"Running {test_type} with command: {command}")
+            logging.info(f"Running tests with command: {command}")
             self.change_to_repo_dir()
-            # Use relative path for output file, and redirect stdout/stderr
-            log_file_path = self.get_test_output_dir(commit_hash) / f"{test_type}.log"
-            with open(log_file_path, "w") as outfile:
-                subprocess.run(
-                    command,
-                    check=True,
-                    stdout=outfile,
-                    stderr=subprocess.STDOUT,
-                    text=True,
-                    cwd=self.repo_under_test_path,
-                )
-
+            logging.info(f"Current working directory: {os.getcwd()}")
+            subprocess.run(
+                command,
+                shell=True,
+                check=True,
+                text=True,
+                cwd=self.repo_under_test_path,
+            )
         except subprocess.CalledProcessError as e:
-            logging.error(f"Error running {test_type}: {e}")
+            logging.error(f"Error running tests: {e}")
             logging.error(f"stdout: {e.stdout}")
             logging.error(f"stderr: {e.stderr}")
             raise e
         finally:
             self.restore_cwd()
-            if test_type == "playwright":
-                # Unset the environment variable
-                if "PLAYWRIGHT_JUNIT_OUTPUT_NAME" in os.environ:
-                    del os.environ["PLAYWRIGHT_JUNIT_OUTPUT_NAME"]
 
     @staticmethod
     def initialize(target_name, target_repo_path, project_root):
@@ -336,11 +318,7 @@ class Retro(BaseModel):  # Renamed class
             raise ValueError(f"Invalid target repository path: {target_repo_path}")
 
         # Create a Retro instance with resolved paths
-        retro = Retro(
-            name=target_name,
-            repo_under_test_path=target_repo_path,
-            output_paths={},
-        )
+        retro = Retro(name=target_name, repo_under_test_path=target_repo_path)
 
         # Convert Path objects to strings for TOML serialization
         config_data = retro.model_dump()

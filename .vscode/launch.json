@@ -2,19 +2,61 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File with Arguments",
-            "type": "debugpy",
+            "name": "Run example-remote -i 1",
+            "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "module": "hatch",
+            "args": [
+                "run",
+                "default:example-remote",
+                "1"
+            ],
             "console": "integratedTerminal",
-            "args": "${command:pickArgs}"
+            "justMyCode": false
         },
         {
             "name": "Run handterm -i 1",
-            "type": "debugpy",
+            "type": "python",
+            "request": "launch",
+            "module": "hatch",
+            "args": [
+                "run",
+                "default:handterm",
+                "-i",
+                "1"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug retrospector.py (handterm)",
+            "type": "python",
             "request": "launch",
             "program": "src/git_retrospector/retrospector.py",
-            "args": ["run", "handterm", "-i", "1"]
+            "args": [
+                "run",
+                "handterm",
+                "-i",
+                "1"
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug retrospector.py (example-remote)",
+            "type": "python",
+            "request": "launch",
+            "program": "src/git_retrospector/retrospector.py",
+            "args": [
+                "run",
+                "example-remote",
+                "-i",
+                "1"
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
         }
     ]
 }

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import subprocess
 import logging
+import toml
+import time
 
 
 def process_commit(target_repo, commit_hash, output_dir, origin_branch, retro):
@@ -35,8 +37,25 @@ def process_commit(target_repo, commit_hash, output_dir, origin_branch, retro):
         return  # need to return here, so we don't try to run tests if checkout failed
 
     try:
-        retro.run_tests("vitest", commit_hash)
-        retro.run_tests("playwright", commit_hash)
+        # Load the retro.toml file to access test_runners
+        config_file_path = retro.get_config_file_path()
+        with open(config_file_path) as config_file:
+            config_data = toml.load(config_file)
+
+        # Ensure test_runners exists and is a list
+        test_runners = config_data.get("test_runners", [])
+        if not isinstance(test_runners, list):
+            logging.error("test_runners in retro.toml must be a list")
+            return
+
+        for test_runner in test_runners:
+            try:
+                retro.run_tests(test_runner, commit_hash)
+            except Exception:  # Removed unused variable 'e'
+                logging.info("commit_processor test_runner: {e}")
+            finally:
+                retro.move_test_results_to_local(commit_hash, test_runner["output_dir"])
+                time.sleep(1)  # Added delay
     finally:
         pass
 
