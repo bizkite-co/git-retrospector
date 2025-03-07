@@ -77,5 +77,19 @@ However, there are persistent issues:
 
 The primary remaining issue is the disappearing `vitest.xml` file. Since this appears to be caused by something external to `git-retrospector`, and since the user has instructed me not to fix issues within the `handterm` environment, I am unable to fully resolve this. However, the core functionality of `git-retrospector` is working as intended, given the constraints.
 
+## Playwright Sripts
+
+I would like this script to work in it's attempt to set the `PLAYWRIGHT_REPORTERS` environment variable right before using it, but I haven't been able to get it to do that:
+
+`unset PLAYWRIGHT_REPORTERS; PLAYWRIGHT_REPORTERS='junit'; PLAYWRIGHT_OUTPUT_DIR=test-results; PLAYWRIGHT_JUNIT_OUTPUT_NAME='playwright.xml'; PLAYWRIGHT_TEST=1; npx playwright test`
+
+So, the `playwright.xml` still doesn't get output unless the `reporters` is set like this:
+
+* Find replace in the remote `playwright.config.ts`
+
+`  reporter: [['list'], ['junit' ]],`
+
+I think that means we have to `sed` that replacement, or something similar in Python.
+
 ## Next Steps
 * Create a new task to continue debugging and troubleshooting.
