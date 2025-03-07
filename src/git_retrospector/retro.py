@@ -15,34 +15,34 @@ class Retro(BaseModel):  # Renamed class
     """
 
     name: str
-    repo_under_test_path: DirectoryPath
+    remote_repo_path: DirectoryPath  # Renamed
     # test_result_dir: str  # Removed
     # output_paths: dict # Removed
     test_output_dir: str = "test-output"
     local_test_output_dir_full: str = Field(default="", exclude=True)
-    original_cwd: str = ""
+    local_cwd: str = ""  # Renamed
     test_result_dir: str = ""
     test_runners: list[dict] = Field(default=[], exclude=True)
 
-    def __init__(self, *, name: str, repo_under_test_path: str, **data):
+    def __init__(self, *, name: str, remote_repo_path: str, **data):  # Renamed
         # Initialize Pydantic model first
         super().__init__(
             name=name,
-            repo_under_test_path=repo_under_test_path,
+            remote_repo_path=remote_repo_path,  # Renamed
             # output_paths=output_paths, # Removed
             **data,
         )
         logging.info(
             f"""Retro init: name={
                 self.name
-            }, repo_under_test_path={self.repo_under_test_path}"""
+            }, remote_repo_path={self.remote_repo_path}"""  # Renamed
         )
 
         # Set the local_test_output_dir_full attribute
         self.local_test_output_dir_full = str(
             Path("retros") / self.name / self.test_output_dir
         )
-        self.original_cwd = os.getcwd()  # Store original CWD
+        self.local_cwd = os.getcwd()  # Store original CWD  # Renamed
 
         # Determine config file path
         if not Retro.is_test_environment():
@@ -74,8 +74,8 @@ class Retro(BaseModel):  # Renamed class
             values["test_output_dir"] = "test-output"
 
         # Resolve paths to absolute paths
-        values["repo_under_test_path"] = str(
-            Path(values["repo_under_test_path"]).resolve()
+        values["remote_repo_path"] = str(  # Renamed
+            Path(values["repo_under_test_path"]).resolve()  # Renamed
         )
 
         # Construct the full path to the test output directory
@@ -196,13 +196,13 @@ class Retro(BaseModel):  # Renamed class
         to the local repository's test-output directory, organized by commit hash.
         """
         remote = (
-            self.repo_under_test_path / output_dir
+            self.remote_repo_path / output_dir  # Renamed
         )  # Expected location in remote repo
         local = (
-            Path(self.get_retro_dir()) / "test-output" / commit_hash
+            Path(self.local_test_output_dir_full) / commit_hash  # Modified
         )  # Local destination
         logging.info(f"Moving test results from {remote} to {local}")
-        logging.info(f"Remote exists: {remote.exists()}")  # Added logging
+        logging.info(f"Remote exists: {remote.exists()}")
         logging.info(f"Remote contents: {list(remote.glob('*'))}")
         # TODO: Clear the local hash only at creation
         # if local.exists():
@@ -215,7 +215,7 @@ class Retro(BaseModel):  # Renamed class
                 shutil.rmtree(str(remote))  # Remove source after copy
                 logging.info(
                     f"Local contents after rmtree of remote: {list(local.glob('*'))}"
-                )  # NEW LOG LINE
+                )
                 logging.info(
                     "Successfully moved test results from %s to %s",
                     remote,
@@ -237,47 +237,126 @@ class Retro(BaseModel):  # Renamed class
 
     def change_to_repo_dir(self):
         """Changes the current working directory to the target repo."""
-        logging.info(f"Changing CWD to: {self.repo_under_test_path}")
-        os.chdir(self.repo_under_test_path)
+        logging.info(f"Changing CWD to: {self.remote_repo_path}")  # Renamed
+        os.chdir(self.remote_repo_path)  # Renamed
 
     def restore_cwd(self):
         """Restores the current working directory to the original value."""
-        logging.info(f"Restoring CWD to: {self.original_cwd}")
-        os.chdir(self.original_cwd)
+        logging.info(f"Restoring CWD to: {self.local_cwd}")  # Renamed
+        os.chdir(self.local_cwd)  # Renamed
 
     def init_repo(self):
         """Initializes a git repository in the repo_under_test_path."""
         subprocess.run(
             ["git", "init"],
-            cwd=self.repo_under_test_path,
+            cwd=self.remote_repo_path,  # Renamed
             check=True,
             capture_output=True,
             text=True,
         )
 
     def run_tests(self, test_runner, commit_hash):
+        """
+        Runs tests for a specific commit using the specified test runner.
+
+        Args:
+            test_runner (dict): A dictionary containing the test runner configuration
+                (e.g., name, command, output_dir).
+            commit_hash (str): The hash of the commit to run tests against.
+
+        **IMPORTANT: We intentionally
+        DO NOT use check=True in the subprocess.run() call.**
+        This is because the test runners themselves (e.g., vitest, playwright) might
+        return a non-zero exit code if tests fail.  We *expect* this to happen, and
+        we want to capture the output (stdout and stderr) even when tests fail.
+        Raising an exception here would prevent us from capturing the output and
+        moving the test results, and would halt the retrospector process prematurely.
+        We handle non-zero exit codes by logging a warning, but we *do not* treat
+        them as fatal errors within the retrospector. The errors are in the *target*
+        repository's tests, not in the retrospector itself.
+        """
         command = test_runner["command"]
+        # Create a log file path for this specific test run
+        logging.info(f"Test runner name: {test_runner['name']}")
+        log_file_path = (
+            Path(self.local_test_output_dir_full)
+            / commit_hash
+            / f"{test_runner['name']}.log"
+        )
+        logging.info(f"Initial log_file_path: {log_file_path}")
+        logging.info(f"log_file_path.parent: {log_file_path.parent}")
+        logging.info(f"log_file_path.parent.exists(): {log_file_path.parent.exists()}")
+
+        # Create a dummy file to test if file creation works
+        dummy_file_path = (
+            Path(self.local_test_output_dir_full) / commit_hash / "dummy.txt"
+        )
+        logging.info(f"dummy_file_path: {dummy_file_path}")
+        try:
+            with open(dummy_file_path, "w") as f:
+                f.write("This is a dummy file.")
+                f.flush()  # Force write
+            logging.info(f"Created dummy file: {dummy_file_path}")
+        except Exception as e:
+            logging.error(f"Failed to create dummy file: {e}")
+            #  Don't return here. Continue to see if the rest works.
+
         try:
             logging.info(f"Running tests with command: {command}")
             self.change_to_repo_dir()
-            logging.info(f"Current working directory: {os.getcwd()}")
-            subprocess.run(
+            logging.info(
+                f"Current working directory after change_to_repo_dir: {os.getcwd()}"
+            )
+            logging.info(f"log_file_path after cwd change: {log_file_path}")
+
+            # Capture both stdout and stderr
+            result = subprocess.run(
                 command,
                 shell=True,
-                check=True,
                 text=True,
-                cwd=self.repo_under_test_path,
+                cwd=self.remote_repo_path,
+                capture_output=True,  # Capture the output
             )
-        except subprocess.CalledProcessError as e:
+            # Check the return code and log a warning if it's non-zero
+            if result.returncode != 0:
+                logging.warning(
+                    f"""Test runner '{
+                        test_runner['name']
+                        }' returned non-zero exit code: {
+                        result.returncode}"""
+                )
+
+        except Exception as e:
             logging.error(f"Error running tests: {e}")
             logging.error(f"stdout: {e.stdout}")
             logging.error(f"stderr: {e.stderr}")
-            raise e
+            raise e  # Re-raise the exception
         finally:
+            # Always write the log file, regardless of success or failure
+            logging.info(f"Entering finally block. log_file_path: {log_file_path}")
+            try:
+                with open(log_file_path, "w") as log_file:
+                    logging.info(f"Opened log file for writing: {log_file_path}")
+                    if "result" in locals():
+                        log_file.write(f"STDOUT:\n{result.stdout}\n")
+                        log_file.write(f"STDERR:\n{result.stderr}\n")
+                        log_file.write(f"RETURN CODE: {result.returncode}\n")
+                        logging.info("Wrote result to log file.")
+                    elif "e" in locals():
+                        log_file.write(f"STDOUT:\n{locals().e.stdout}\n")
+                        log_file.write(f"STDERR:\n{locals().e.stderr}\n")
+                        logging.info("Wrote exception to log file.")
+                    log_file.flush()
+                    logging.info("Flushed log file.")
+            except Exception as e:
+                logging.error(f"Could not write to log file {log_file_path}: {e}")
             self.restore_cwd()
+            logging.info(f"Current working directory after restore_cwd: {os.getcwd()}")
 
     @staticmethod
-    def initialize(target_name, target_repo_path, project_root):
+    def initialize(
+        target_name, target_repo_path, project_root
+    ):  # Modified parameter name
         """
         Initializes a retro for a given target repository.
 
@@ -287,6 +366,7 @@ class Retro(BaseModel):  # Renamed class
         Args:
             target_name (str): The name of the target.
             target_repo_path (str): The path to the target repository.
+            # Modified parameter name
             project_root (str): The absolute path to the project root.
 
         Raises:
@@ -295,7 +375,7 @@ class Retro(BaseModel):  # Renamed class
         logging.info(
             f"""Initializing retro with: target_name={
                 target_name
-                }, target_repo_path={
+            }, target_repo_path={
                 target_repo_path}, project_root={project_root}"""
         )
 
@@ -317,8 +397,8 @@ class Retro(BaseModel):  # Renamed class
         if not os.path.isdir(target_repo_path):
             raise ValueError(f"Invalid target repository path: {target_repo_path}")
 
-        # Create a Retro instance with resolved paths
-        retro = Retro(name=target_name, repo_under_test_path=target_repo_path)
+        # Create a Retro instance with resolved paths, using the correct key
+        retro = Retro(name=target_name, remote_repo_path=target_repo_path)  # Modified
 
         # Convert Path objects to strings for TOML serialization
         config_data = retro.model_dump()
