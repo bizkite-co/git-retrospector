@@ -113,8 +113,8 @@ class Retro(BaseModel):  # Renamed class
         shutil.rmtree(commit_hash_dir, ignore_errors=True)
 
     def print_full_paths(self):
-        """Prints the full paths of repo_under_test_path and test_output_dir."""
-        # print(f"Repository Under Test Path: {self.repo_under_test_path}")
+        """Prints the full paths of remote_repo_path and test_output_dir."""
+        # print(f"Repository Under Test Path: {self.remote_repo_path}")
         # print(f"Test Output Directory: {self.local_test_output_dir_full}")
 
     def get_test_output_dir(self, commit_hash=None):
@@ -246,7 +246,7 @@ class Retro(BaseModel):  # Renamed class
         os.chdir(self.local_cwd)  # Renamed
 
     def init_repo(self):
-        """Initializes a git repository in the repo_under_test_path."""
+        """Initializes a git repository in the remote_repo_path."""
         subprocess.run(
             ["git", "init"],
             cwd=self.remote_repo_path,  # Renamed

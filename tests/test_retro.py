@@ -42,7 +42,7 @@ class TestRetro(unittest.TestCase):  # Inherit directly from unittest.TestCase
 
     def test_move_test_results_to_local(self):
         """Test that test results are moved correctly."""
-        # 1. Create a dummy test-results directory in the repo_under_test_path
+        # 1. Create a dummy test-results directory in the remote_repo_path
         test_results_dir = Path(self.repo_dir) / "test-results"
         test_results_dir.mkdir()
         vitest_xml = test_results_dir / "vitest.xml"  # Changed to vitest.xml

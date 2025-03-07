@@ -1,7 +1,7 @@
 [
     {
         "name": "handterm",
-        "repo_under_test_path": "/home/mstouffer/repos/handterm-proj/handterm",
+        "remote_repo_path": "/home/mstouffer/repos/handterm-proj/handterm",
         "output_paths": {
             "vitest": "test-output/vitest.xml",
             "playwright": "test-output/playwright.xml"
@@ -15,7 +15,7 @@
     },
     {
         "name": "handterm",
-        "repo_under_test_path": "/home/mstouffer/repos/handterm-proj/handterm",
+        "remote_repo_path": "/home/mstouffer/repos/handterm-proj/handterm",
         "output_paths": {
             "vitest": "test-output/vitest.xml",
             "playwright": "test-output/playwright.xml"

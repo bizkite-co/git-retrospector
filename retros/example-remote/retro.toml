@@ -1,5 +1,5 @@
 name = "example-remote"
-repo_under_test_path = "/home/mstouffer/repos/handterm-proj/handterm"
+remote_repo_path = "/home/mstouffer/repos/handterm-proj/handterm"
 github_remote = "git@github.com:bizkite-co/handterm.git"
 github_project_name = "Handterm"
 github_project_number = 4
