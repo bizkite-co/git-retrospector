@@ -1,49 +1,55 @@
-#!/usr/bin/env python3
 import unittest
+import tempfile
 import os
 import shutil
-import tempfile
-from git_retrospector.parser import _process_vitest_log, _process_playwright_xml
-from git_retrospector.retro import Retro
 
-# from TestConfig import BaseTest # No longer needed
+from git_retrospector.parser import parse_author_line, parse_commit_line
+from git_retrospector.git_retrospector import Retro
 
 
-class TestParser(unittest.TestCase):  # Inherit directly from unittest.TestCase
+class TestParser(unittest.TestCase):
     def setUp(self):
+        # Create a temporary directory for testing
         self.temp_dir = tempfile.mkdtemp()
         self.repo_dir = os.path.join(self.temp_dir, "test_repo")
         os.makedirs(self.repo_dir)
+
+        # Initialize a Retro object for testing
         self.retro = Retro(
-            name="test_retro", repo_under_test_path=self.repo_dir, output_paths={}
+            name="test_retro", remote_repo_path=self.repo_dir, test_output_dir="."
         )
-        self.commit_hash = "test_commit"
-        # Create the necessary directory structure
-        self.commit_hash_dir, self.tool_summary_dir = self.retro.create_commit_hash_dir(
-            self.commit_hash
-        )
-
-    def test_process_vitest_log(self):
-        # Create a dummy vitest.log file (replace with actual test data)
-        vitest_log_path = self.retro.get_vitest_log_path(self.commit_hash)
-        with open(vitest_log_path, "w") as f:
-            f.write("test log content")
-
-        # Call _process_vitest_log
-        _process_vitest_log(self.retro, vitest_log_path, self.commit_hash)
-
-        # Add assertions to check the expected outcome
-
-    def test_process_playwright_xml(self):
-        # Create a dummy playwright.xml file (replace with actual test data)
-        playwright_xml_path = self.retro.get_playwright_xml_path(self.commit_hash)
-        with open(playwright_xml_path, "w") as f:
-            f.write("<testsuite></testsuite>")  # Minimal valid XML
-
-        # Call _process_playwright_xml
-        _process_playwright_xml(self.retro, playwright_xml_path, self.commit_hash)
-
-        # Add assertions to check the expected outcome
 
     def tearDown(self):
+        # Clean up the temporary directory after each test
         shutil.rmtree(self.temp_dir)
+
+    def test_parse_author_line(self):
+        line = "Author: John Doe <john.doe@example.com>"
+        author_name, author_email = parse_author_line(line)
+        self.assertEqual(author_name, "John Doe")
+        self.assertEqual(author_email, "john.doe@example.com")
+
+    def test_parse_author_line_no_email(self):
+        line = "Author: John Doe"
+        with self.assertRaises(ValueError):
+            parse_author_line(line)
+
+    def test_parse_author_line_empty(self):
+        line = ""
+        with self.assertRaises(ValueError):
+            parse_author_line(line)
+
+    def test_parse_commit_line(self):
+        line = "commit 1234567890abcdef"
+        commit_hash = parse_commit_line(line)
+        self.assertEqual(commit_hash, "1234567890abcdef")
+
+    def test_parse_commit_line_no_hash(self):
+        line = "commit"
+        with self.assertRaises(ValueError):
+            parse_commit_line(line)
+
+    def test_parse_commit_line_empty(self):
+        line = ""
+        with self.assertRaises(ValueError):
+            parse_commit_line(line)

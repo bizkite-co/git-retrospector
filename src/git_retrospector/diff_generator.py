@@ -31,13 +31,13 @@ def generate_commit_diffs(retro: Retro) -> None:
             try:
                 logging.debug(
                     f"""repo_path: {
-                        retro.repo_under_test_path
+                        retro.remote_repo_path
                     }, commit1: {previous_commit},"""
                     f"commit2: {current_commit}, output_path: {output_path}"
                 )
                 generate_diff(
                     retro,
-                    str(retro.repo_under_test_path),
+                    str(retro.remote_repo_path),
                     previous_commit,
                     current_commit,
                     output_path,

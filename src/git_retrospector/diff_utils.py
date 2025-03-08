@@ -42,7 +42,7 @@ def generate_diff(
 
     # Create the output directory if it doesn't exist
     # output_path is something like:
-    # retros/test_retro_instance/test-output/hash2/hash1_hash2.diff
+    # retros/test_retro/test-output/hash2/hash1_hash2.diff
     commit_hash = Path(output_path).parts[-2]
     commit_hash_dir, _ = retro.get_commit_hash_dir(commit_hash)
     retro.create_output_dirs(commit_hash=commit_hash)

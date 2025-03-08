@@ -4,14 +4,14 @@ github_remote = "git@github.com:bizkite-co/handterm.git"
 github_project_name = "Handterm"
 github_project_number = 4
 github_project_owner = "bizkite-co"
-test_result_dir = "retros/handterm"
+test_result_dir = "retros/example-remote"
 
 [[test_runners]]
 name = "vitest"
-command = "npm run test:vitest-log"
+command = "mkdir -p vitest-output; rm -rf vitest-output/*; npx vitest --run --reporter=junit --outputFile=vitest-output/vitest.xml"
 output_dir = "vitest-output"
 
 [[test_runners]]
-name = "playwright"
-command = "npm run test:playwright-log"
+name = "playwright-single"
+command = "PLAYWRIGHT_OUTPUT_DIR=test-results PLAYWRIGHT_REPORTERS='junit' PLAYWRIGHT_JUNIT_OUTPUT_NAME='test-results/playwright.xml' PLAYWRIGHT_TEST=1 npx playwright test src/e2e/github-command-navigation.spec.ts"
 output_dir = "test-results"

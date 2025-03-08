@@ -30,6 +30,43 @@ logging.basicConfig(
 )
 
 
+def process_single_commit(
+    target_repo, commit_hash, test_output_dir, origin_branch, retro
+):
+    """Processes a single commit."""
+    try:
+        process_commit(
+            retro.remote_repo_path,
+            commit_hash,
+            test_output_dir,
+            origin_branch,
+            retro,
+        )
+        time.sleep(1)  # Added delay
+        os.sync()
+
+        # Check if the commit output directory exists before listing contents
+        commit_output_dir = retro.get_test_output_dir(commit_hash)
+        if commit_output_dir.exists():
+            logging.debug(
+                f"""Contents of {commit_output_dir}: {
+                    list(commit_output_dir.glob('*'))
+                }"""
+            )
+            logging.debug(
+                f"""Contents of {commit_output_dir} using os.listdir: {
+                    os.listdir(commit_output_dir)
+                    }"""
+            )
+        else:
+            logging.warning(
+                f"Commit output directory does not exist: {commit_output_dir}"
+            )
+
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error processing commit {commit_hash}: {e}")
+
+
 def run_tests(target_name, iteration_count, keep=False):
     """
     Runs tests on a range of commits in the target repository.
@@ -45,7 +82,7 @@ def run_tests(target_name, iteration_count, keep=False):
         with open(config_file_path) as config_file:
             config_data = toml.load(config_file)
         retro = Retro(**config_data)
-        target_repo = str(retro.repo_under_test_path)
+        target_repo = str(retro.remote_repo_path)  # Renamed
         test_output_dir = str(retro.local_test_output_dir_full)
     except FileNotFoundError:
         click.echo(
@@ -95,25 +132,10 @@ def run_tests(target_name, iteration_count, keep=False):
                 if not commit_hash:
                     continue  # Skip this iteration
 
-                process_commit(
+                process_single_commit(
                     target_repo, commit_hash, test_output_dir, origin_branch, retro
                 )
-                time.sleep(1)  # Added delay
-                os.sync()
-                logging.info(
-                    f"""Contents of {
-                        retro.get_test_output_dir(commit_hash)
-                    }: {
-                        list(retro.get_test_output_dir(commit_hash).glob('*'))
-                    }"""
-                )
-                logging.info(
-                    f"""Contents of {
-                        retro.get_test_output_dir(commit_hash)
-                        } using os.listdir: {
-                        os.listdir(retro.get_test_output_dir(commit_hash))
-                        }"""
-                )
+
                 commits_log.write(f"{commit_hash}\n")
             except subprocess.CalledProcessError as e:
                 logging.error(f"Error processing commit {current_commit}~{i}: {e}")
@@ -182,7 +204,7 @@ def load_config_for_retro(retro_name):
     with open(config_file_path) as config_file:
         config_data = toml.load(config_file)
     retro = Retro(**config_data)
-    return retro.repo_under_test_owner, retro.repo_under_test_name
+    return retro.remote_repo_path, retro.github_project_name  # Changed
 
 
 def get_user_confirmation(failed_count):
@@ -400,8 +422,8 @@ def handle_no_command():
 def handle_init_command(command_parts):
     if len(command_parts) == 3:
         target_name = command_parts[1]
-        target_repo_path = command_parts[2]
-        init(target_name, target_repo_path)
+        remote_repo_path = command_parts[2]  # Renamed
+        init(target_name, remote_repo_path)  # Renamed
     else:
         click.echo("Usage: init <target_name> <target_repo_path>")
 
@@ -474,8 +496,8 @@ def cli():
 
 @cli.command()
 @click.argument("target_name")
-@click.argument("target_repo_path")
-def init(target_name, target_repo_path):
+@click.argument("remote_repo_path")  # Renamed
+def init(target_name, remote_repo_path):  # Renamed
     """Initialize a target repository."""
     try:
         # Get project root from environment variable if available, otherwise use git
@@ -488,7 +510,7 @@ def init(target_name, target_repo_path):
                 stderr=subprocess.DEVNULL,
             ).strip()
             logging.info(f"init: project_root from git: {project_root}")
-        Retro.initialize(target_name, target_repo_path, project_root)
+        Retro.initialize(target_name, remote_repo_path, project_root)  # Renamed
     except subprocess.CalledProcessError:
         raise click.ClickException(
             "Not in a git repository. Run 'git init' in your project root."
@@ -532,7 +554,7 @@ def run(target_name, iterations, commit_dir, keep):
     else:
         config_file_path = os.path.join("retros", target_name, "retro.toml")
         try:
-            with open(config_file_path) as config_file:  # Added retro loading
+            with open(config_file_path) as config_file:
                 config_data = toml.load(config_file)
             retro = Retro(**config_data)
         except (

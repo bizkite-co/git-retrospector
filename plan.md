@@ -91,5 +91,7 @@ So, the `playwright.xml` still doesn't get output unless the `reporters` is set 
 
 I think that means we have to `sed` that replacement, or something similar in Python.
 
+The `sed` operation needs to be a script that we can run on the remote repo every time we check out a new commit, and we have to `git reset *` or whatever will obliterate all changes on the repo before we exit the comit.
+
 ## Next Steps
 * Create a new task to continue debugging and troubleshooting.

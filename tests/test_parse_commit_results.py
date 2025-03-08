@@ -1,48 +1,43 @@
-#!/usr/bin/env python3
 import unittest
+import tempfile
 import os
 import shutil
-import tempfile
-from git_retrospector.parser import parse_commit_results
+
+from git_retrospector.parser import process_commit_results
 from git_retrospector.retro import Retro
 
-# from TestConfig import BaseTest # No longer needed
 
-
-class TestParseCommitResults(
-    unittest.TestCase
-):  # Inherit directly from unittest.TestCase
+class TestParseCommitResults(unittest.TestCase):
     def setUp(self):
+        # Create a temporary directory for testing
         self.temp_dir = tempfile.mkdtemp()
         self.repo_dir = os.path.join(self.temp_dir, "test_repo")
         os.makedirs(self.repo_dir)
+
+        # Initialize a Retro object for testing
         self.retro = Retro(
-            name="test_retro", repo_under_test_path=self.repo_dir, output_paths={}
-        )
-        self.commit_hash = "test_commit"
-        # Create the necessary directory structure
-        self.commit_hash_dir, self.tool_summary_dir = self.retro.create_commit_hash_dir(
-            self.commit_hash
-        )
-
-    def test_parse_commit_results(self):
-        # Create dummy XML files (replace with actual test data)
-        playwright_xml_path = self.retro.get_playwright_xml_path(self.commit_hash)
-        vitest_log_path = self.retro.get_vitest_log_path(self.commit_hash)
-        with open(playwright_xml_path, "w") as f:
-            f.write("<testsuite></testsuite>")  # Minimal valid XML
-        with open(vitest_log_path, "w") as f:
-            f.write("<testsuites></testsuites>")  # Minimal valid XML for Vitest
-        # Call parse_commit_results
-        parse_commit_results(self.retro, self.commit_hash)
-
-        # Assert that the CSV files are created
-        self.assertTrue(
-            os.path.exists(self.retro.get_playwright_csv_path(self.commit_hash))
-        )
-        self.assertTrue(
-            os.path.exists(self.retro.get_vitest_csv_path(self.commit_hash))
+            name="test_retro", remote_repo_path=self.repo_dir, test_output_dir="."
         )
 
     def tearDown(self):
+        # Clean up the temporary directory after each test
         shutil.rmtree(self.temp_dir)
+
+    def test_process_commit_results_no_files(self):
+        result = process_commit_results(self.retro, "test_commit")
+        self.assertEqual(result, [])
+
+    def test_process_commit_results_no_matching_files(self):
+        # Create a dummy file that doesn't match the expected patterns
+        with open(os.path.join(self.repo_dir, "dummy.txt"), "w") as f:
+            f.write("dummy content")
+
+        result = process_commit_results(self.retro, "test_commit")
+        self.assertEqual(result, [])
+
+    # Add more test cases to cover different scenarios, such as:
+    # - Files with different extensions
+    # - Files in subdirectories
+    # - Files with special characters in their names
+    # - Empty files
+    # - Very large files

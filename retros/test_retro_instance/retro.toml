@@ -1,5 +1,0 @@
-name = "test_retro_instance"
-remote_repo_path = "PosixPath('/tmp/tmpqnugpsgz/test_repo')"
-test_output_dir = "test-output"
-original_cwd = "/home/mstouffer/repos/handterm-proj/git-retrospector"
-test_result_dir = ""

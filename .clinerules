@@ -1,5 +1,5 @@
 * USE SPACES INSTEAD OF TABS.
-* DON'T FIX LINTING ERRORS WHILE EDITING.
+* DON'T FIX LINTING ERRORS UNTIL ALL TESTS PASS.
 * Read linting errors and _avoid making new_ linting errors, but don't fix existing linting errors until all tests pass.
 * This Python 3 project has a `./.venv` virtual environment that was created with `uv`.
 * We use `unittest` for unit tests. Create a unit test for each function and run the unit test.
@@ -18,7 +18,7 @@
     NUMBER  TITLE                 STATE  ID
     3       Git Retro             open   PVT_kwDOBVBs1c4Ay6ev
 * Use the GitHub CLI for GitHub actions not available in the MCP.
-* When the Issue is complete and the user agrees, create commit with a multi-line commit message starting with `fix #<issue number>`. That will close the issue.
+* When the Issue is complete and the user agrees, create commit with a multi-line commit message starting with `fix #<issue number> <issue title>`. That will close the issue.
 * Use modern Python best practices as much as possible.
 * Suggest Python best practices improvements.
 * Use industry standard best practice coding standards and file structure and naming conventions.

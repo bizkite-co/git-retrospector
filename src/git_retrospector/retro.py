@@ -7,6 +7,7 @@ import subprocess
 from pydantic import BaseModel, DirectoryPath, model_validator, Field
 import toml
 import logging
+import time
 
 
 class Retro(BaseModel):  # Renamed class
@@ -38,12 +39,6 @@ class Retro(BaseModel):  # Renamed class
             }, remote_repo_path={self.remote_repo_path}"""  # Renamed
         )
 
-        # Set the local_test_output_dir_full attribute
-        self.local_test_output_dir_full = str(
-            Path("retros") / self.name / self.test_output_dir
-        )
-        self.local_cwd = os.getcwd()  # Store original CWD  # Renamed
-
         # Determine config file path
         if not Retro.is_test_environment():
             config_file_path = os.path.join("retros", self.name, "retro.toml")
@@ -58,6 +53,17 @@ class Retro(BaseModel):  # Renamed class
                 # Write config to file
                 with open(config_file_path, "w") as config_file:
                     toml.dump(config_data, config_file)
+
+        # Set the local_test_output_dir_full attribute
+        self.local_cwd = (
+            os.getcwd()
+        )  # Store original CWD and set before local_test_output_dir_full # Renamed
+        self.local_test_output_dir_full = str(
+            Path(self.local_cwd)
+            / "retros"
+            / self.name
+            / self.test_output_dir  # Modified
+        )
 
     def get_retro_dir(self):
         return os.path.join("retros", self.name)
@@ -75,7 +81,7 @@ class Retro(BaseModel):  # Renamed class
 
         # Resolve paths to absolute paths
         values["remote_repo_path"] = str(  # Renamed
-            Path(values["repo_under_test_path"]).resolve()  # Renamed
+            Path(values["remote_repo_path"]).resolve()  # Renamed and corrected
         )
 
         # Construct the full path to the test output directory
@@ -102,9 +108,33 @@ class Retro(BaseModel):  # Renamed class
         return commit_hash_dir, tool_summary_dir
 
     def create_commit_hash_dir(self, commit_hash):
-        commit_hash_dir, tool_summary_dir = self.get_commit_hash_dir(commit_hash)
+        commit_hash_dir = os.path.join(self.get_test_output_dir(commit_hash))
+        tool_summary_dir = os.path.join(commit_hash_dir, "tool-summary")
+        logging.info(f"create_commit_hash_dir: commit_hash_dir = {commit_hash_dir}")
         os.makedirs(commit_hash_dir, exist_ok=True)
         os.makedirs(tool_summary_dir, exist_ok=True)
+        # Explicitly check and wait for directory creation
+        timeout = 5  # seconds
+        start_time = time.time()
+        while (
+            not os.path.exists(commit_hash_dir) and time.time() - start_time < timeout
+        ):
+            time.sleep(0.1)
+        if not os.path.exists(commit_hash_dir):
+            logging.error(
+                f"Commit hash directory did not get created: {commit_hash_dir}"
+            )
+        while (
+            not os.path.exists(tool_summary_dir) and time.time() - start_time < timeout
+        ):
+            time.sleep(0.1)
+        if not os.path.exists(tool_summary_dir):
+            logging.error(
+                f"Tool summary directory did not get created: {tool_summary_dir}"
+            )
+
+        logging.info(f"commit_hash_dir exists: {os.path.exists(commit_hash_dir)}")
+        logging.info(f"tool_summary_dir exists: {os.path.exists(tool_summary_dir)}")
         return commit_hash_dir, tool_summary_dir
 
     @staticmethod
@@ -114,8 +144,9 @@ class Retro(BaseModel):  # Renamed class
 
     def print_full_paths(self):
         """Prints the full paths of remote_repo_path and test_output_dir."""
-        # print(f"Repository Under Test Path: {self.remote_repo_path}")
+        # print(f"Repository Under Test Path: {self.remote_repo_path}") # Renamed
         # print(f"Test Output Directory: {self.local_test_output_dir_full}")
+        pass
 
     def get_test_output_dir(self, commit_hash=None):
         """Returns the test output directory path."""
@@ -198,24 +229,19 @@ class Retro(BaseModel):  # Renamed class
         remote = (
             self.remote_repo_path / output_dir  # Renamed
         )  # Expected location in remote repo
-        local = (
-            Path(self.local_test_output_dir_full) / commit_hash  # Modified
-        )  # Local destination
+        local = Path(self.local_test_output_dir_full) / commit_hash  # Local destination
         logging.info(f"Moving test results from {remote} to {local}")
-        logging.info(f"Remote exists: {remote.exists()}")
+        logging.info(f"Remote exists: {remote.exists()}")  # Added logging
         logging.info(f"Remote contents: {list(remote.glob('*'))}")
-        # TODO: Clear the local hash only at creation
-        # if local.exists():
-        #     logging.info(f"Removing existing destination directory: {local}")
-        #     shutil.rmtree(local)
         if remote.exists():  # Only copy if the source exists
             try:
                 shutil.copytree(str(remote), str(local), dirs_exist_ok=True)
-                logging.info(f"Local contents after copy: {list(local.glob('*'))}")
+                # logging.info(f"Local contents after copy: {list(local.glob('*'))}")
+                logging.info(f"Removing remote directory: {str(remote)}")
                 shutil.rmtree(str(remote))  # Remove source after copy
-                logging.info(
-                    f"Local contents after rmtree of remote: {list(local.glob('*'))}"
-                )
+                # logging.info(
+                #     f"Local contents after rmtree of remote: {list(local.glob('*'))}"
+                # )  # NEW LOG LINE
                 logging.info(
                     "Successfully moved test results from %s to %s",
                     remote,
@@ -264,8 +290,7 @@ class Retro(BaseModel):  # Renamed class
                 (e.g., name, command, output_dir).
             commit_hash (str): The hash of the commit to run tests against.
 
-        **IMPORTANT: We intentionally
-        DO NOT use check=True in the subprocess.run() call.**
+        **IMPORTANT: We intentionally DO NOT use check=True in the subprocess.run().**
         This is because the test runners themselves (e.g., vitest, playwright) might
         return a non-zero exit code if tests fail.  We *expect* this to happen, and
         we want to capture the output (stdout and stderr) even when tests fail.
@@ -284,22 +309,6 @@ class Retro(BaseModel):  # Renamed class
             / f"{test_runner['name']}.log"
         )
         logging.info(f"Initial log_file_path: {log_file_path}")
-        logging.info(f"log_file_path.parent: {log_file_path.parent}")
-        logging.info(f"log_file_path.parent.exists(): {log_file_path.parent.exists()}")
-
-        # Create a dummy file to test if file creation works
-        dummy_file_path = (
-            Path(self.local_test_output_dir_full) / commit_hash / "dummy.txt"
-        )
-        logging.info(f"dummy_file_path: {dummy_file_path}")
-        try:
-            with open(dummy_file_path, "w") as f:
-                f.write("This is a dummy file.")
-                f.flush()  # Force write
-            logging.info(f"Created dummy file: {dummy_file_path}")
-        except Exception as e:
-            logging.error(f"Failed to create dummy file: {e}")
-            #  Don't return here. Continue to see if the rest works.
 
         try:
             logging.info(f"Running tests with command: {command}")
@@ -323,7 +332,8 @@ class Retro(BaseModel):  # Renamed class
                     f"""Test runner '{
                         test_runner['name']
                         }' returned non-zero exit code: {
-                        result.returncode}"""
+                        result.returncode
+                    }"""
                 )
 
         except Exception as e:
@@ -355,7 +365,7 @@ class Retro(BaseModel):  # Renamed class
 
     @staticmethod
     def initialize(
-        target_name, target_repo_path, project_root
+        target_name, remote_repo_path, project_root
     ):  # Modified parameter name
         """
         Initializes a retro for a given target repository.
@@ -365,8 +375,7 @@ class Retro(BaseModel):  # Renamed class
 
         Args:
             target_name (str): The name of the target.
-            target_repo_path (str): The path to the target repository.
-            # Modified parameter name
+            remote_repo_path (str): The path to the target repository.
             project_root (str): The absolute path to the project root.
 
         Raises:
@@ -375,8 +384,8 @@ class Retro(BaseModel):  # Renamed class
         logging.info(
             f"""Initializing retro with: target_name={
                 target_name
-            }, target_repo_path={
-                target_repo_path}, project_root={project_root}"""
+            }, remote_repo_path={
+                remote_repo_path}, project_root={project_root}"""  # Modified
         )
 
         retro_dir = os.path.join(project_root, "retros", target_name)
@@ -394,11 +403,13 @@ class Retro(BaseModel):  # Renamed class
         logging.info(f"Created directory: {retro_dir}")
 
         # Check if target_repo_path is a valid directory
-        if not os.path.isdir(target_repo_path):
-            raise ValueError(f"Invalid target repository path: {target_repo_path}")
+        if not os.path.isdir(remote_repo_path):  # Modified
+            raise ValueError(
+                f"Invalid target repository path: {remote_repo_path}"
+            )  # Modified
 
         # Create a Retro instance with resolved paths, using the correct key
-        retro = Retro(name=target_name, remote_repo_path=target_repo_path)  # Modified
+        retro = Retro(name=target_name, remote_repo_path=remote_repo_path)  # Modified
 
         # Convert Path objects to strings for TOML serialization
         config_data = retro.model_dump()
