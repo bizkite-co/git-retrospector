@@ -13,5 +13,5 @@ output_dir = "vitest-output"
 
 [[test_runners]]
 name = "playwright-single"
-command = "PLAYWRIGHT_OUTPUT_DIR=test-results PLAYWRIGHT_REPORTERS='junit' PLAYWRIGHT_JUNIT_OUTPUT_NAME='test-results/playwright.xml' PLAYWRIGHT_TEST=1 npx playwright test src/e2e/github-command-navigation.spec.ts"
+command = "PLAYWRIGHT_OUTPUT_DIR=test-results PLAYWRIGHT_REPORTERS='junit' PLAYWRIGHT_JUNIT_OUTPUT_NAME='test-results/playwright.xml' PLAYWRIGHT_TEST=1 npx playwright test"
 output_dir = "test-results"

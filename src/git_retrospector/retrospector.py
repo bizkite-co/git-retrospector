@@ -209,7 +209,10 @@ def get_user_confirmation(failed_count):
     """Gets user confirmation to proceed with creating issues."""
     while True:
         user_input = input(
-            f"Found {failed_count} failed tests. Create GitHub issues? (y/n): "
+            coloredlogs.ansi_wrap(
+                f"Found {failed_count} failed tests. Create GitHub issues? (y/n): ",
+                level="WARNING",
+            )
         ).lower()
         if user_input in ["y", "n"]:
             return user_input == "y"

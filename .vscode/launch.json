@@ -15,21 +15,7 @@
             "justMyCode": false
         },
         {
-            "name": "Run handterm -i 1",
-            "type": "python",
-            "request": "launch",
-            "module": "hatch",
-            "args": [
-                "run",
-                "default:handterm",
-                "-i",
-                "1"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
-        {
-            "name": "Debug run (handterm)",
+            "name": "Debug RUN (handterm)",
             "type": "python",
             "request": "launch",
             "program": "src/git_retrospector/retrospector.py",
