@@ -59,6 +59,20 @@
             "justMyCode": false
         },
         {
+            "name": "Debug ISSUES (handterm)",
+            "type": "python",
+            "request": "launch",
+            "program": "src/git_retrospector/retrospector.py",
+            "args": [
+                "issues",
+                "handterm",
+                "4fdc219",
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
+        },
+        {
             "name": "Debug PARSE (example-remote)",
             "type": "python",
             "request": "launch",

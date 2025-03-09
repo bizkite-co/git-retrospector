@@ -22,12 +22,10 @@ from git_retrospector.git_utils import (
 from git_retrospector.parser import process_retro  # Import process_retro
 
 import toml
+import coloredlogs
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+coloredlogs.install(level="INFO", fmt="%(message)s")
 
 
 def process_single_commit(
@@ -384,12 +382,14 @@ def create_issues_for_commit(retro_name, commit_hash):
         f"{retro_name}, commit_hash: {commit_hash}"
     )
     if not should_create_issues(retro_name, commit_hash):
-        logging.info("should_create_issues returned False")
+        logging.warning(
+            f"Commit {commit_hash} does not exist on the '{retro_name}' repo."
+        )
         return
 
     repo_owner, repo_name = load_config_for_retro(retro_name)
     if not repo_owner or not repo_name:
-        logging.info("Could not load repo owner or name")
+        logging.info(f"Could not load repo owner or name for {retro_name}")
         return
 
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
