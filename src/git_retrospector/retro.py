@@ -10,6 +10,12 @@ import logging
 import time
 
 
+class TestRunner(BaseModel):
+    name: str
+    command: str
+    output_dir: str
+
+
 class Retro(BaseModel):  # Renamed class
     """
     Configuration settings for git-retrospector.
@@ -17,22 +23,21 @@ class Retro(BaseModel):  # Renamed class
 
     name: str
     remote_repo_path: DirectoryPath  # Renamed
-    # test_result_dir: str  # Removed
-    # output_paths: dict # Removed
+    github_remote: str = ""
+    github_repo_name: str = ""
+    github_repo_owner: str = ""
+    github_project_name: str = ""
+    github_project_number: int = 0
+    github_project_owner: str = ""
+    test_result_dir: str = ""
+    test_runners: list[TestRunner] = []
     test_output_dir: str = "test-output"
     local_test_output_dir_full: str = Field(default="", exclude=True)
     local_cwd: str = ""  # Renamed
-    test_result_dir: str = ""
-    test_runners: list[dict] = Field(default=[], exclude=True)
 
-    def __init__(self, *, name: str, remote_repo_path: str, **data):  # Renamed
-        # Initialize Pydantic model first
-        super().__init__(
-            name=name,
-            remote_repo_path=remote_repo_path,  # Renamed
-            # output_paths=output_paths, # Removed
-            **data,
-        )
+    def __init__(self, *, name: str, **data):  # Renamed
+        super().__init__(name=name, **data)
+
         logging.info(
             f"""Retro init: name={
                 self.name
@@ -40,19 +45,30 @@ class Retro(BaseModel):  # Renamed class
         )
 
         # Determine config file path
-        if not Retro.is_test_environment():
-            config_file_path = os.path.join("retros", self.name, "retro.toml")
+        config_file_path = self.get_config_file_path()
 
-            if not os.path.exists(config_file_path):
-                # Create directories if they don't exist
-                os.makedirs(os.path.dirname(config_file_path), exist_ok=True)
+        if os.path.exists(config_file_path):
+            # Load config from file
+            with open(config_file_path) as config_file:
+                config_data = toml.load(config_file)
+                # Update model with loaded data, handling nested models
+                for key, value in config_data.items():
+                    if key == "test_runners":
+                        self.test_runners = [TestRunner(**tr) for tr in value]
+                    elif hasattr(self, key):
+                        setattr(self, key, value)
 
-                # Convert Path objects to strings for TOML serialization
-                config_data = self.model_dump()
+        else:
+            # Create directories if they don't exist
+            os.makedirs(os.path.dirname(config_file_path), exist_ok=True)
 
-                # Write config to file
-                with open(config_file_path, "w") as config_file:
-                    toml.dump(config_data, config_file)
+            # Convert Path objects to strings and handle nested
+            # models for TOML serialization
+            config_data = self.model_dump()
+
+            # Write config to file
+            with open(config_file_path, "w") as config_file:
+                toml.dump(config_data, config_file)
 
         # Set the local_test_output_dir_full attribute
         self.local_cwd = (
@@ -80,9 +96,10 @@ class Retro(BaseModel):  # Renamed class
             values["test_output_dir"] = "test-output"
 
         # Resolve paths to absolute paths
-        values["remote_repo_path"] = str(  # Renamed
-            Path(values["remote_repo_path"]).resolve()  # Renamed and corrected
-        )
+        if "remote_repo_path" in values:
+            values["remote_repo_path"] = str(  # Renamed
+                Path(values["remote_repo_path"]).resolve()  # Renamed and corrected
+            )
 
         # Construct the full path to the test output directory
         # This is used internally by methods that need the absolute path
@@ -377,7 +394,17 @@ class Retro(BaseModel):  # Renamed class
 
     @staticmethod
     def initialize(
-        target_name, remote_repo_path, project_root
+        target_name,
+        remote_repo_path,
+        project_root,
+        github_remote="",
+        github_repo_name="",
+        github_repo_owner="",
+        github_project_name="",
+        github_project_number=0,
+        github_project_owner="",
+        test_result_dir="",
+        test_runners=None,
     ):  # Modified parameter name
         """
         Initializes a retro for a given target repository.
@@ -389,6 +416,14 @@ class Retro(BaseModel):  # Renamed class
             target_name (str): The name of the target.
             remote_repo_path (str): The path to the target repository.
             project_root (str): The absolute path to the project root.
+            github_remote (str): The GitHub remote URL.
+            github_repo_name (str): The name of the GitHub repo.
+            github_repo_owner (str): The owner of the GitHub repo.
+            github_project_name (str): The GitHub project name.
+            github_project_number (int): The GitHub project number.
+            github_project_owner (str): The GitHub project owner.
+            test_result_dir (str): The directory for test results.
+            test_runners (list): List of test runner configurations.
 
         Raises:
             ValueError: If the target repository path is invalid.
@@ -420,10 +455,23 @@ class Retro(BaseModel):  # Renamed class
                 f"Invalid target repository path: {remote_repo_path}"
             )  # Modified
 
-        # Create a Retro instance with resolved paths, using the correct key
-        retro = Retro(name=target_name, remote_repo_path=remote_repo_path)  # Modified
+        # Create a Retro instance with resolved paths, using the correct
+        # key and all parameters
+        retro = Retro(
+            name=target_name,
+            remote_repo_path=remote_repo_path,
+            github_remote=github_remote,
+            github_repo_name=github_repo_name,
+            github_repo_owner=github_repo_owner,
+            github_project_name=github_project_name,
+            github_project_number=github_project_number,
+            github_project_owner=github_project_owner,
+            test_result_dir=test_result_dir,
+            test_runners=test_runners,
+        )  # Modified
 
-        # Convert Path objects to strings for TOML serialization
+        # Convert Path objects to strings and handle nested models for
+        # TOML serialization
         config_data = retro.model_dump()
 
         # Write config to file

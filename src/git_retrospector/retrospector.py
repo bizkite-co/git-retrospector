@@ -12,6 +12,7 @@ from github import Github, GithubException
 from pydantic import ValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.formatted_text import HTML
 
 from git_retrospector.commit_processor import process_commit
 from git_retrospector.retro import Retro
@@ -202,28 +203,32 @@ def load_config_for_retro(retro_name):
     with open(config_file_path) as config_file:
         config_data = toml.load(config_file)
     retro = Retro(**config_data)
-    return retro.remote_repo_path, retro.github_project_name  # Changed
+    return retro
 
 
 def get_user_confirmation(failed_count):
     """Gets user confirmation to proceed with creating issues."""
     while True:
-        user_input = input(
-            coloredlogs.ansi_wrap(
-                f"Found {failed_count} failed tests. Create GitHub issues? (y/n): ",
-                level="WARNING",
+        user_input = prompt(
+            HTML(
+                f"""<style bg="ansiyellow" fg="black">Found {
+                    failed_count
+                } failed tests.</style> """
+                f'<style fg="ansicyan">Create GitHub issues? (y/n): </style>'
             )
         ).lower()
         if user_input in ["y", "n"]:
             return user_input == "y"
 
 
-def process_csv_files(repo, playwright_csv, vitest_csv):
-    """Processes CSV files and creates issues for failed tests."""
+def process_csv_files(repo, playwright_csv, vitest_csv, existing_issues):
+    """Processes CSV files and creates issues for failed tests, avoiding duplicates."""
     logging.info(
         f"process_csv_files called with repo: {repo}, "
         f"playwright_csv: {playwright_csv}, vitest_csv: {vitest_csv}"
     )
+    existing_titles = {issue.title for issue in existing_issues}
+
     for csv_file in [playwright_csv, vitest_csv]:
         if csv_file:
             with open(csv_file) as f:
@@ -231,6 +236,15 @@ def process_csv_files(repo, playwright_csv, vitest_csv):
                 for row in reader:
                     if row.get("Result") == "failed":
                         title = row.get("Test Name", "Unnamed Test")
+                        if title in existing_titles:
+                            logging.info(
+                                f"""
+                                Skipping issue creation, title already exists: {
+                                    title
+                                }"""
+                            )
+                            continue  # Skip creating this issue
+
                         body = (
                             f"Error: {row.get('Error', 'No error message')}\n"
                             f"Stack Trace: {row.get('Stack Trace', 'No stack trace')}\n"
@@ -303,7 +317,7 @@ def handle_failed_tests(retro_name, commit_hash):
 
 
 def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
-    """Creates GitHub issues based on failed test data."""
+    """Creates GitHub issues based on failed test data, avoiding duplicates."""
     token = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
     if not token:
         return
@@ -312,10 +326,12 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
 
     try:
         repo = g.get_user(repo_owner).get_repo(repo_name)
+        existing_issues = list(repo.get_issues(state="open"))  # Get open issues
     except Exception as e:
         logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
         return
-    process_csv_files(repo, playwright_csv, vitest_csv)
+
+    process_csv_files(repo, playwright_csv, vitest_csv, existing_issues)
 
 
 def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
@@ -390,14 +406,16 @@ def create_issues_for_commit(retro_name, commit_hash):
         )
         return
 
-    repo_owner, repo_name = load_config_for_retro(retro_name)
-    if not repo_owner or not repo_name:
+    retro: Retro = load_config_for_retro(retro_name)
+    if not retro.github_repo_owner or not retro.name:
         logging.info(f"Could not load repo owner or name for {retro_name}")
         return
 
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
     playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
-    create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv)
+    create_github_issues(
+        retro.github_repo_owner, retro.github_repo_name, playwright_csv, vitest_csv
+    )
 
 
 def handle_no_command():
@@ -513,7 +531,17 @@ def init(target_name, remote_repo_path):  # Renamed
                 stderr=subprocess.DEVNULL,
             ).strip()
             logging.info(f"init: project_root from git: {project_root}")
-        Retro.initialize(target_name, remote_repo_path, project_root)  # Renamed
+        Retro.initialize(
+            target_name,
+            remote_repo_path,
+            project_root,
+            github_remote="",
+            github_project_name="",
+            github_project_number=0,
+            github_project_owner="",
+            test_result_dir="",
+            test_runners=[],
+        )  # Renamed and added parameters
     except subprocess.CalledProcessError:
         raise click.ClickException(
             "Not in a git repository. Run 'git init' in your project root."
