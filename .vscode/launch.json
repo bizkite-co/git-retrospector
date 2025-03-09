@@ -29,7 +29,7 @@
             "justMyCode": false
         },
         {
-            "name": "Debug retrospector.py (handterm)",
+            "name": "Debug run (handterm)",
             "type": "python",
             "request": "launch",
             "program": "src/git_retrospector/retrospector.py",
@@ -44,7 +44,7 @@
             "justMyCode": false
         },
         {
-            "name": "Debug retrospector.py (example-remote)",
+            "name": "Debug RUN (example-remote)",
             "type": "python",
             "request": "launch",
             "program": "src/git_retrospector/retrospector.py",
@@ -53,6 +53,19 @@
                 "example-remote",
                 "-i",
                 "3"
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug PARSE (example-remote)",
+            "type": "python",
+            "request": "launch",
+            "program": "src/git_retrospector/retrospector.py",
+            "args": [
+                "parse",
+                "example-remote",
             ],
             "console": "integratedTerminal",
             "preLaunchTask": "activate-venv",

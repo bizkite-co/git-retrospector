@@ -73,7 +73,7 @@ def _process_test_suite(test_suite, commit, test_type, csv_writer):
             media_path = ""  # No media for passed tests
 
         _write_test_case_to_csv(
-            csv_writer, commit, test_type, name, result, time, media_path
+            csv_writer, commit.name, test_type, name, result, time, media_path
         )
 
 

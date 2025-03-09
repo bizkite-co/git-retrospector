@@ -23,8 +23,8 @@ test = "python3 -m unittest discover -s tests"
 test-cov = "coverage run -m unittest discover -s tests && coverage report"
 test-save = "python3 -m unittest discover -s tests > latest-test-results.txt 2>&1"
 test-cov-save = "coverage run -m unittest discover -s tests > latest-test-results.txt 2>&1"
-handterm = "rm -rf repos/handterm/test-output && python src/git_retrospector/retrospector.py run handterm -i {args} && tree retros/handterm"
-example-remote = "rm -rf /home/mstouffer/repos/handterm-proj/handterm/test-output/* ;python src/git_retrospector/retrospector.py run example-remote -i {args}; tree remotes/example-remote;"
+handterm = "rm -rf retros/handterm/test-output && python src/git_retrospector/retrospector.py run handterm -i {args} && tree retros/handterm"
+example-remote = "rm -rf /home/mstouffer/repos/handterm-proj/handterm/retros/example-remote/test-output;python src/git_retrospector/retrospector.py run example-remote -i {args} > latest-test-results.txt 2>&1"
 
 [[tool.hatch.envs.default.matrix]]
 python = ["3.12"]

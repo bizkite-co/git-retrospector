@@ -166,6 +166,10 @@ class Retro(BaseModel):  # Renamed class
         """Returns the path to the vitest.log file for a specific commit."""
         return Path(self.get_test_output_dir(commit_hash)) / "vitest.log"
 
+    def get_vitest_xml_path(self, commit_hash):
+        """Returns the path to the vitest.xml file for a specific commit."""
+        return Path(self.get_test_output_dir(commit_hash)) / "vitest.xml"
+
     def get_playwright_csv_path(self, commit_hash):
         """Returns the path to the playwright.csv file for a specific commit."""
         return Path(self.get_tool_summary_dir(commit_hash)) / "playwright.csv"
@@ -191,9 +195,6 @@ class Retro(BaseModel):  # Renamed class
 
     def path_exists(self, relative_path):
         """Checks if a path exists relative to the retro root directory."""
-        full_path = Path(relative_path)
-        if full_path.exists():
-            return True
         full_path = Path("retros") / self.name / relative_path
         return full_path.exists()
 
@@ -221,27 +222,38 @@ class Retro(BaseModel):  # Renamed class
         """Returns the path to the retro.toml file."""
         return Path(self.get_retro_dir()) / "retro.toml"
 
-    def move_test_results_to_local(self, commit_hash, output_dir):
+    def move_test_results_to_local(
+        self, commit_hash, output_path, output_filename=None
+    ):
         """
-        Moves test results from the remote repository's test-results directory
-        to the local repository's test-output directory, organized by commit hash.
+        Moves test results from the remote repository to the local repository.
+
+        Args:
+            commit_hash (str): The hash of the commit.
+            output_path (str | Path): The path to the
+            output *file or directory* in the remote repository.
+            output_filename (str, optional): The new name of the file in
+            the local repository. Defaults to None.
         """
-        remote = (
-            self.remote_repo_path / output_dir  # Renamed
-        )  # Expected location in remote repo
+        remote = self.remote_repo_path / output_path  # Expected location in remote repo
         local = Path(self.local_test_output_dir_full) / commit_hash  # Local destination
+        if output_filename:
+            local = local / output_filename
+
         logging.info(f"Moving test results from {remote} to {local}")
         logging.info(f"Remote exists: {remote.exists()}")  # Added logging
-        logging.info(f"Remote contents: {list(remote.glob('*'))}")
-        if remote.exists():  # Only copy if the source exists
+
+        if remote.exists():
             try:
-                shutil.copytree(str(remote), str(local), dirs_exist_ok=True)
-                # logging.info(f"Local contents after copy: {list(local.glob('*'))}")
-                logging.info(f"Removing remote directory: {str(remote)}")
-                shutil.rmtree(str(remote))  # Remove source after copy
-                # logging.info(
-                #     f"Local contents after rmtree of remote: {list(local.glob('*'))}"
-                # )  # NEW LOG LINE
+                if remote.is_dir():
+                    shutil.copytree(str(remote), str(local), dirs_exist_ok=True)
+                    logging.info(f"Removing remote directory: {str(remote)}")
+                    shutil.rmtree(str(remote))  # Remove source after copy
+                else:
+                    # Ensure the parent directory exists
+                    local.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(str(remote), str(local))  # Copy a single file
+                    os.remove(str(remote))
                 logging.info(
                     "Successfully moved test results from %s to %s",
                     remote,
@@ -255,7 +267,7 @@ class Retro(BaseModel):  # Renamed class
                     e,
                 )
         else:
-            logging.warning(f"Source directory {remote} does not exist. Skipping copy.")
+            logging.warning(f"Source path {remote} does not exist. Skipping copy.")
 
     def rename_file(self, old_path, new_name):
         new_path = Path(old_path).parent / new_name
