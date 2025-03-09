@@ -1,114 +1,67 @@
-#!/usr/bin/env python3
-import csv
-import logging
 import os
-
-from git_retrospector import xml_processor  # Import the updated module
-from git_retrospector.retro import Retro  # Use new class name
-
-
-def _process_vitest_xml(retro: Retro, vitest_xml_path, commit_hash):
-    """Processes a Vitest XML file and extracts test results."""
-    try:
-        # Check if the file exists before trying to open it
-        if not os.path.exists(vitest_xml_path):
-            logging.warning(f"Vitest XML file not found: {vitest_xml_path}")
-            return
-
-        with open(vitest_xml_path) as vitest_xml_file:
-            vitest_xml_string = vitest_xml_file.read()
-            csv_output_path = retro.get_vitest_csv_path(commit_hash)
-            with open(csv_output_path, "w", newline="") as individual_csvfile:
-                csv_writer = csv.writer(individual_csvfile)
-                csv_writer.writerow([
-                    "Commit",
-                    "Test Type",
-                    "Test Name",
-                    "Result",
-                    "Duration",
-                    "Media Path",
-                ])
-                xml_processor.process_xml_string(
-                    vitest_xml_string,
-                    commit_hash,  # Use commit_hash directly
-                    "vitest",
-                    csv_writer,
-                )
-
-    except Exception as e:
-        logging.error(f"Error processing Vitest XML file {vitest_xml_path}: {e}")
+import json
+import logging
+import xml.etree.ElementTree as ET
 
 
-def _process_playwright_xml(retro: Retro, playwright_xml_path, commit_hash):
-    """Processes a Playwright XML file and extracts test results."""
-    logging.info(f"Processing Playwright XML: {playwright_xml_path}")
-    try:
-        # Check if the file exists before trying to open it
-        if not os.path.exists(playwright_xml_path):
-            logging.warning(f"Playwright XML file not found: {playwright_xml_path}")
-            return
+def process_commit_results(commit_dir):
+    """
+    Processes the test results for a single commit, extracting error
+    information and saving it to a JSON file.
+    """
+    logging.info(f"Processing commit: {os.path.basename(commit_dir)}")
+    tool_summary_dir = os.path.join(commit_dir, "tool-summary")
+    junit_xml_path = os.path.join(commit_dir, "playwright.xml")
 
-        with open(playwright_xml_path) as playwright_xml_file:
-            playwright_xml_string = playwright_xml_file.read()
-            csv_output_path = retro.get_playwright_csv_path(commit_hash)
-            logging.info(f"Writing Playwright CSV to: {csv_output_path}")
-            with open(csv_output_path, "w", newline="") as individual_csvfile:
-                csv_writer = csv.writer(individual_csvfile)
-                csv_writer.writerow([
-                    "Commit",
-                    "Test Type",
-                    "Test Name",
-                    "Result",
-                    "Duration",
-                    "Media Path",
-                ])
-                xml_processor.process_xml_string(
-                    playwright_xml_string,
-                    commit_hash,  # Use commit_hash directly
-                    "playwright",
-                    csv_writer,
-                )
-    except Exception as e:
-        logging.error(
-            f"ERROR processing Playwright XML file {playwright_xml_path}: {e}"
+    if os.path.exists(junit_xml_path):
+        try:
+            errors = {}
+            tree = ET.parse(junit_xml_path)
+            root = tree.getroot()
+            for testcase in root.findall(".//testcase"):
+                test_name = testcase.get("name")
+                failure = testcase.find("failure")
+                error = testcase.find("error")
+                if failure is not None:
+                    message = failure.get("message")
+                    stack_trace = failure.text
+                    errors[test_name] = {"error": message, "stack_trace": stack_trace}
+                elif error is not None:
+                    message = error.get("message")
+                    stack_trace = error.text
+                    errors[test_name] = {"error": message, "stack_trace": stack_trace}
+
+            if errors:
+                errors_json_path = os.path.join(tool_summary_dir, "errors.json")
+                with open(errors_json_path, "w") as f:
+                    json.dump(errors, f, indent=2)
+                logging.info(f"Wrote errors to {errors_json_path}")
+
+        except ET.ParseError as e:
+            logging.error(f"Error parsing XML for {os.path.basename(commit_dir)}: {e}")
+        except Exception as e:
+            logging.error(
+                f"Error processing commit {os.path.basename(commit_dir)}: {e}"
+            )
+    else:
+        logging.warning(
+            f"playwright.xml not found for commit: {os.path.basename(commit_dir)}"
         )
 
 
-def parse_commit_results(retro: Retro, commit_hash: str):
+def process_retro(retro):
     """
-    Parses test results from XML files (for Vitest and Playwright)
-    in a specified commit directory and writes summaries to CSV files.
-
-        retro (Retro): The configuration object.
-        commit_hash (str): The hash of the commit to parse results for.
+    Processes the test results for a given retro, extracting error information
+    and saving it to individual JSON files.
     """
-    # XML files are in the commit dir, *next* to tool-summary
-    vitest_xml_path = retro.get_vitest_xml_path(commit_hash)
-    playwright_xml_path = retro.get_playwright_xml_path(commit_hash)
+    logging.info(f"Processing retro: {retro.name}")
+    test_output_dir = retro.get_test_output_dir()
 
-    # Process Vitest XML
-    logging.info(f"Checking for Vitest XML at: {vitest_xml_path}")
-    if retro.path_exists(vitest_xml_path):
-        logging.info(
-            f"Vitest XML found, processing: {vitest_xml_path}"
-        )  # Added logging
-        _process_vitest_xml(retro, vitest_xml_path, commit_hash)
-    else:
-        logging.error(f"Vitest XML file not found: {vitest_xml_path}")
+    if not os.path.exists(test_output_dir):
+        logging.warning(f"Test output directory not found: {test_output_dir}")
+        return
 
-    # Process Playwright XML
-    if retro.path_exists(playwright_xml_path):
-        _process_playwright_xml(retro, playwright_xml_path, commit_hash)
-    else:
-        logging.error(f"Playwright XML file not found: {playwright_xml_path}")
-
-
-def process_retro(retro: Retro):
-    """
-    Processes all commits within a retro's test output directory.
-
-    Args:
-        retro (Retro): The configuration object.
-    """
-    for commit_hash in retro.list_commit_dirs():
-        parse_commit_results(retro, commit_hash)
+    for commit_hash in os.listdir(test_output_dir):
+        commit_dir = os.path.join(test_output_dir, commit_hash)
+        if os.path.isdir(commit_dir):
+            process_commit_results(commit_dir)

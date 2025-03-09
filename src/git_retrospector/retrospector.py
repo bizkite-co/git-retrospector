@@ -6,6 +6,8 @@ import sys
 import os  # Import the os module
 from pathlib import Path
 import time
+import xml.etree.ElementTree as ET
+import json
 
 import click
 from github import Github, GithubException
@@ -19,6 +21,7 @@ from git_retrospector.retro import Retro
 from git_retrospector.git_utils import (
     get_current_commit_hash,
     get_origin_branch_or_commit,
+    ensure_screenshots_branch,
 )
 from git_retrospector.parser import process_retro  # Import process_retro
 
@@ -27,6 +30,51 @@ import coloredlogs
 
 # Configure logging
 coloredlogs.install(level="INFO", fmt="%(message)s")
+
+
+def get_error_details_from_junit(commit_dir, test_name, retro):
+    """
+    Extracts the error message and stack trace from the playwright.xml file
+    for a specific failed test.
+
+    Args:
+        commit_dir: The directory for the specific commit.
+        test_name:  The name of the test.
+        retro: The Retro object
+
+    Returns:
+        A tuple containing (error_message, stack_trace), or (None, None) if not found.
+    """
+    try:
+        # Construct path to the JUnit XML file
+        junit_xml_path = os.path.join(commit_dir, "tool-summary", "playwright.xml")
+
+        if not os.path.exists(junit_xml_path):
+            logging.warning(f"JUnit XML file not found: {junit_xml_path}")
+            return None, None
+
+        tree = ET.parse(junit_xml_path)
+        root = tree.getroot()
+
+        for testcase in root.findall(".//testcase"):
+            # Match the test name.  The CSV file has extra info after the name,
+            # so we use 'startswith'
+            if testcase.get("name").startswith(test_name):
+                failure = testcase.find("failure")
+                if failure is not None:
+                    message = failure.get("message")
+                    stack_trace = failure.text
+                    return message, stack_trace
+                error = testcase.find("error")
+                if error is not None:
+                    message = error.get("message")
+                    stack_trace = error.text
+                    return message, stack_trace
+    except ET.ParseError as e:
+        logging.error(f"Error parsing JUnit XML: {e}")
+        return None, None
+
+    return None, None
 
 
 def process_single_commit(
@@ -221,11 +269,50 @@ def get_user_confirmation(failed_count):
             return user_input == "y"
 
 
-def process_csv_files(repo, playwright_csv, vitest_csv, existing_issues):
-    """Processes CSV files and creates issues for failed tests, avoiding duplicates."""
+def get_screenshot_url(row, commit_dir, retro):
+    """
+    Extracts and uploads the screenshot for a failed test, returning the URL.
+    """
+    media_paths = row.get("Media Path", "").split(";")
+    for media_path in media_paths:
+        # Check if the file is an image or video
+        if media_path.lower().endswith(
+            (".png", ".jpg", ".jpeg", ".gif", ".mp4", ".webm")
+        ):
+            # Construct the full path.  Remove 'test-results/' prefix if present
+            relative_path = media_path.replace("test-results/", "", 1)
+            full_media_path = os.path.join(commit_dir, relative_path)
+
+            # Upload the screenshot if found and get URL
+            screenshot_url = upload_screenshot_to_github(
+                full_media_path, retro.github_repo_owner, retro.github_repo_name
+            )
+            if screenshot_url:
+                return screenshot_url  # Stop after the first successful upload
+    return None
+
+
+def construct_issue_body(test_name, error_message, stack_trace, screenshot_url):
+    """Constructs the GitHub issue body."""
+    body = f"**Test Name:** {test_name}\n\n"
+    if error_message:
+        body += f"**Error:** {error_message}\n\n"
+    if stack_trace:
+        body += f"**Stack Trace:**\n```\n{stack_trace}\n```\n"
+    if screenshot_url:
+        body += f"**Screenshot/Video:**\n![Screenshot]({screenshot_url})\n"
+    return body
+
+
+def process_csv_files(
+    repo, playwright_csv, vitest_csv, existing_issues, commit_dir, retro
+):
+    """Processes CSV files, uploads screenshots, and creates issues for failed tests."""
     logging.info(
-        f"process_csv_files called with repo: {repo}, "
-        f"playwright_csv: {playwright_csv}, vitest_csv: {vitest_csv}"
+        "process_csv_files called with repo: %s, playwright_csv: %s, vitest_csv: %s",
+        repo,
+        playwright_csv,
+        vitest_csv,
     )
     existing_titles = {issue.title for issue in existing_issues}
 
@@ -235,23 +322,43 @@ def process_csv_files(repo, playwright_csv, vitest_csv, existing_issues):
                 reader = csv.DictReader(f)
                 for row in reader:
                     if row.get("Result") == "failed":
-                        title = row.get("Test Name", "Unnamed Test")
-                        if title in existing_titles:
+                        test_name = row.get("Test Name", "Unnamed Test")
+                        if test_name in existing_titles:
                             logging.info(
-                                f"""
-                                Skipping issue creation, title already exists: {
-                                    title
-                                }"""
+                                f"Skipping issue creation, "
+                                f"title already exists: {test_name}"
                             )
-                            continue  # Skip creating this issue
+                            continue
 
-                        body = (
-                            f"Error: {row.get('Error', 'No error message')}\n"
-                            f"Stack Trace: {row.get('Stack Trace', 'No stack trace')}\n"
-                            # TODO: Add screenshot link if available
+                        # Get the media paths from the CSV row and upload screenshot
+                        screenshot_url = get_screenshot_url(row, commit_dir, retro)
+
+                        # Load error details from JSON (if available)
+                        error_message = None
+                        stack_trace = None
+                        errors_json_path = os.path.join(
+                            commit_dir, "tool-summary", "errors.json"
                         )
-                        logging.info(f"Creating issue with title: {title}")
-                        repo.create_issue(title=title, body=body)
+                        if os.path.exists(errors_json_path):
+                            try:
+                                with open(errors_json_path) as errors_file:
+                                    errors_data = json.load(errors_file)
+                                    error_info = errors_data.get(test_name)
+                                    if error_info:
+                                        error_message = error_info.get("error")
+                                        stack_trace = error_info.get("stack_trace")
+                            except Exception as e:
+                                logging.error(
+                                    f"Error loading or parsing errors.json: {e}"
+                                )
+
+                        # Construct the issue body
+                        body = construct_issue_body(
+                            test_name, error_message, stack_trace, screenshot_url
+                        )
+
+                        logging.info(f"Creating issue with title: {test_name}")
+                        repo.create_issue(title=test_name, body=body)
 
 
 def should_create_issues(retro_name, commit_hash):
@@ -316,7 +423,9 @@ def handle_failed_tests(retro_name, commit_hash):
     return failed_count
 
 
-def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
+def create_github_issues(
+    repo_owner, repo_name, playwright_csv, vitest_csv, commit_dir, retro
+):
     """Creates GitHub issues based on failed test data, avoiding duplicates."""
     token = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
     if not token:
@@ -331,13 +440,18 @@ def create_github_issues(repo_owner, repo_name, playwright_csv, vitest_csv):
         logging.error(f"Error getting repository {repo_owner}/{repo_name}: {e}")
         return
 
-    process_csv_files(repo, playwright_csv, vitest_csv, existing_issues)
+    # Ensure the screenshots branch exists
+    if not ensure_screenshots_branch(retro.remote_repo_path):
+        logging.error("Could not ensure screenshots branch exists.")
+        return
+
+    process_csv_files(
+        repo, playwright_csv, vitest_csv, existing_issues, commit_dir, retro
+    )
 
 
 def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
     """
-    from github import Github, GithubException
-
     Uploads a screenshot to the GitHub repository.
 
     Args:
@@ -363,13 +477,15 @@ def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
         # Create a unique file name for the screenshot
         screenshot_name = os.path.basename(screenshot_path)
         upload_path = f"screenshots/{screenshot_name}"
+        logging.info(f"upload_path: {upload_path}")
 
         try:
             # Check if the file already exists
-            repo.get_contents(upload_path)
+            repo.get_contents(upload_path, ref="test-screenshots")
             logging.warning(f"Screenshot already exists at {upload_path}")
             return (
-                f"https://github.com/{repo_owner}/{repo_name}/blob/main/{upload_path}"
+                f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}"
+                f"/test-screenshots/{upload_path}"
             )
         except GithubException as e:
             if e.status == 404:  # File does not exist, proceed with upload
@@ -377,12 +493,12 @@ def upload_screenshot_to_github(screenshot_path, repo_owner, repo_name):
                     upload_path,
                     f"Upload screenshot {screenshot_name}",
                     content,
-                    branch="main",
+                    branch="test-screenshots",
                 )
-                return f"""
-                    https://github.com/{
-                    repo_owner}/{repo_name
-                    }/blob/main/{upload_path}"""  # Raw URL
+                return (
+                    f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}"
+                    f"/test-screenshots/{upload_path}"
+                )  # Raw URL
             else:
                 logging.error(f"Error checking for existing screenshot: {e}")
                 return None
@@ -414,7 +530,12 @@ def create_issues_for_commit(retro_name, commit_hash):
     commit_dir = os.path.join("retros", retro_name, "test-output", commit_hash)
     playwright_csv, vitest_csv = find_test_summary_files(commit_dir)
     create_github_issues(
-        retro.github_repo_owner, retro.github_repo_name, playwright_csv, vitest_csv
+        retro.github_repo_owner,
+        retro.github_repo_name,
+        playwright_csv,
+        vitest_csv,
+        commit_dir,
+        retro,
     )
 
 
@@ -536,6 +657,8 @@ def init(target_name, remote_repo_path):  # Renamed
             remote_repo_path,
             project_root,
             github_remote="",
+            github_repo_name="",
+            github_repo_owner="",
             github_project_name="",
             github_project_number=0,
             github_project_owner="",

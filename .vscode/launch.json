@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Run example-remote -i 1",
             "type": "python",
@@ -53,6 +54,19 @@
                 "issues",
                 "handterm",
                 "4fdc219",
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug PARSE (handterm)",
+            "type": "python",
+            "request": "launch",
+            "program": "src/git_retrospector/retrospector.py",
+            "args": [
+                "parse",
+                "handterm",
             ],
             "console": "integratedTerminal",
             "preLaunchTask": "activate-venv",

@@ -91,3 +91,142 @@ def enable_junit_reporter_playwright(remote_repo_path):
     except Exception as e:
         logging.error(f"Error writing updated playwright config: {e}")
         return
+
+
+def ensure_screenshots_branch(repo_path, branch_name="test-screenshots"):
+    """
+    Ensures that the specified branch exists in the remote repository.
+    Creates the branch if it doesn't exist locally or remotely.
+    """
+    try:
+        # Get the current branch
+        current_branch = subprocess.check_output(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_path, text=True
+        ).strip()
+
+        # Check if the branch exists locally
+        result = subprocess.run(
+            ["git", "branch", "--list", branch_name],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            check=False,  # Don't raise an exception if branch doesn't exist
+        )
+        if branch_name in result.stdout:
+            if current_branch == branch_name:
+                logging.info(f"Already on branch '{branch_name}'.")
+                return True  # Already on the correct branch
+
+            # Branch exists locally, switch to it and pull
+            logging.info(
+                f"Branch '{branch_name}' exists locally. Switching and pulling..."
+            )
+            subprocess.run(
+                ["git", "checkout", branch_name],
+                cwd=repo_path,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            subprocess.run(
+                ["git", "pull", "origin", branch_name],
+                cwd=repo_path,
+                check=False,  # might not exist on remote yet
+                capture_output=True,
+                text=True,
+            )
+        else:
+            # Branch doesn't exist locally, check remotely
+            try:
+                subprocess.run(
+                    [
+                        "git",
+                        "ls-remote",
+                        "--exit-code",
+                        "--heads",
+                        "origin",
+                        branch_name,
+                    ],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                logging.info(f"Branch '{branch_name}' exists remotely. Fetching...")
+                # Branch exists remotely, fetch and checkout
+                subprocess.run(
+                    ["git", "fetch", "origin", f"{branch_name}:{branch_name}"],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                subprocess.run(
+                    ["git", "checkout", branch_name],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            except subprocess.CalledProcessError:
+                # Branch doesn't exist remotely, create it
+                logging.info(
+                    f"Branch '{branch_name}' does not exist remotely. Creating..."
+                )
+                # Fetch origin to make sure we have the latest refs
+                subprocess.run(
+                    ["git", "fetch", "origin"],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                # Create the branch from the main branch
+                # (or master, if main doesn't exist)
+                main_branch = subprocess.run(
+                    ["git", "symbolic-ref", "refs/remotes/origin/HEAD"],
+                    cwd=repo_path,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if main_branch.returncode == 0:
+                    default_branch = main_branch.stdout.strip().replace(
+                        "refs/remotes/origin/", ""
+                    )
+                else:  # default to main
+                    default_branch = "main"
+
+                subprocess.run(
+                    ["git", "checkout", "-b", branch_name, f"origin/{default_branch}"],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                # Push the new branch to the remote
+                subprocess.run(
+                    ["git", "push", "-u", "origin", branch_name],
+                    cwd=repo_path,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                logging.info(f"Branch '{branch_name}' created and pushed to remote.")
+
+        # Switch back to the original branch
+        if current_branch != branch_name:
+            subprocess.run(
+                ["git", "checkout", current_branch],
+                cwd=repo_path,
+                check=False,  # don't fail if we can't switch back
+                capture_output=True,
+                text=True,
+            )
+
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error ensuring branch '{branch_name}': {e}")
+        return False
+
+    return True
