@@ -61,3 +61,28 @@ def generate_diff(
             f.write(result.stdout)
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Error generating diff: {e}") from e
+
+
+def filter_diff_by_filenames(diff_content: str, filenames: list[str]) -> str:
+    """
+    Filters a diff content string to include only changes related to specified files.
+
+    Args:
+        diff_content: The original diff content as a string.
+        filenames: A list of filenames to include in the filtered diff.
+
+    Returns:
+        A string containing only the diff hunks related to the specified files.
+        If no matches are found, returns an empty string.
+    """
+    filtered_diff = []
+    include_current_file = False
+
+    for line in diff_content.splitlines():
+        if line.startswith("diff --git"):
+            current_file = line.split(" ")[-1][2:]  # Extract filename after 'b/'
+            include_current_file = current_file in filenames
+        if include_current_file:
+            filtered_diff.append(line)
+
+    return "\n".join(filtered_diff)

@@ -252,7 +252,9 @@ class Retro(BaseModel):  # Renamed class
             output_filename (str, optional): The new name of the file in
             the local repository. Defaults to None.
         """
-        remote = self.remote_repo_path / output_path  # Expected location in remote repo
+        remote = self.remote_repo_path / Path(
+            output_path
+        )  # Expected location in remote repo
         local = Path(self.local_test_output_dir_full) / commit_hash  # Local destination
         if output_filename:
             local = local / output_filename
