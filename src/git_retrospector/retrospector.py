@@ -573,7 +573,7 @@ def handle_init_command(command_parts):
 def handle_run_command(command_parts):
     if len(command_parts) >= 2:
         target_name = command_parts[1]
-        #  Handle optional arguments for run
+        # Handle optional arguments for run
         iterations = 10
         if "-i" in command_parts:
             try:

@@ -43,13 +43,13 @@ def _write_test_case_to_csv(
     csv_writer, commit, test_type, name, result, time, media_path
 ):
     """Writes a single test case's data to the CSV writer."""
-    csv_writer.writerow([commit, test_type, name, result, time, media_path])
+    csv_writer.writerow([commit, test_type, name, result, f"{time:.3f}", media_path])
 
 
 def _process_test_suite(test_suite, commit, test_type, csv_writer):
     """Processes a single test suite and extracts test case data."""
     for test_case in test_suite.findall("./testcase"):
-        name = test_case.get("name")
+        name = f"{test_case.get('classname')}::{test_case.get('name')}"
         time_str = test_case.get("time")
         time = float(time_str) if time_str else 0.0
 
@@ -103,6 +103,6 @@ def process_xml_string(
             _process_test_suite(test_suite, commit, test_type, csv_writer)
 
     except ET.ParseError:
-        pass
+        return  # Don't write to CSV if there's a parsing error
     except Exception:
         pass
