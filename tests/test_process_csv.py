@@ -3,7 +3,7 @@ import tempfile
 import os
 import shutil
 
-from git_retrospector.git_retrospector import Retro
+from git_retrospector.retro import Retro
 
 
 class TestProcessCommit(unittest.TestCase):

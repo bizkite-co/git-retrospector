@@ -5,7 +5,7 @@ import shutil
 from unittest.mock import patch
 
 from git_retrospector.commit_processor import process_commit
-from git_retrospector.git_retrospector import Retro
+from git_retrospector.retro import Retro
 
 
 class TestProcessCommit(unittest.TestCase):

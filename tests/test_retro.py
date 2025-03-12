@@ -4,7 +4,7 @@ import os
 import shutil
 from pathlib import Path
 
-from git_retrospector.git_retrospector import Retro
+from git_retrospector.retro import Retro
 
 
 class TestRetro(unittest.TestCase):

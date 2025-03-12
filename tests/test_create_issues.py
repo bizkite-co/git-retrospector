@@ -3,9 +3,7 @@ import tempfile
 import os
 import shutil
 
-from git_retrospector.git_retrospector import (
-    Retro,
-)  # Assuming Retro class is defined here
+from git_retrospector.retro import Retro
 
 
 class TestCreateIssues(unittest.TestCase):

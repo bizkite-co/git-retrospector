@@ -610,7 +610,7 @@ def handle_issues_command(command_parts):
         click.echo("Usage: issues <retro_name> <commit_hash>")
 
 
-def handle_parse_command(command_parts):  # New function to handle 'parse'
+def handle_parse_command(command_parts):
     if len(command_parts) == 2:
         retro_name = command_parts[1]
         config_file_path = os.path.join("retros", retro_name, "retro.toml")
