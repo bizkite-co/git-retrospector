@@ -15,7 +15,9 @@ class TestProcessCommit(unittest.TestCase):
 
         # Initialize a Retro object for testing
         self.retro = Retro(
-            name="test_retro", remote_repo_path=self.repo_dir, test_output_dir="."
+            name="test_retro",
+            remote_repo_path=self.repo_dir,
+            test_output_dir=self.temp_dir,
         )
 
     def tearDown(self):

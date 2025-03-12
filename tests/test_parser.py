@@ -4,7 +4,7 @@ import os
 import shutil
 
 from git_retrospector.parser import parse_author_line, parse_commit_line
-from git_retrospector.git_retrospector import Retro
+from git_retrospector.retro import Retro
 
 
 class TestParser(unittest.TestCase):
@@ -16,7 +16,9 @@ class TestParser(unittest.TestCase):
 
         # Initialize a Retro object for testing
         self.retro = Retro(
-            name="test_retro", remote_repo_path=self.repo_dir, test_output_dir="."
+            name="test_retro",
+            remote_repo_path=self.repo_dir,
+            test_output_dir=self.temp_dir,
         )
 
     def tearDown(self):
