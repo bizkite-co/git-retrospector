@@ -17,9 +17,8 @@ class TestRetro(unittest.TestCase):
         # Initialize a Retro object for testing
         self.retro = Retro(
             name="test_retro",
-            remote_repo_path=self.repo_dir,  # Modified
-            # output_paths={},  # Removed
-            test_output_dir=os.path.join(self.temp_dir, "test-output"),
+            remote_repo_path=self.repo_dir,
+            test_output_dir="test-output",  # Use a relative path
         )
 
     def tearDown(self):
@@ -30,11 +29,11 @@ class TestRetro(unittest.TestCase):
         """Test that paths are created and resolved correctly."""
         self.assertEqual(
             self.retro.local_test_output_dir_full,
-            str(Path("retros") / "test_retro" / "test-output"),
+            os.path.join(self.retro.local_cwd, "retros", "test_retro", "test-output"),
         )
         self.assertEqual(
-            self.retro.remote_repo_path, str(Path(self.repo_dir).resolve())
-        )  # No change
+            str(self.retro.remote_repo_path), str(Path(self.repo_dir).resolve())
+        )
 
     def test_get_retro_dir(self):
         """Test that the retro directory is constructed correctly."""
@@ -44,8 +43,8 @@ class TestRetro(unittest.TestCase):
     def test_get_test_output_dir(self):
         """Test that the test output directory is constructed correctly."""
         expected_test_output_dir = os.path.join(
-            self.temp_dir, "test-output"
-        )  # No change
+            self.retro.local_cwd, "retros", "test_retro", "test-output"
+        )
         self.assertEqual(
             str(self.retro.get_test_output_dir()), expected_test_output_dir
         )
@@ -55,8 +54,8 @@ class TestRetro(unittest.TestCase):
         constructed correctly."""
         commit_hash = "1234567890abcdef"
         expected_test_output_dir = os.path.join(
-            self.temp_dir, "test-output", commit_hash
-        )  # No change
+            self.retro.local_cwd, "retros", "test_retro", "test-output", commit_hash
+        )
         self.assertEqual(
             str(self.retro.get_test_output_dir(commit_hash)),
             expected_test_output_dir,
@@ -66,8 +65,13 @@ class TestRetro(unittest.TestCase):
         """Test that the tool summary directory is constructed correctly."""
         commit_hash = "1234567890abcdef"
         expected_tool_summary_dir = os.path.join(
-            self.temp_dir, "test-output", commit_hash, "tool-summary"
-        )  # No change
+            self.retro.local_cwd,
+            "retros",
+            "test_retro",
+            "test-output",
+            commit_hash,
+            "tool-summary",
+        )
         self.assertEqual(
             str(self.retro.get_tool_summary_dir(commit_hash)),
             expected_tool_summary_dir,

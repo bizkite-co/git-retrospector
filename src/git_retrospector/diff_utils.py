@@ -80,9 +80,15 @@ def filter_diff_by_filenames(diff_content: str, filenames: list[str]) -> str:
 
     for line in diff_content.splitlines():
         if line.startswith("diff --git"):
-            current_file = line.split(" ")[-1][2:]  # Extract filename after 'b/'
-            include_current_file = current_file in filenames
+            parts = line.split(" ")
+            current_file = None
+            for part in parts:
+                if part.startswith("b/"):
+                    current_file = part[2:]
+                    break
+            if current_file:  # Check if current_file was found
+                include_current_file = current_file in filenames
         if include_current_file:
             filtered_diff.append(line)
 
-    return "\n".join(filtered_diff)
+    return "\n".join(filtered_diff) if filtered_diff else ""

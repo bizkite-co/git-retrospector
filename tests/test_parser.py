@@ -4,9 +4,12 @@ import os
 import shutil
 import csv
 import re
+import logging
 
 from git_retrospector.retro import Retro  # Corrected import
 from git_retrospector.parser import process_retro
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def parse_author_line(line):
@@ -41,6 +44,10 @@ class TestParser(unittest.TestCase):
             name="test_retro",
             remote_repo_path=self.repo_dir,
             test_output_dir=self.temp_dir,
+        )
+        logging.debug(
+            f"""setUp: self.retro.local_test_output_dir_full = {
+                self.retro.local_test_output_dir_full}"""
         )
 
     def tearDown(self):
@@ -81,9 +88,18 @@ class TestParser(unittest.TestCase):
     def test_process_retro_playwright(self):
         # Create a sample playwright.xml file
         commit_hash = "test_commit"
-        commit_dir = os.path.join(self.retro.get_test_output_dir(commit_hash))
-        os.makedirs(commit_dir, exist_ok=True)  # Only create commit dir
-        playwright_xml_path = os.path.join(commit_dir, "playwright.xml")
+        # Use the Retro object's methods to get the correct paths
+        commit_dir = self.retro.get_test_output_dir(commit_hash)
+        tool_summary_dir = self.retro.get_tool_summary_dir(commit_hash)
+
+        logging.debug(f"test_process_retro_playwright: commit_dir: {commit_dir}")
+        os.makedirs(commit_dir, exist_ok=True)  # Ensure commit dir exists
+        os.makedirs(tool_summary_dir, exist_ok=True)  # Ensure tool summary dir exists
+
+        playwright_xml_path = self.retro.get_playwright_xml_path(commit_hash)
+        logging.debug(
+            f"test_process_retro_playwright: playwright_xml_path: {playwright_xml_path}"
+        )
         with open(playwright_xml_path, "w") as f:
             f.write(
                 """<?xml version="1.0" encoding="UTF-8"?>
@@ -108,6 +124,9 @@ class TestParser(unittest.TestCase):
 
         # Check if the playwright.csv file was created
         playwright_csv_path = self.retro.get_playwright_csv_path(commit_hash)
+        logging.debug(
+            f"test_process_retro_playwright: playwright_csv_path: {playwright_csv_path}"
+        )
         self.assertTrue(os.path.exists(playwright_csv_path))
 
         # Check the content of the playwright.csv file
@@ -155,10 +174,14 @@ class TestParser(unittest.TestCase):
     def test_process_retro_vitest(self):
         # Create a sample vitest.xml file
         commit_hash = "test_commit"
-        commit_dir = os.path.join(self.retro.get_test_output_dir(commit_hash))
-        os.makedirs(commit_dir, exist_ok=True)  # Only create commit dir
+        commit_dir = self.retro.get_test_output_dir(commit_hash)
+        tool_summary_dir = self.retro.get_tool_summary_dir(commit_hash)
+        logging.debug(f"test_process_retro_vitest: commit_dir: {commit_dir}")
+        os.makedirs(commit_dir, exist_ok=True)  # Ensure commit dir exists
+        os.makedirs(tool_summary_dir, exist_ok=True)  # Ensure tool summary dir exists
 
-        vitest_xml_path = os.path.join(commit_dir, "vitest.xml")
+        vitest_xml_path = self.retro.get_vitest_xml_path(commit_hash)
+        logging.debug(f"test_process_retro_vitest: vitest_xml_path: {vitest_xml_path}")
         with open(vitest_xml_path, "w") as f:
             f.write(
                 """<?xml version="1.0" encoding="UTF-8"?>
@@ -177,6 +200,7 @@ class TestParser(unittest.TestCase):
 
         # Check if the vitest.csv file was created
         vitest_csv_path = self.retro.get_vitest_csv_path(commit_hash)
+        logging.debug(f"test_process_retro_vitest: vitest_csv_path: {vitest_csv_path}")
         self.assertTrue(os.path.exists(vitest_csv_path))
 
         # Check the content of the vitest.csv file
