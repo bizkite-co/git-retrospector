@@ -1,0 +1,4 @@
+# lambda_fns/initiation/requirements.txt
+# Dependencies for the Initiation Lambda function.
+# boto3 is provided by the AWS Lambda runtime environment.
+# If other libraries like GitPython were used, they would be listed here.

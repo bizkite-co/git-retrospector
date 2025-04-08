@@ -1,18 +1,21 @@
+# iac/iac/iac_stack.py
 from aws_cdk import (
     Stack,
     RemovalPolicy,
+    Duration,
     aws_dynamodb as dynamodb,
     aws_s3 as s3,
     aws_ecs as ecs,
-    # Although not used directly here, good practice to import if related
-    # aws_ecr_assets as ecr_assets,
     aws_iam as iam,
     aws_logs as logs,
-    aws_stepfunctions as sfn,  # Added import
-    aws_stepfunctions_tasks as sfn_tasks,  # Added import
+    aws_stepfunctions as sfn,
+    aws_stepfunctions_tasks as sfn_tasks,
+    aws_lambda as lambda_,
     CfnOutput,
 )
+import aws_cdk.aws_lambda_python_alpha as lambda_alpha  # Reverted import
 from constructs import Construct
+import os
 
 
 class IacStack(Stack):
@@ -22,7 +25,6 @@ class IacStack(Stack):
 
         # --- Existing Resources ---
 
-        # Define the DynamoDB table for commit status
         commit_status_table = dynamodb.Table(
             self,
             "CommitStatusTable",
@@ -34,26 +36,47 @@ class IacStack(Stack):
                 name="commit_hash", type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            removal_policy=RemovalPolicy.RETAIN,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
-        # Define the S3 bucket for storing results
         results_bucket = s3.Bucket(
             self,
             "ResultsBucket",
+            bucket_name=f"git-retrospector-results-{self.account}-{self.region}",
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             encryption=s3.BucketEncryption.S3_MANAGED,
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
         )
 
-        # --- New ECS Resources ---
+        # --- New Lambda Function (Initiation) ---
 
-        # Define the ECS Cluster
-        # Using default VPC created by CDK
+        initiation_lambda = lambda_alpha.PythonFunction(  # Reverted usage
+            self,
+            "InitiationLambda",
+            entry=os.path.join(
+                os.path.dirname(__file__), "..", "..", "lambda_fns", "initiation"
+            ),
+            index="handler.py",
+            handler="lambda_handler",
+            runtime=lambda_.Runtime.PYTHON_3_11,
+            timeout=Duration.minutes(5),
+            memory_size=1024,
+            environment={
+                "COMMIT_STATUS_TABLE_NAME": commit_status_table.table_name,
+                "GIT_EXECUTABLE_PATH": "/opt/bin/git",  # Assuming use of a Git layer
+            },
+            # layers=[lambda_.LayerVersion.from_layer_version_arn(self,
+            # "GitLayer", "arn:aws:lambda:REGION:ACCOUNT_ID:layer:GitLayer:VERSION")]
+            # Example if using layer
+        )
+
+        commit_status_table.grant_write_data(initiation_lambda)
+
+        # --- ECS Resources (Processing Task) ---
+
         cluster = ecs.Cluster(self, "RetrospectorCluster")
 
-        # Define the IAM Task Role for Fargate Tasks
         task_role = iam.Role(
             self,
             "FargateTaskRole",
@@ -61,81 +84,48 @@ class IacStack(Stack):
             description="Role assumed by ECS Fargate tasks for Git Retrospector",
         )
 
-        # Grant permissions to the Task Role
         commit_status_table.grant_read_write_data(task_role)
         results_bucket.grant_write(task_role)
-        # Add Secrets Manager permissions if needed later
-        # Example: secretsmanager.Secret.from_secret_name_v2(...).grant_read(task_role)
 
-        # Define the Fargate Task Definition
         task_definition = ecs.FargateTaskDefinition(
             self,
             "RetrospectorTaskDef",
             task_role=task_role,
-            cpu=1024,  # 1 vCPU
-            memory_limit_mib=2048,  # 2 GB RAM
+            cpu=1024,
+            memory_limit_mib=2048,
         )
 
-        # Define the Log Group for the container
         log_group = logs.LogGroup(
             self,
             "RetrospectorTaskLogGroup",
             log_group_name="/ecs/GitRetrospectorTask",
-            removal_policy=RemovalPolicy.DESTROY,  # Clean up logs in dev
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
-        # Add a container to the Task Definition
         container = task_definition.add_container(
             "RetrospectorContainer",
-            # Placeholder image - replace with actual application image later
             image=ecs.ContainerImage.from_registry(
-                "public.ecr.aws/amazonlinux/amazonlinux:latest"
+                "public.ecr.aws/amazonlinux/amazonlinux:latest"  # Placeholder
             ),
             logging=ecs.LogDrivers.aws_logs(
                 log_group=log_group,
-                stream_prefix="ecs",  # Prefix for log streams within the group
+                stream_prefix="ecs",
             ),
-            # Environment variables can be added here later
             environment={
                 "DYNAMODB_TABLE_NAME": commit_status_table.table_name,
                 "S3_BUCKET_NAME": results_bucket.bucket_name,
-                # COMMIT_HASH_TO_PROCESS will be added via Step Functions override
             },
         )
 
         # --- Step Functions State Machine ---
 
-        # Placeholder: Initiation State
-        initiation_state = sfn.Pass(
-            self,
-            "Initiation",
-            comment="Placeholder: Fetch repo info and trigger commit list retrieval",
-            # Input: { "repo_owner": "...", "repo_name": "...",
-            # "selection_criteria": {...} }
-        )
-
-        # Placeholder: Get Commit List State
-        get_commit_list_state = sfn.Pass(
-            self,
-            "Get Commit List",
-            comment="Placeholder: Fetch commit list based on input",
-            # Output: { "commits": [{"hash": "..."}, {"hash": "..."}] }
-            # Example output for testing:
-            result=sfn.Result.from_object(
-                {"commits": [{"hash": "example_hash_1"}, {"hash": "example_hash_2"}]}
-            ),
-            result_path="$.commit_list_output",  # Place example output somewhere
-        )
-
-        # Fargate Task State (to be run inside the Map state)
         fargate_task_state = sfn_tasks.EcsRunTask(
             self,
             "ProcessSingleCommitTask",
-            integration_pattern=sfn.IntegrationPattern.RUN_JOB,  # .sync
+            integration_pattern=sfn.IntegrationPattern.RUN_JOB,
             cluster=cluster,
             task_definition=task_definition,
             launch_target=sfn_tasks.EcsFargateLaunchTarget(
-                # Add the required platform_version
                 platform_version=ecs.FargatePlatformVersion.LATEST
             ),
             container_overrides=[
@@ -143,66 +133,61 @@ class IacStack(Stack):
                     container_definition=container,
                     environment=[
                         sfn_tasks.TaskEnvironmentVariable(
+                            name="REPO_ID",
+                            value=sfn.JsonPath.string_at("$.repo_id"),
+                        ),
+                        sfn_tasks.TaskEnvironmentVariable(
                             name="COMMIT_HASH_TO_PROCESS",
-                            # Access the 'hash' field from the current item being
-                            # processed by the Map state
-                            value=sfn.JsonPath.string_at("$$.Map.Item.Value.hash"),
-                        )
+                            value=sfn.JsonPath.string_at(
+                                "$$.Map.Item.Value.commit_hash"
+                            ),
+                        ),
                     ],
                 )
             ],
-            # Pass relevant parts of the state to the task if needed, or
-            # rely on overrides
-            # input_path="$.some_input_for_task"
-            result_path=sfn.JsonPath.DISCARD,  # Discard Fargate task output for now
+            result_path=sfn.JsonPath.DISCARD,
         )
 
-        # Map State to process commits in parallel
         map_state = sfn.Map(
             self,
             "ProcessCommitsMap",
-            items_path=sfn.JsonPath.string_at(
-                "$.commit_list_output.commits"
-            ),  # Use the output from the previous step
+            items_path=sfn.JsonPath.string_at("$.commits"),
             max_concurrency=10,
-            # Define the workflow for each item in the list
-            # result_path="$.map_results" # Optional: Where to store
-            # results of map iterations
         )
-        map_state.iterator(fargate_task_state)  # Run the Fargate task for each commit
+        map_state.iterator(fargate_task_state)
 
-        # Placeholder: Completion State
         completion_state = sfn.Pass(
-            self, "Processing Complete", comment="All commits processed successfully"
+            self, "ProcessingComplete", comment="All commits processed successfully"
         )
 
-        # Define the State Machine Definition by chaining the states
-        definition = (
-            initiation_state.next(get_commit_list_state)
-            .next(map_state)
-            .next(completion_state)
-        )
+        definition = map_state.next(completion_state)
 
-        # Create the State Machine
         state_machine = sfn.StateMachine(
             self,
             "GitRetrospectorStateMachine",
             state_machine_name="GitRetrospectorStateMachine",
             definition=definition,
-            # Consider adding logging configuration
-            # logs=sfn.LogOptions(
-            #     destination=logs.LogGroup(self, "StateMachineLogGroup"),
-            #     level=sfn.LogLevel.ALL,
-            #     include_execution_data=True
-            # )
+            logs=sfn.LogOptions(
+                destination=logs.LogGroup(
+                    self, "StateMachineLogGroup", removal_policy=RemovalPolicy.DESTROY
+                ),
+                level=sfn.LogLevel.ALL,
+                include_execution_data=True,
+            ),
         )
+
+        # --- Grant Permissions (Post-Definition) ---
+
+        initiation_lambda.add_environment(
+            "STATE_MACHINE_ARN", state_machine.state_machine_arn
+        )
+        state_machine.grant_start_execution(initiation_lambda)
 
         # --- Outputs ---
         CfnOutput(self, "CommitStatusTableName", value=commit_status_table.table_name)
         CfnOutput(self, "ResultsBucketName", value=results_bucket.bucket_name)
+        CfnOutput(self, "InitiationLambdaArn", value=initiation_lambda.function_arn)
         CfnOutput(self, "ClusterName", value=cluster.cluster_name)
         CfnOutput(self, "TaskDefinitionArn", value=task_definition.task_definition_arn)
         CfnOutput(self, "TaskRoleArn", value=task_role.role_arn)
-        # CfnOutput(self, "ContainerName", value=container.container_name)
-        # Construct doesn't expose name directly
         CfnOutput(self, "StateMachineArn", value=state_machine.state_machine_arn)

@@ -58,3 +58,13 @@
     *   Run `cdk synth` to ensure the stack synthesizes correctly.
 
 **Reference:** Consult `plan.md` (Phase 3, Step 2a).
+
+---
+**Achievements (2025-04-08):**
+*   Created Lambda handler code in `lambda_fns/initiation/handler.py`.
+*   Created `lambda_fns/initiation/requirements.txt`.
+*   Added `aws-cdk.aws-lambda-python-alpha` dependency to `iac/requirements.txt`.
+*   Defined Initiation Lambda function (`InitiationLambda`) in `iac/iac/iac_stack.py` using `PythonFunction`.
+*   Granted necessary DynamoDB write and Step Functions start execution permissions to the Lambda role.
+*   Updated the Step Functions definition in the CDK stack to be triggered by the Lambda (Lambda calls `start_execution`).
+*   Successfully synthesized the CDK stack (`cdk synth`).
