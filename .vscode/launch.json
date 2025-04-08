@@ -24,7 +24,7 @@
                 "run",
                 "handterm",
                 "-i",
-                "1"
+                "10"
             ],
             "console": "integratedTerminal",
             "preLaunchTask": "activate-venv",
