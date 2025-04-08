@@ -4,7 +4,7 @@ This plan outlines the steps to refactor the `git-retrospector` tool to pre-fetc
 
 ## Phase 1: Pre-fetch Commits by Iteration Count
 
-**Goal:** Replace the current iterative commit discovery with a pre-fetch mechanism based on the iteration count. Store commit hash, date, and summary. Replace `commits.log` with `commit_manifest.json`.
+**Goal:** Replace the current iterative commit discovery with a pre-fetch mechanism based on the iteration count. Store commit hash, date, and summary. Replace `commits.log` with `commit_manifest.json`. Ensure changes are tested.
 
 **Steps:**
 
@@ -30,6 +30,11 @@ This plan outlines the steps to refactor the `git-retrospector` tool to pre-fetc
 4.  **CLI (`@click` commands in `retrospector.py`):**
     *   No changes are needed for the `run` command's options in this phase, as we are only changing the *implementation* for the existing `iterations` parameter.
 
+5.  **Testing:**
+    *   Update existing tests or create new unit tests (`unittest`) for the `get_commit_list` function in `git_utils.py`.
+    *   Review and update tests related to the `run_tests` function in `retrospector.py` to ensure they account for the new commit fetching logic and the `commit_manifest.json` file.
+    *   Run all unit tests to confirm the refactoring works as expected and no regressions were introduced. Adhere to `.clinerules` regarding linting errors (fix only after tests pass).
+
 **Diagram:**
 
 ```mermaid
@@ -47,7 +52,8 @@ graph TD
     K --> F;
     F -- Loop Finished --> L[Checkout Original Branch (if not --keep)];
     L --> M[Analyze Results];
-    M --> N[End];
+    M --> N[Run Unit Tests]; %% Added Test Step
+    N --> O[End]; %% Shifted End
 
     subgraph Future Enhancements
         C -- Add Params --> C;
@@ -58,6 +64,7 @@ graph TD
     style E fill:#f9f,stroke:#333,stroke-width:2px
     style C fill:#ccf,stroke:#333,stroke-width:2px
     style G fill:#ccf,stroke:#333,stroke-width:2px
+    style N fill:#cfc,stroke:#333,stroke-width:2px %% Style Test Step
 ```
 
 ## Phase 2: Future Enhancements (Out of Scope for Initial Refactor)

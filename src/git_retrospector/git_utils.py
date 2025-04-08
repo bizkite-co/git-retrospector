@@ -1,6 +1,7 @@
 import os
 import subprocess
 import logging
+from typing import List, Dict  # Added List, Dict, Optional, Any
 
 
 def get_origin_branch_or_commit(repo_path):
@@ -230,3 +231,53 @@ def ensure_screenshots_branch(repo_path, branch_name="test-screenshots"):
         return False
 
     return True
+
+
+def get_commit_list(repo_path: str, num_commits: int) -> List[Dict[str, str]]:
+    """
+    Retrieves a list of the last N commits from the repository.
+
+    Args:
+        repo_path: The path to the Git repository.
+        num_commits: The number of commits to retrieve.
+
+    Returns:
+        A list of dictionaries, where each dictionary represents a commit
+        with 'hash', 'date', and 'summary' keys. Returns an empty list on error.
+    """
+    commit_list: List[Dict[str, str]] = []
+    try:
+        # Construct the git log command
+        command = [
+            "git",
+            "log",
+            "--pretty=format:%H|%ad|%s",
+            "--date=iso",
+            f"-n{num_commits}",
+        ]
+        logging.debug(f"Executing command: {' '.join(command)} in {repo_path}")
+
+        result = subprocess.run(
+            command,
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            check=True,
+            encoding="utf-8",
+        )
+
+        output = result.stdout.strip()
+        for line in output.splitlines():
+            parts = line.split("|", 2)  # Split into max 3 parts
+            if len(parts) == 3:
+                commit_list.append(
+                    {"hash": parts[0], "date": parts[1], "summary": parts[2]}
+                )
+            else:
+                logging.warning(f"Skipping malformed commit line: {line}")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error getting commit list from {repo_path}: {e}")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred while getting commit list: {e}")
+
+    return commit_list

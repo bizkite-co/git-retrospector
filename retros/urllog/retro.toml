@@ -1,0 +1,19 @@
+name = "urllog"
+remote_repo_path = "/home/mstouffer/repos/urllog"
+github_remote = "git@github.com:bizkite-co/urllog.git"
+github_repo_owner = "bizkite-co"
+github_repo_name = "urllog"
+github_project_name = "UrlLog"
+github_project_number = 4
+github_project_owner = "bizkite-co"
+test_result_dir = "retros/example-remote"
+
+[[test_runners]]
+name = "vitest"
+command = "mkdir -p vitest-output; rm -rf vitest-output/*; npx vitest --run --reporter=junit --outputFile=vitest-output/vitest.xml"
+output_dir = "vitest-output"
+
+[[test_runners]]
+name = "playwright-single"
+command = "PLAYWRIGHT_OUTPUT_DIR=test-results PLAYWRIGHT_REPORTERS='junit' PLAYWRIGHT_JUNIT_OUTPUT_NAME='test-results/playwright.xml' PLAYWRIGHT_TEST=1 npx playwright test"
+output_dir = "test-results"

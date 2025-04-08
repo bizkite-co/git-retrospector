@@ -1,4 +1,4 @@
-Metadata-Version: 2.2
+Metadata-Version: 2.4
 Name: git_retrospector
 Version: 0.1.0
 Summary: A tool to run tests on a range of Git commits and analyze the results.

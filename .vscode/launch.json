@@ -24,7 +24,22 @@
                 "run",
                 "handterm",
                 "-i",
-                "10"
+                "1"
+            ],
+            "console": "integratedTerminal",
+            "preLaunchTask": "activate-venv",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug RUN (urllog)",
+            "type": "python",
+            "request": "launch",
+            "program": "src/git_retrospector/retrospector.py",
+            "args": [
+                "run",
+                "urllog",
+                "-i",
+                "1"
             ],
             "console": "integratedTerminal",
             "preLaunchTask": "activate-venv",

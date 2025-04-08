@@ -1,49 +1,26 @@
-# Task: Refactor Commit Selection (Phase 1)
+# Task: Fix TestRunner Subscriptable Error
 
-**Objective:** Implement the first phase of the refactoring plan outlined in `plan.md`. This involves changing how commits are selected based on an iteration count and storing the results in a new JSON manifest file.
+**Objective:** Resolve the runtime error `'TestRunner' object is not subscriptable` by correcting attribute access in `commit_processor.py` and `retro.py`.
+
+**Context:**
+*   A runtime error occurs because code attempts to access attributes of `TestRunner` Pydantic model instances using dictionary-style square brackets (`[]`) instead of object-style dot notation (`.`).
+*   This error occurs in both `commit_processor.py` and the `run_tests` method within `retro.py`.
 
 **Detailed Steps:**
 
-1.  **Modify `src/git_retrospector/git_utils.py`:**
-    *   Add a new function `get_commit_list(repo_path: str, num_commits: int) -> list[dict]`.
-    *   Inside the function:
-        *   Construct the `git log` command: `['git', 'log', f"--pretty=format:%H|%ad|%s", '--date=iso', f'-n{num_commits}']`.
-        *   Use `subprocess.run` to execute the command in the `repo_path` directory, capturing the output (`stdout`). Remember to handle potential errors (e.g., using `check=True` and a `try...except` block).
-        *   Process the `stdout`:
-            *   Decode it to a string.
-            *   Split the string into lines.
-            *   For each line, split it by the '|' delimiter.
-            *   Create a dictionary for each commit: `{'hash': parts[0], 'date': parts[1], 'summary': parts[2]}`.
-            *   Handle potential errors during parsing (e.g., if a line doesn't have 3 parts).
-        *   Return the list of commit dictionaries.
-    *   Ensure necessary imports are present (e.g., `subprocess`, `logging`).
+1.  **Modify `src/git_retrospector/commit_processor.py`:**
+    *   In the loop starting around line 45:
+        *   Change `test_runner['name']` (line 46) to `test_runner.name`.
+        *   Change `test_runner["output_dir"]` (line 50) to `test_runner.output_dir`.
 
-2.  **Refactor `src/git_retrospector/retrospector.py` (within the `run_tests` function):**
-    *   **Remove:** Delete the `for i in range(iteration_count):` loop (approximately lines 167-189) which contains the `git rev-parse` logic and the call to `process_single_commit` inside the loop. Also remove the `commits_log.write(f"{commit_hash}\n")` line within that loop.
-    *   **Add (before where the loop was):**
-        *   Import `get_commit_list` from `.git_utils`.
-        *   Import `json`.
-        *   Call the new function: `commit_list = get_commit_list(target_repo, iteration_count)` (handle potential exceptions).
-        *   Define the manifest file path: `manifest_path = Path(retro.get_test_output_dir()) / "commit_manifest.json"`.
-        *   Write the `commit_list` to the `manifest_path` using `json.dump()`:
-            ```python
-            try:
-                manifest_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
-                with open(manifest_path, 'w') as f:
-                    json.dump(commit_list, f, indent=2)
-                logging.info(f"Commit manifest written to {manifest_path}")
-            except Exception as e:
-                logging.error(f"Failed to write commit manifest: {e}")
-            ```
-    *   **Add (replace the old loop):**
-        *   Create a new loop: `for commit_info in commit_list:`.
-        *   Inside this new loop, extract the hash: `commit_hash = commit_info['hash']`.
-        *   Call `process_single_commit` using this `commit_hash`:
-            ```python
-            process_single_commit(
-                target_repo, commit_hash, test_output_dir, origin_branch, retro
-            )
-            ```
-    *   **Remove:** Delete the `commits_log_path` definition and the `with open(commits_log_path, "w") as commits_log:` block (around lines 148-150).
+2.  **Modify `src/git_retrospector/retro.py`:**
+    *   Within the `run_tests` method (starting around line 240):
+        *   Change `test_runner["command"]` (line 241) to `test_runner.command`.
+        *   Change `test_runner['name']` (line 242) to `test_runner.name`.
+        *   Change `test_runner['name']` (line 243) to `test_runner.name`.
+        *   Change `test_runner['name']` (line 267) to `test_runner.name`.
 
-**Reference:** Consult `plan.md` for the overall context and diagrams.
+3.  **Testing:**
+    *   After applying the fixes, run the test suite (`python -m unittest discover tests` or equivalent) to ensure no regressions were introduced.
+    *   Consider if a specific test case simulating the original error condition should be added to `tests/test_process_commit.py` or `tests/test_retro.py` to prevent this specific issue from recurring. This might involve mocking `retro.test_runners` with `TestRunner` objects and asserting that `retro.run_tests` and `commit_processor.process_commit` execute without the `TypeError`.
+    *   Run the command that previously caused the error (`retrospector run <your_target_name> -i <iterations>`) to confirm the fix works in a real scenario.

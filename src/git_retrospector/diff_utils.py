@@ -2,6 +2,8 @@
 import subprocess
 from pathlib import Path
 from git_retrospector.retro import Retro
+import logging  # Import logging
+import re  # Import re for more robust parsing
 
 
 def generate_diff(
@@ -41,10 +43,10 @@ def generate_diff(
         raise ValueError(f"Invalid commit hash: {e}") from e
 
     # Create the output directory if it doesn't exist
-    # output_path is something like:
-    # retros/test_retro/test-output/hash2/hash1_hash2.diff
-    commit_hash = Path(output_path).parts[-2]
-    commit_hash_dir, _ = retro.get_commit_hash_dir(commit_hash)
+    output_path_obj = Path(output_path)
+    commit_hash = (
+        output_path_obj.parent.name
+    )  # Get the parent directory name (commit hash)
     retro.create_output_dirs(commit_hash=commit_hash)
 
     # Generate the diff
@@ -54,13 +56,19 @@ def generate_diff(
             cwd=repo_path,
             capture_output=True,
             text=True,
-            check=True,
+            check=True,  # Check=True is appropriate here, failure means diff failed
         )
         # Save the diff to the output file
-        with open(output_path, "w") as f:
+        with open(output_path_obj, "w") as f:
             f.write(result.stdout)
     except subprocess.CalledProcessError as e:
+        # Log the error for better debugging
+        logging.error(f"Error generating diff between {commit1} and {commit2}: {e}")
+        logging.error(f"Stderr: {e.stderr}")
         raise RuntimeError(f"Error generating diff: {e}") from e
+    except Exception as e:
+        logging.error(f"Unexpected error writing diff file {output_path_obj}: {e}")
+        raise
 
 
 def filter_diff_by_filenames(diff_content: str, filenames: list[str]) -> str:
@@ -75,20 +83,34 @@ def filter_diff_by_filenames(diff_content: str, filenames: list[str]) -> str:
         A string containing only the diff hunks related to the specified files.
         If no matches are found, returns an empty string.
     """
-    filtered_diff = []
-    include_current_file = False
+    filtered_lines = []
+    current_file_is_target = False  # Flag for the current file block
+    # Regex to capture the 'b/' filename, handling potential quotes
+    diff_git_pattern = re.compile(r'^diff --git a/.+ b/(?:"?([^"]+)"?|([^ ]+))$')
 
     for line in diff_content.splitlines():
-        if line.startswith("diff --git"):
-            parts = line.split(" ")
-            current_file = None
-            for part in parts:
-                if part.startswith("b/"):
-                    current_file = part[2:]
-                    break
-            if current_file:  # Check if current_file was found
-                include_current_file = current_file in filenames
-        if include_current_file:
-            filtered_diff.append(line)
+        match = diff_git_pattern.match(line)
+        if match:
+            # Reset flag for the new file block
+            current_file_is_target = False
+            # Extract filename (group 1 for quoted, group 2 for unquoted)
+            current_file = match.group(1) or match.group(2)
+            if current_file and current_file in filenames:
+                current_file_is_target = True
+                filtered_lines.append(line)  # Add the 'diff --git' line itself
+            # else: # Debugging
+            #     logging.debug(f"Diff filter: Skipping file {current_file}")
 
-    return "\n".join(filtered_diff) if filtered_diff else ""
+        elif current_file_is_target:
+            # If we are inside a block for a target file, add the line
+            filtered_lines.append(line)
+
+    # Join lines adding back the newline character, ensuring consistent trailing newline
+    if not filtered_lines:
+        return ""
+    else:
+        # Ensure the result ends with exactly one newline
+        result = "\n".join(filtered_lines)
+        if not result.endswith("\n"):
+            result += "\n"
+        return result
