@@ -8,6 +8,8 @@ from aws_cdk import (
     # aws_ecr_assets as ecr_assets,
     aws_iam as iam,
     aws_logs as logs,
+    aws_stepfunctions as sfn,  # Added import
+    aws_stepfunctions_tasks as sfn_tasks,  # Added import
     CfnOutput,
 )
 from constructs import Construct
@@ -94,16 +96,113 @@ class IacStack(Stack):
                 stream_prefix="ecs",  # Prefix for log streams within the group
             ),
             # Environment variables can be added here later
-            # environment={
-            #     "DYNAMODB_TABLE_NAME": commit_status_table.table_name,
-            #     "S3_BUCKET_NAME": results_bucket.bucket_name,
-            # }
+            environment={
+                "DYNAMODB_TABLE_NAME": commit_status_table.table_name,
+                "S3_BUCKET_NAME": results_bucket.bucket_name,
+                # COMMIT_HASH_TO_PROCESS will be added via Step Functions override
+            },
         )
 
-        # Outputs (optional, but helpful)
+        # --- Step Functions State Machine ---
+
+        # Placeholder: Initiation State
+        initiation_state = sfn.Pass(
+            self,
+            "Initiation",
+            comment="Placeholder: Fetch repo info and trigger commit list retrieval",
+            # Input: { "repo_owner": "...", "repo_name": "...",
+            # "selection_criteria": {...} }
+        )
+
+        # Placeholder: Get Commit List State
+        get_commit_list_state = sfn.Pass(
+            self,
+            "Get Commit List",
+            comment="Placeholder: Fetch commit list based on input",
+            # Output: { "commits": [{"hash": "..."}, {"hash": "..."}] }
+            # Example output for testing:
+            result=sfn.Result.from_object(
+                {"commits": [{"hash": "example_hash_1"}, {"hash": "example_hash_2"}]}
+            ),
+            result_path="$.commit_list_output",  # Place example output somewhere
+        )
+
+        # Fargate Task State (to be run inside the Map state)
+        fargate_task_state = sfn_tasks.EcsRunTask(
+            self,
+            "ProcessSingleCommitTask",
+            integration_pattern=sfn.IntegrationPattern.RUN_JOB,  # .sync
+            cluster=cluster,
+            task_definition=task_definition,
+            launch_target=sfn_tasks.EcsFargateLaunchTarget(
+                # Add the required platform_version
+                platform_version=ecs.FargatePlatformVersion.LATEST
+            ),
+            container_overrides=[
+                sfn_tasks.ContainerOverride(
+                    container_definition=container,
+                    environment=[
+                        sfn_tasks.TaskEnvironmentVariable(
+                            name="COMMIT_HASH_TO_PROCESS",
+                            # Access the 'hash' field from the current item being
+                            # processed by the Map state
+                            value=sfn.JsonPath.string_at("$$.Map.Item.Value.hash"),
+                        )
+                    ],
+                )
+            ],
+            # Pass relevant parts of the state to the task if needed, or
+            # rely on overrides
+            # input_path="$.some_input_for_task"
+            result_path=sfn.JsonPath.DISCARD,  # Discard Fargate task output for now
+        )
+
+        # Map State to process commits in parallel
+        map_state = sfn.Map(
+            self,
+            "ProcessCommitsMap",
+            items_path=sfn.JsonPath.string_at(
+                "$.commit_list_output.commits"
+            ),  # Use the output from the previous step
+            max_concurrency=10,
+            # Define the workflow for each item in the list
+            # result_path="$.map_results" # Optional: Where to store
+            # results of map iterations
+        )
+        map_state.iterator(fargate_task_state)  # Run the Fargate task for each commit
+
+        # Placeholder: Completion State
+        completion_state = sfn.Pass(
+            self, "Processing Complete", comment="All commits processed successfully"
+        )
+
+        # Define the State Machine Definition by chaining the states
+        definition = (
+            initiation_state.next(get_commit_list_state)
+            .next(map_state)
+            .next(completion_state)
+        )
+
+        # Create the State Machine
+        state_machine = sfn.StateMachine(
+            self,
+            "GitRetrospectorStateMachine",
+            state_machine_name="GitRetrospectorStateMachine",
+            definition=definition,
+            # Consider adding logging configuration
+            # logs=sfn.LogOptions(
+            #     destination=logs.LogGroup(self, "StateMachineLogGroup"),
+            #     level=sfn.LogLevel.ALL,
+            #     include_execution_data=True
+            # )
+        )
+
+        # --- Outputs ---
         CfnOutput(self, "CommitStatusTableName", value=commit_status_table.table_name)
         CfnOutput(self, "ResultsBucketName", value=results_bucket.bucket_name)
         CfnOutput(self, "ClusterName", value=cluster.cluster_name)
         CfnOutput(self, "TaskDefinitionArn", value=task_definition.task_definition_arn)
         CfnOutput(self, "TaskRoleArn", value=task_role.role_arn)
-        CfnOutput(self, "Container", value=container)
+        # CfnOutput(self, "ContainerName", value=container.container_name)
+        # Construct doesn't expose name directly
+        CfnOutput(self, "StateMachineArn", value=state_machine.state_machine_arn)
