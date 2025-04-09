@@ -1,0 +1,2 @@
+# fargate_task/requirements.txt
+boto3
