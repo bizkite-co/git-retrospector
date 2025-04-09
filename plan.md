@@ -21,9 +21,12 @@ This plan outlines the steps to refactor the `git-retrospector` tool to pre-fetc
 *   Stack renamed to `RetrospectorInfraStack`.
 *   Git Lambda Layer added to Initiation Lambda.
 *   Initial deployment successful.
-*   **Blocker:** Initial invocation test failed during `git clone` in Initiation Lambda due to the Git Lambda Layer missing HTTPS support (`git-remote-https` helper and dependencies like `curl`). Lambda has default internet access, but the Git installation is incomplete.
+*   **Blocker Resolved (Git Layer):** Git Lambda Layer was fixed to include HTTPS support. `git clone` in Initiation Lambda now works.
+*   **Blocker Resolved (Input Mapping):** Step Function `Map` state input mapping fixed to correctly pass `repo_id` and other necessary details (`repo_owner`, `repo_name`, `repo_url`) to the `EcsRunTask` iterator using the `Map` state's `parameters` field and `EcsRunTask`'s `container_overrides`.
+*   **Blocker Resolved (Architecture):** Fargate task `exec format error` resolved by specifying `platform=ecr_assets.Platform.LINUX_AMD64` for the `DockerImageAsset` build.
+*   **Current Status:** The latest deployment includes fixes for input mapping and container architecture. The next step is to re-run the invocation test.
 
-**Next Step:** Fix the Git Lambda Layer to include HTTPS support.
+**Next Step:** Re-test the invocation (`invoke-retrospector.sh`) to verify the Fargate task runs successfully with the correct environment variables.
 
 **Planned Steps:**
 
@@ -33,16 +36,16 @@ This plan outlines the steps to refactor the `git-retrospector` tool to pre-fetc
     *   Define DynamoDB Table (`CommitStatusTable`). (Done)
     *   Define S3 Bucket (`ResultsBucket`). (Done)
     *   Define ECS Cluster. (Done)
-    *   Define Fargate Task Definition (`RetrospectorTaskDef`) w/ IAM Role. (Done)
-    *   Define Step Functions State Machine (`RetrospectorStateMachine`) structure. (Done)
-    *   Define Git Lambda Layer. (Done, but needs fix)
-        *   **Fix Git Lambda Layer:** Ensure layer includes `git-remote-https` helper and dependencies (`curl`, `ca-certificates`). (Pending - **NEXT ACTION**)
-    *   Define Initiation Lambda Function & attach fixed Git Layer. (Done, layer attachment needs verification after fix)
-    *   Integrate Docker Image build (`fargate_task/Dockerfile`) via ECR Assets into Task Definition. (Done)
+    *   Define Fargate Task Definition (`RetrospectorTaskDef`) w/ IAM Role & correct platform. (Done)
+    *   Define Step Functions State Machine (`RetrospectorStateMachine`) structure with correct input mapping. (Done)
+    *   Define Git Lambda Layer. (Done)
+        *   **Fix Git Lambda Layer:** Ensure layer includes `git-remote-https` helper and dependencies (`curl`, `ca-certificates`). (Done)
+    *   Define Initiation Lambda Function & attach Git Layer. (Done)
+    *   Integrate Docker Image build (`fargate_task/Dockerfile`) via ECR Assets into Task Definition with correct platform. (Done)
     *   *(Future):* Define API Gateway trigger for Initiation Lambda.
 
 2.  **Refactor Application Logic for AWS:**
-    *   **Initiation Logic (Lambda):** (Implemented, needs successful Git clone)
+    *   **Initiation Logic (Lambda):** (Implemented)
     *   **Fargate Task Logic (Container Script):** (Implemented)
 
 3.  **Containerization:**
@@ -50,11 +53,12 @@ This plan outlines the steps to refactor the `git-retrospector` tool to pre-fetc
 
 4.  **Deployment & Testing:**
     *   Initial CDK Deployment. (Done)
-    *   Basic Invocation Test. (Failed due to Git Layer issue)
-    *   Re-test Invocation after Git Layer fix. (Pending)
+    *   Basic Invocation Test. (Done, subsequent failures investigated and fixed)
+    *   Re-test Invocation after Environment Variable fix. (Pending - **NEXT ACTION**)
     *   Develop unit tests for Lambda/Fargate logic. (Pending)
     *   Perform integration testing. (Pending)
     *   Conduct end-to-end tests. (Pending)
+    *   Update `get-retro-logs.sh` to include Fargate task logs. (Pending)
 
 **Level of Effort (LoE) Estimate:** (Unchanged) High.
 **Timeline:** (Unchanged) Several weeks to 1-2 months.

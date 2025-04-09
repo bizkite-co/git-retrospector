@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Workflow initiated successfully.\", \"executionArn\": \"arn:aws:states:us-east-1:318364255844:execution:GitRetrospectorStateMachine-RetrospectorInfraStack:94b4daa5-33d2-492e-aaee-74f04bdaed43\"}"}

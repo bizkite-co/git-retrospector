@@ -9,6 +9,7 @@ from pathlib import Path
 from botocore.exceptions import ClientError
 import time
 from typing import Dict, Any, Tuple, Optional
+import re  # Import re for URL parsing
 
 # --- Placeholder for shared code/functions ---
 # TODO: Determine the best strategy for sharing code (copy, layer, package)
@@ -66,8 +67,8 @@ logging.basicConfig(
 )
 
 # Define constants for environment variable names
-REPO_OWNER_ENV = "REPO_OWNER"
-REPO_NAME_ENV = "REPO_NAME"
+# REPO_OWNER_ENV = "REPO_OWNER" # Removed
+# REPO_NAME_ENV = "REPO_NAME" # Removed
 REPO_URL_ENV = "REPO_URL"
 COMMIT_HASH_ENV = "COMMIT_HASH_TO_PROCESS"
 TABLE_NAME_ENV = "DYNAMODB_TABLE_NAME"
@@ -80,11 +81,27 @@ REPO_DIR = BASE_WORK_DIR / "repo"
 OUTPUT_DIR = BASE_WORK_DIR / "output"
 
 
+def parse_github_url(url: str) -> Tuple[Optional[str], Optional[str]]:
+    """Parses owner and repo name from a GitHub HTTPS URL."""
+    # Basic regex for https://github.com/owner/repo.git or https://github.com/owner/repo
+    match = re.match(r"https://github\.com/([^/]+)/([^/.]+)(\.git)?$", url)
+    if match:
+        owner = match.group(1)
+        repo = match.group(2)
+        return owner, repo
+    else:
+        logging.warning(f"Could not parse owner/repo from URL: {url}")
+        return None, None
+
+
 def get_task_config() -> Dict[str, str]:
-    """Retrieves and validates required configuration from environment variables."""
+    """
+    Retrieves and validates required configuration from environment variables.
+    Parses repo owner and name from the repo URL.
+    """
     config = {
-        "repo_owner": os.environ.get(REPO_OWNER_ENV),
-        "repo_name": os.environ.get(REPO_NAME_ENV),
+        # "repo_owner": os.environ.get(REPO_OWNER_ENV), # Removed
+        # "repo_name": os.environ.get(REPO_NAME_ENV), # Removed
         "repo_url": os.environ.get(REPO_URL_ENV),
         "commit_hash": os.environ.get(COMMIT_HASH_ENV),
         "table_name": os.environ.get(TABLE_NAME_ENV),
@@ -94,9 +111,8 @@ def get_task_config() -> Dict[str, str]:
         ),
     }
 
+    # Check required variables that are directly read
     required_vars_map = {
-        REPO_OWNER_ENV: config["repo_owner"],
-        REPO_NAME_ENV: config["repo_name"],
         REPO_URL_ENV: config["repo_url"],
         COMMIT_HASH_ENV: config["commit_hash"],
         TABLE_NAME_ENV: config["table_name"],
@@ -108,9 +124,22 @@ def get_task_config() -> Dict[str, str]:
         logging.error(msg)
         raise ValueError(msg)
 
-    config["repo_id"] = f"{config['repo_owner']}/{config['repo_name']}"
+    # Parse owner and name from URL
+    repo_owner, repo_name = parse_github_url(config["repo_url"])
+    if not repo_owner or not repo_name:
+        msg = (
+            f"Could not parse repository owner and name from URL: {config['repo_url']}"
+        )
+        logging.error(msg)
+        raise ValueError(msg)
+
+    config["repo_owner"] = repo_owner
+    config["repo_name"] = repo_name
+    config["repo_id"] = f"{repo_owner}/{repo_name}"
+
     logging.info(
-        f"Processing commit {config['commit_hash']} for repository {config['repo_id']}"
+        f"Processing commit {config['commit_hash']} "
+        f"for repository {config['repo_id']} ({config['repo_url']})"
     )
     return config
 
@@ -291,7 +320,7 @@ def main():
     total_tests, failed_tests, s3_path, error_message = None, None, None, None
 
     try:
-        # 1. Get Configuration
+        # 1. Get Configuration (includes parsing URL)
         config = get_task_config()
 
         # 2. Initialize AWS Clients
@@ -314,8 +343,8 @@ def main():
         total_tests, failed_tests, s3_path, processing_error = process_results(
             s3_client,
             config["bucket_name"],
-            config["repo_owner"],
-            config["repo_name"],
+            config["repo_owner"],  # Use parsed owner
+            config["repo_name"],  # Use parsed name
             config["commit_hash"],
         )
         # --- End Core Processing ---
@@ -355,7 +384,7 @@ def main():
 
             update_success = update_dynamodb_status(
                 table,
-                config["repo_id"],
+                config["repo_id"],  # Use derived repo_id
                 config["commit_hash"],
                 final_status,
                 details_to_update,

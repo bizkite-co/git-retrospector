@@ -88,6 +88,7 @@ def lambda_handler(event, context):
         repo_name = event["repo_name"]
         # Use HTTPS URL for cloning, authentication handled by
         # git credential helper or token
+        # Construct repo_url here
         repo_url = f"https://github.com/{repo_owner}/{repo_name}.git"
         iterations = int(event.get("iterations", 10))
         # Default to 10 iterations, ensure int
@@ -125,7 +126,7 @@ def lambda_handler(event, context):
     sfn = boto3.client("stepfunctions")
     table = dynamodb.Table(table_name)
 
-    repo_id = f"{repo_owner}/{repo_name}"
+    repo_id = f"{repo_owner}/{repo_name}"  # Still needed for DDB writes here
     temp_dir = None
 
     try:
@@ -171,7 +172,7 @@ def lambda_handler(event, context):
             for commit in commits:
                 batch.put_item(
                     Item={
-                        "repo_id": repo_id,  # Partition Key
+                        "repo_id": repo_id,  # Partition Key (still needed here)
                         "commit_hash": commit["commit_hash"],  # Sort Key
                         "commit_date": commit["commit_date"],
                         "commit_summary": commit["commit_summary"],
@@ -181,13 +182,10 @@ def lambda_handler(event, context):
                 )
         logger.info("Commits written to DynamoDB.")
 
-        # 7. Prepare input for Step Functions
+        # 7. Prepare input for Step Functions - SIMPLIFIED
         sfn_input = {
-            "repo_owner": repo_owner,
-            "repo_name": repo_name,
-            "repo_id": repo_id,
+            "repo_url": repo_url,  # Pass only the URL
             "commits": commits,  # Pass the list of commits to the next step
-            # Do not pass repo_url with token if it was constructed
         }
 
         # 8. Start Step Functions execution

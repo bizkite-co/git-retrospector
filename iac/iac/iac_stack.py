@@ -132,8 +132,9 @@ class RetrospectorInfraStack(Stack):  # Renamed class
             "RetrospectorFargateTaskImage",
             directory=os.path.join(
                 os.path.dirname(__file__), "..", "..", "fargate_task"
-            ),
-        )
+            ),  # Closing parenthesis for os.path.join
+            platform=ecr_assets.Platform.LINUX_AMD64,  # Specify target platform
+        )  # Closing parenthesis for DockerImageAsset
 
         task_definition = ecs.FargateTaskDefinition(
             self,
@@ -149,7 +150,7 @@ class RetrospectorInfraStack(Stack):  # Renamed class
             "RetrospectorTaskLogGroup",
             log_group_name=f"/ecs/GitRetrospectorTask-{construct_id}",  # Modified name
             removal_policy=RemovalPolicy.DESTROY,  # Be cautious in production
-        )
+        )  # Closing parenthesis for LogGroup
 
         container = task_definition.add_container(
             "RetrospectorContainer",
@@ -160,6 +161,7 @@ class RetrospectorInfraStack(Stack):  # Renamed class
             ),
             environment={
                 # Pass the dynamically generated table and bucket names
+                # These are static for all tasks within the execution
                 "DYNAMODB_TABLE_NAME": commit_status_table.table_name,
                 "S3_BUCKET_NAME": results_bucket.bucket_name,
             },
@@ -176,30 +178,24 @@ class RetrospectorInfraStack(Stack):  # Renamed class
             launch_target=sfn_tasks.EcsFargateLaunchTarget(
                 platform_version=ecs.FargatePlatformVersion.LATEST
             ),
+            # Input for this task comes from the 'parameters' of the Map state.
             container_overrides=[
                 sfn_tasks.ContainerOverride(
                     container_definition=container,
                     environment=[
+                        # Pass only the variables needed per commit
                         sfn_tasks.TaskEnvironmentVariable(
-                            name="REPO_ID",
-                            value=sfn.JsonPath.string_at("$.repo_id"),
+                            name="REPO_URL",
+                            # Reference repo_url from the Map iterator's input
+                            value=sfn.JsonPath.string_at("$.repo_url"),
                         ),
                         sfn_tasks.TaskEnvironmentVariable(
                             name="COMMIT_HASH_TO_PROCESS",
+                            # Reference commit_hash from the Map iterator's input
                             value=sfn.JsonPath.string_at(
-                                "$$.Map.Item.Value.commit_hash"
+                                "$.commit_details.commit_hash"
                             ),
                         ),
-                        # Pass dynamic names to the container if needed
-                        # (already done above)
-                        # sfn_tasks.TaskEnvironmentVariable(
-                        #     name="DYNAMODB_TABLE_NAME",
-                        #     value=commit_status_table.table_name
-                        # ),
-                        # sfn_tasks.TaskEnvironmentVariable(
-                        #     name="S3_BUCKET_NAME",
-                        #     value=results_bucket.bucket_name
-                        # ),
                     ],
                 )
             ],
@@ -210,6 +206,16 @@ class RetrospectorInfraStack(Stack):  # Renamed class
             self,
             "ProcessCommitsMap",
             items_path=sfn.JsonPath.string_at("$.commits"),
+            # Construct input for each iteration: pass repo_url and current commit item
+            parameters={
+                "repo_url": sfn.JsonPath.string_at(
+                    "$.repo_url"
+                ),  # From main state input
+                # Embed the current map item value
+                "commit_details.$": "$$.Map.Item.Value",
+            },
+            # The output of 'parameters' becomes the input '$' for
+            # the iterator (fargate_task_state)
             max_concurrency=10,
         )
         map_state.iterator(fargate_task_state)
