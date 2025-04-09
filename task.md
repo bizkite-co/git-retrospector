@@ -1,61 +1,57 @@
-# Task: Implement Fargate Task Logic Script (Phase 3 - Step 2b)
+# Task: Create Dockerfile for Fargate Task (Phase 3 - Step 3a)
 
-**Objective:** Create the Python script that will execute within the Fargate container to process a single commit.
+**Objective:** Create the `Dockerfile` to build the container image that will run the Fargate task logic (`process_single_commit_task.py`).
 
-**Context:** This script represents the core workhorse of the parallel processing workflow defined in the Step Functions state machine. It takes details for a single commit, processes it, and updates the central state/results.
+**Context:** This defines the runtime environment for the core processing logic within ECS Fargate.
 
 **Prerequisites:**
-*   CDK stack defines DynamoDB table, S3 bucket, and Fargate Task Definition.
-*   Initiation Lambda populates DynamoDB and triggers the Step Functions workflow.
-*   The Fargate Task Definition (within the Step Functions Map state) is configured to pass `repo_owner`, `repo_name`, `repo_url`, and `commit_hash` to the container (e.g., via environment variables like `REPO_OWNER`, `REPO_NAME`, `REPO_URL`, `COMMIT_HASH_TO_PROCESS`).
+*   Fargate task script exists at `fargate_task/process_single_commit_task.py`.
+*   Dependencies for the script are listed in `fargate_task/requirements.txt`.
 
 **Detailed Steps:**
 
-1.  **Create Fargate Script Directory & File:**
-    *   Create a new directory, e.g., `fargate_task/`.
-    *   Inside, create the main script file, e.g., `process_single_commit_task.py`.
+1.  **Create `Dockerfile`:**
+    *   Create a new file named `Dockerfile` inside the `fargate_task/` directory.
+    *   **DONE:** `fargate_task/Dockerfile` created.
 
-2.  **Implement Script Logic (`process_single_commit_task.py`):**
-    *   **Import necessary libraries:** `os`, `subprocess`, `boto3`, `json`, `logging`, `shutil`, `pathlib`.
-    *   **Import relevant logic:** Adapt and import necessary functions from the main `git_retrospector` project (e.g., parts of `commit_processor.py`, `retro.py` related to running tests, parsing results, potentially `git_utils`). *Carefully consider dependencies and how to package/access this shared code within the container.* (For now, assume functions can be copied/adapted into this script or a shared layer).
-    *   **Setup Logging:** Configure basic logging.
-    *   **Retrieve Input:** Get `repo_owner`, `repo_name`, `repo_url`, `commit_hash`, `table_name`, `bucket_name` from environment variables (e.g., `os.environ.get(...)`). Add error handling if variables are missing.
-    *   **Initialize Boto3 Clients:** Create clients for DynamoDB and S3. Get the DynamoDB table resource.
-    *   **Update Status (RUNNING):** Update the item in DynamoDB for the current `repo_id` (`owner/name`) and `commit_hash` to set `status='RUNNING'`. Include error handling.
-    *   **Define Local Paths:** Define paths within the container's temporary filesystem (e.g., `/app/repo`, `/app/output`).
-    *   **Clone Repository:**
-        *   Retrieve Git credentials securely if needed (e.g., from environment variables or Secrets Manager - requires IAM permissions).
-        *   Use `subprocess.run` to clone the `repo_url` into the defined local repo path. Handle errors.
-    *   **Checkout Commit:** Use `subprocess.run` to `git checkout` the specific `commit_hash` within the cloned repo. Handle errors.
-    *   **Run Test Runners:**
-        *   *Adaptation Required:* The concept of `retro.toml` needs rethinking. Test runner commands might need to be passed via environment variables, discovered from the repo, or standardized. **Simplification for now:** Assume test commands are known or passed via environment variables.
-        *   Execute the test command(s) using `subprocess.run` (similar to `retro.run_tests`), capturing output. Store results in the defined local output path.
-    *   **Parse Results:**
-        *   *Adaptation Required:* Adapt the result parsing logic (e.g., from `parser.py`) to read files from the local output path.
-        *   Calculate `total_tests`, `failed_tests`.
-    *   **Upload Results to S3:**
-        *   Use `boto3` S3 client (`upload_file` or potentially syncing the whole output directory) to upload the contents of the local output directory to `s3://<bucket_name>/<repo_owner>/<repo_name>/<commit_hash>/`. Handle errors. Construct the `s3_output_path`.
-    *   **Update Status (COMPLETE/FAILED):**
-        *   Update the item in DynamoDB for the current commit:
-            *   Set `status='COMPLETE'`.
-            *   Set `total_tests`, `failed_tests`.
-            *   Set `s3_output_path`.
-        *   If any step failed, update status to `'FAILED'` and log errors appropriately.
-    *   **Cleanup:** Remove the cloned repository and local output directories from the container's filesystem.
-    *   **Main Execution Block:** Use `if __name__ == "__main__":` to call the main processing logic.
+2.  **Define Dockerfile Stages:**
+    *   **Base Stage:**
+        *   Start from a suitable Python base image (e.g., `FROM python:3.11-slim`).
+        *   Set the working directory (e.g., `WORKDIR /app`).
+        *   Install necessary OS packages:
+            *   Update package lists (`apt-get update`).
+            *   Install `git` (`apt-get install -y git`).
+            *   Install `curl` or `wget` if needed for fetching `uv`.
+            *   Clean up apt cache (`rm -rf /var/lib/apt/lists/*`).
+        *   Install `uv`: Download the installer script and execute it, or download the binary directly. Ensure it's executable and in the PATH.
+            ```dockerfile
+            # Example using installer script (check for latest URL/method)
+            RUN apt-get update &amp;&amp; apt-get install -y curl &amp;&amp; \
+                curl -LsSf https://astral.sh/uv/install.sh | sh &amp;&amp; \
+                apt-get purge -y --auto-remove curl &amp;&amp; \
+                rm -rf /var/lib/apt/lists/*
+            ENV PATH="/root/.cargo/bin:$PATH" # Note: Actual install path was /root/.local/bin
+            ```
+    *   **Application Stage:**
+        *   Copy the requirements file (`COPY requirements.txt .`).
+        *   Install Python dependencies using `uv`: `RUN uv pip install --no-cache --system -r requirements.txt`.
+        *   Copy the Fargate task script (`COPY process_single_commit_task.py .`).
+        *   *(Consideration):* If shared code from `src/git_retrospector` is needed and not included via dependencies, copy it here as well. This might involve adjusting paths or packaging `git_retrospector` as an installable library. For now, assume the script is self-contained or dependencies handle shared code.
+        *   Define the entrypoint or command to run the script (e.g., `CMD ["python", "process_single_commit_task.py"]`).
+    *   **DONE:** Stages defined in `fargate_task/Dockerfile`. Corrected `uv` PATH to `/root/.local/bin`.
 
-3.  **Create `requirements.txt`:**
-    *   In the `fargate_task/` directory, list dependencies needed specifically by this script (e.g., `boto3`).
+3.  **(Optional) Local Build Test:**
+    *   Navigate to the `fargate_task/` directory.
+    *   Run `docker build -t retrospector-fargate-task .` to verify the Dockerfile builds successfully locally.
+    *   **DONE:** Build tested successfully after manual correction of `&amp;&amp;` syntax issue.
 
-**Considerations:**
-*   **Shared Code:** How will functions from `git_retrospector` be made available to this script? (Copying, packaging as a library, Lambda layer?)
-*   **Test Runner Config:** How will the script know which test commands to run? (Environment variables, file in repo?)
-*   **Error Handling:** Robust error handling is critical for each step (Git, tests, S3, DynamoDB). Failures should result in a 'FAILED' status in DynamoDB.
+**Reference:** Consult `plan.md` (Phase 3, Step 3).
 
-**Reference:** Consult `plan.md` (Phase 3, Step 2b).
-
-**Status:**
-*   [X] Initial implementation of `fargate_task/process_single_commit_task.py` created.
-*   [X] `fargate_task/requirements.txt` created with `boto3` dependency.
-*   [ ] Integration of shared code from `git_retrospector` needed.
-*   [ ] Specific test result parsing logic needs implementation.
+**Achievements (2025-04-08):**
+*   Created `fargate_task/Dockerfile`.
+*   Defined base and application stages.
+*   Installed OS packages (git) and Python package manager (`uv`).
+*   Installed Python dependencies from `fargate_task/requirements.txt`.
+*   Set up the entrypoint for `process_single_commit_task.py`.
+*   Corrected `uv` installation path in `ENV PATH`.
+*   Successfully built the Docker image locally (`retrospector-fargate-task:latest`) after manual correction of `&amp;&amp;` syntax in the `RUN` command.
