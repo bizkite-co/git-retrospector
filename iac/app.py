@@ -3,13 +3,13 @@
 
 import aws_cdk as cdk
 
-from iac.iac_stack import IacStack
+from iac.iac_stack import RetrospectorInfraStack  # Renamed import
 
 
 app = cdk.App()
-IacStack(
+RetrospectorInfraStack(  # Renamed class usage
     app,
-    "IacStack",
+    "RetrospectorInfraStack",  # Renamed stack ID
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.

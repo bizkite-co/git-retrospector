@@ -11,25 +11,46 @@ from aws_cdk import (
     aws_stepfunctions as sfn,
     aws_stepfunctions_tasks as sfn_tasks,
     aws_lambda as lambda_,
-    aws_ecr_assets as ecr_assets,  # Added import
+    aws_ecr_assets as ecr_assets,
     CfnOutput,
+    Token,  # Import Token for checking unresolved values
 )
-import aws_cdk.aws_lambda_python_alpha as lambda_alpha  # Reverted import
+import aws_cdk.aws_lambda_python_alpha as lambda_alpha
 from constructs import Construct
 import os
+import re  # Import re for sanitizing bucket name
 
 
-class IacStack(Stack):
+class RetrospectorInfraStack(Stack):  # Renamed class
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # --- Git Lambda Layer ---
+        git_layer = lambda_.LayerVersion(
+            self,
+            "GitLayer",
+            code=lambda_.Code.from_asset(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "..",
+                    "..",
+                    "lambda_layers",
+                    "git",
+                    "git-layer.zip",
+                )
+            ),
+            compatible_runtimes=[lambda_.Runtime.PYTHON_3_11],
+            description="Layer containing Git binary and dependencies",
+        )
+
         # --- Existing Resources ---
 
+        # Make DynamoDB table name unique to the stack instance
         commit_status_table = dynamodb.Table(
             self,
             "CommitStatusTable",
-            table_name="GitRetrospectorCommitStatus",
+            table_name=f"GitRetrospectorCommitStatus-{construct_id}",  # Modified name
             partition_key=dynamodb.Attribute(
                 name="repo_id", type=dynamodb.AttributeType.STRING
             ),
@@ -37,22 +58,38 @@ class IacStack(Stack):
                 name="commit_hash", type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            removal_policy=RemovalPolicy.DESTROY,
+            removal_policy=RemovalPolicy.DESTROY,  # Be cautious in production
         )
+
+        # Make S3 bucket name unique and compliant
+        # Bucket names must be globally unique, lowercase, no underscores, 3-63 chars.
+        # Sanitize construct_id and combine with account/region for better uniqueness.
+        sanitized_construct_id = re.sub(r"[^a-z0-9-]", "-", construct_id.lower())
+        # Ensure the combined name doesn't exceed 63 chars and follows rules
+        base_bucket_name = f"git-retrospector-results-{sanitized_construct_id}"
+        # Use unresolved tokens for account/region if available, otherwise handle
+        # potential placeholders
+        account_part = (
+            self.account if not Token.is_unresolved(self.account) else "account"
+        )
+        region_part = self.region if not Token.is_unresolved(self.region) else "region"
+        full_bucket_name = f"{base_bucket_name}-{account_part}-{region_part}"
+        # Truncate if necessary, ensuring it doesn't end with a hyphen
+        final_bucket_name = full_bucket_name[:63].rstrip("-")
 
         results_bucket = s3.Bucket(
             self,
             "ResultsBucket",
-            bucket_name=f"git-retrospector-results-{self.account}-{self.region}",
+            bucket_name=final_bucket_name,  # Modified and sanitized name
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             encryption=s3.BucketEncryption.S3_MANAGED,
-            removal_policy=RemovalPolicy.DESTROY,
-            auto_delete_objects=True,
+            removal_policy=RemovalPolicy.DESTROY,  # Be cautious in production
+            auto_delete_objects=True,  # Useful for dev/test
         )
 
         # --- New Lambda Function (Initiation) ---
 
-        initiation_lambda = lambda_alpha.PythonFunction(  # Reverted usage
+        initiation_lambda = lambda_alpha.PythonFunction(
             self,
             "InitiationLambda",
             entry=os.path.join(
@@ -64,12 +101,13 @@ class IacStack(Stack):
             timeout=Duration.minutes(5),
             memory_size=1024,
             environment={
+                # Pass the dynamically generated table name to the lambda
                 "COMMIT_STATUS_TABLE_NAME": commit_status_table.table_name,
-                "GIT_EXECUTABLE_PATH": "/opt/bin/git",  # Assuming use of a Git layer
+                "GIT_EXECUTABLE_PATH": "/opt/bin/git",  # Path provided by the layer
+                # Tell git where to find helpers
+                "GIT_EXEC_PATH": "/opt/libexec/git-core",
             },
-            # layers=[lambda_.LayerVersion.from_layer_version_arn(self,
-            # "GitLayer", "arn:aws:lambda:REGION:ACCOUNT_ID:layer:GitLayer:VERSION")]
-            # Example if using layer
+            layers=[git_layer],  # Attach the Git layer
         )
 
         commit_status_table.grant_write_data(initiation_lambda)
@@ -105,23 +143,23 @@ class IacStack(Stack):
             memory_limit_mib=2048,
         )
 
+        # Make log group name unique to the stack instance
         log_group = logs.LogGroup(
             self,
             "RetrospectorTaskLogGroup",
-            log_group_name="/ecs/GitRetrospectorTask",
-            removal_policy=RemovalPolicy.DESTROY,
+            log_group_name=f"/ecs/GitRetrospectorTask-{construct_id}",  # Modified name
+            removal_policy=RemovalPolicy.DESTROY,  # Be cautious in production
         )
 
         container = task_definition.add_container(
             "RetrospectorContainer",
-            image=ecs.ContainerImage.from_docker_image_asset(
-                docker_image_asset
-            ),  # Updated image source
+            image=ecs.ContainerImage.from_docker_image_asset(docker_image_asset),
             logging=ecs.LogDrivers.aws_logs(
                 log_group=log_group,
                 stream_prefix="ecs",
             ),
             environment={
+                # Pass the dynamically generated table and bucket names
                 "DYNAMODB_TABLE_NAME": commit_status_table.table_name,
                 "S3_BUCKET_NAME": results_bucket.bucket_name,
             },
@@ -152,6 +190,16 @@ class IacStack(Stack):
                                 "$$.Map.Item.Value.commit_hash"
                             ),
                         ),
+                        # Pass dynamic names to the container if needed
+                        # (already done above)
+                        # sfn_tasks.TaskEnvironmentVariable(
+                        #     name="DYNAMODB_TABLE_NAME",
+                        #     value=commit_status_table.table_name
+                        # ),
+                        # sfn_tasks.TaskEnvironmentVariable(
+                        #     name="S3_BUCKET_NAME",
+                        #     value=results_bucket.bucket_name
+                        # ),
                     ],
                 )
             ],
@@ -172,14 +220,22 @@ class IacStack(Stack):
 
         definition = map_state.next(completion_state)
 
+        # Make state machine name unique to the stack instance
         state_machine = sfn.StateMachine(
             self,
             "GitRetrospectorStateMachine",
-            state_machine_name="GitRetrospectorStateMachine",
+            # Modified name
+            state_machine_name=f"GitRetrospectorStateMachine-{construct_id}",
             definition=definition,
             logs=sfn.LogOptions(
                 destination=logs.LogGroup(
-                    self, "StateMachineLogGroup", removal_policy=RemovalPolicy.DESTROY
+                    self,
+                    "StateMachineLogGroup",
+                    # Modified name
+                    log_group_name=f"""/aws/stepfunctions/GitRetrospectorStateMachine-{
+                         construct_id
+                    }""",
+                    removal_policy=RemovalPolicy.DESTROY,  # Be cautious in production
                 ),
                 level=sfn.LogLevel.ALL,
                 include_execution_data=True,
@@ -191,6 +247,14 @@ class IacStack(Stack):
         initiation_lambda.add_environment(
             "STATE_MACHINE_ARN", state_machine.state_machine_arn
         )
+        # Pass the dynamic bucket name to the initiation lambda if it needs it
+        initiation_lambda.add_environment(
+            "RESULTS_BUCKET_NAME", results_bucket.bucket_name
+        )
+        results_bucket.grant_read_write(
+            initiation_lambda
+        )  # Grant S3 permissions if needed by lambda
+
         state_machine.grant_start_execution(initiation_lambda)
 
         # --- Outputs ---
@@ -201,6 +265,7 @@ class IacStack(Stack):
         CfnOutput(self, "TaskDefinitionArn", value=task_definition.task_definition_arn)
         CfnOutput(self, "TaskRoleArn", value=task_role.role_arn)
         CfnOutput(self, "StateMachineArn", value=state_machine.state_machine_arn)
+        CfnOutput(self, "DockerImageAssetUri", value=docker_image_asset.image_uri)
         CfnOutput(
-            self, "DockerImageAssetUri", value=docker_image_asset.image_uri
-        )  # Added output for verification
+            self, "GitLayerArn", value=git_layer.layer_version_arn
+        )  # Added output for layer ARN
