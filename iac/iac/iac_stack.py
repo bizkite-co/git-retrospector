@@ -11,6 +11,7 @@ from aws_cdk import (
     aws_stepfunctions as sfn,
     aws_stepfunctions_tasks as sfn_tasks,
     aws_lambda as lambda_,
+    aws_ecr_assets as ecr_assets,  # Added import
     CfnOutput,
 )
 import aws_cdk.aws_lambda_python_alpha as lambda_alpha  # Reverted import
@@ -87,6 +88,15 @@ class IacStack(Stack):
         commit_status_table.grant_read_write_data(task_role)
         results_bucket.grant_write(task_role)
 
+        # Define Docker Image Asset
+        docker_image_asset = ecr_assets.DockerImageAsset(
+            self,
+            "RetrospectorFargateTaskImage",
+            directory=os.path.join(
+                os.path.dirname(__file__), "..", "..", "fargate_task"
+            ),
+        )
+
         task_definition = ecs.FargateTaskDefinition(
             self,
             "RetrospectorTaskDef",
@@ -104,9 +114,9 @@ class IacStack(Stack):
 
         container = task_definition.add_container(
             "RetrospectorContainer",
-            image=ecs.ContainerImage.from_registry(
-                "public.ecr.aws/amazonlinux/amazonlinux:latest"  # Placeholder
-            ),
+            image=ecs.ContainerImage.from_docker_image_asset(
+                docker_image_asset
+            ),  # Updated image source
             logging=ecs.LogDrivers.aws_logs(
                 log_group=log_group,
                 stream_prefix="ecs",
@@ -191,3 +201,6 @@ class IacStack(Stack):
         CfnOutput(self, "TaskDefinitionArn", value=task_definition.task_definition_arn)
         CfnOutput(self, "TaskRoleArn", value=task_role.role_arn)
         CfnOutput(self, "StateMachineArn", value=state_machine.state_machine_arn)
+        CfnOutput(
+            self, "DockerImageAssetUri", value=docker_image_asset.image_uri
+        )  # Added output for verification
