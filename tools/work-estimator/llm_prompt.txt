@@ -1,0 +1,617 @@
+Based on the following git commit analysis, please provide a summary of the work done.
+The analysis covers a period of 30 days.
+The total estimated hours worked, based on continuous commit sessions, is 42.44.
+
+Here are the commit subjects and relevant file changes (`plan.md`, `task.md`):
+
+--- Session 1 ---
+- Commit 6c89921: feat(starshipit): Improve order discovery and prevent direct creation
+    - Changes: 10 files changed (468 insertions, 173 deletions)
+
+--- Session 2 ---
+- Commit 07feb46: feat(starshipit): Enforce integration-first order creation and improve shipping mapping
+    - Changes: 7 files changed (798 insertions, 90 deletions)
+- Commit 263da79: refactor(cdk): Improve application stack resilience and configuration
+    - Changes: 6 files changed (93 insertions, 590 deletions)
+
+--- Session 3 ---
+- Commit af1c182: feat(workflow): Enhance Starshipit integration resilience
+    - Changes: 3 files changed (29 insertions, 24 deletions)
+- Commit 33fa256: Move Update Starshipit retries to Step Function
+    - Changes: 2 files changed (6 insertions, 22 deletions)
+
+--- Session 4 ---
+- Commit 378f13f: feat(workflow): Improve error handling for Starshipit and approval tasks
+    - Changes: 1 files changed (17 insertions, 9 deletions)
+
+--- Session 5 ---
+- Commit efeec96: refactor: Move scripts to Makefile to declutter package.json
+    - Changes: 2 files changed (289 insertions, 92 deletions)
+
+--- Session 6 ---
+- Commit c93ff14: plan: Issue 28 reopened
+    - Changes: 2 files changed (33 insertions, 144 deletions)
+
+--- Session 7 ---
+- Commit 69b9abe: refactor(workflow): Extract Starshipit logic into a separate construct This commit refactors the main Shopify order processing Step Function workflow by extracting all Starshipit-related tasks and logic into a new `StarshipitWorkflow` construct.
+    - Changes: 5 files changed (409 insertions, 449 deletions)
+
+--- Session 8 ---
+- Commit 9f901f6: feat(workflow): Modularize Shopify order processing workflow
+    - Changes: 4 files changed (567 insertions, 517 deletions)
+
+--- Session 9 ---
+- Commit 85b5f76: feat: Update "Parcels Determined" status to "Waiting for PDFs"
+    - Changes: 2 files changed (12 insertions, 3 deletions)
+
+--- Session 10 ---
+- Commit af83b1c: refactor: Modularize print status page JS
+    - Changes: 10 files changed (563 insertions, 350 deletions)
+
+--- Session 11 ---
+- Commit 5c848e3: refactor: Simplify HTML labels and update Ezeep status message format
+    - Changes: 3 files changed (7 insertions, 8 deletions)
+
+--- Session 12 ---
+- Commit d527448: feat: Add 'copy-to-web' task to Makefile and enhance status website styles
+    - Changes: 5 files changed (34 insertions, 23 deletions)
+
+--- Session 13 ---
+- Commit 40ab119: feat: Fix `make build`
+    - Changes: 1 files changed (2 insertions, 3 deletions)
+
+--- Session 14 ---
+- Commit 4fdac7b: plan: Convert Zod to Effect Schema for Fulfillment workflow
+    - Changes: 2 files changed (121 insertions, 0 deletions)
+
+--- Session 15 ---
+- Commit 06893dd: feat: Update Makefile for improved build process and add Shopify schemas
+    - Changes: 5 files changed (896 insertions, 2 deletions)
+
+--- Session 16 ---
+- Commit 8b34f3e: plan: Issue #29 fix Fulfillment workflow by fixing data mapping.
+    - Changes: 3 files changed (139 insertions, 48 deletions)
+
+--- Session 17 ---
+- Commit f690f46: feat: Update linting commands in Makefile to use npx and improve schema definitions
+    - Changes: 5 files changed (14 insertions, 10 deletions)
+
+--- Session 18 ---
+- Commit ad34cb8: feat: Configure ESLint with flat config and fix linting errors
+    - Changes: 15 files changed (1497 insertions, 194 deletions)
+
+--- Session 19 ---
+- Commit 8e278e0: Starshipit meeting
+    - Changes: 1 files changed (10 insertions, 0 deletions)
+
+--- Session 20 ---
+- Commit ebd7246: feat: Load product data from S3 instead of local CSV
+    - Changes: 10 files changed (1440 insertions, 474 deletions)
+- Commit b4fccea: fix: Erroneous workflow renaming and refactor
+    - Changes: 2 files changed (75 insertions, 23 deletions)
+
+--- Session 21 ---
+- Commit 8488953: feat: Handle orders with no shipping lines gracefully
+    - Changes: 9 files changed (837 insertions, 231 deletions)
+
+--- Session 22 ---
+- Commit 7ac94a4: feat: Enhance Starshipit shipping mapping and output
+    - Changes: 2 files changed (116 insertions, 11 deletions)
+
+--- Session 23 ---
+- Commit e63f542: feat: Refactor test order creation and update shipping data
+    - Changes: 12 files changed (1504 insertions, 485 deletions)
+
+--- Session 24 ---
+- Commit c171345: feat: Update product data with HS codes and add csv-stringify
+    - Changes: 4 files changed (108 insertions, 100 deletions)
+
+--- Session 25 ---
+- Commit f2f50d1: fix: Stop removing DB attributes as a default action
+    - Changes: 1 files changed (0 insertions, 19 deletions)
+- Commit 16aa3ed: feat: Migrate print status update schemas to Effect Schema and enhance Shopify line item definitions
+    - Changes: 3 files changed (101 insertions, 10 deletions)
+
+--- Session 26 ---
+- Commit b22cd24: feat: Enhance parcel determination logic with product data loading and packing diagram generation
+    - Changes: 16 files changed (915 insertions, 504 deletions)
+
+--- Session 27 ---
+- Commit 7cb2ca2: feat: Add packing method display and logic to order processing
+    - Changes: 12 files changed (256 insertions, 91 deletions)
+
+--- Session 28 ---
+- Commit 52f6bcf: fix: Recurrent `__dirname` error
+    - Changes: 8 files changed (38 insertions, 16 deletions)
+- Commit 5d931a2: fix: Add titles back in to products.
+    - Changes: 2 files changed (88 insertions, 87 deletions)
+
+--- Session 29 ---
+- Commit 99651b6: feat: Update product detail retrieval to include price and streamline order creation logic
+    - Changes: 3 files changed (9 insertions, 12 deletions)
+- Commit e23fbae: feat: Enhance create order logic to include random price for items without product details
+    - Changes: 2 files changed (7 insertions, 3 deletions)
+
+--- Session 30 ---
+- Commit 9eaa2c6: feat: Refactor product data loading and improve error handling
+    - Changes: 11 files changed (235 insertions, 105 deletions)
+
+--- Session 31 ---
+- Commit 896a4a7: feat: Enhance parcel determination logic to include enriched line item dimensions and packing method
+    - Changes: 6 files changed (96 insertions, 228 deletions)
+  - Diff for `task.md`:
+    commit 896a4a7cc214d6aeae4e0d5a714b01b0b699c04d
+    Author: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>
+    Date:   Fri Sep 26 11:00:17 2025 -0700
+
+        feat: Enhance parcel determination logic to include enriched line item dimensions and packing method
+
+    diff --git a/task.md b/task.md
+    index ba51e29..6cb1e3f 100644
+    --- a/task.md
+    +++ b/task.md
+    @@ -1,30 +1,38 @@
+    -### Plan to Resolve Data Mapping Issues
+    +### Plan to Resolve Remaining Issues in Step Function Workflow
+
+    -**Goal:** Ensure `starshipitShippingMethodName` and `trackingInfo.number` are correctly propagated and validated throughout the Step Function workflow, adhering to the principles outlined in `docs/data-mapping-guidance.md`.
+    +**Goal:** Ensure `packingMethod` and `packing_diagram_html` from the `determineParcels` Lambda are correctly propagated, saved to the database, and potentially displayed.
+
+    -**Steps:**
+    +**Current Status:**
+    +The `determineParcels` Lambda is now successfully:
+    +-   Loading `box-definitions.json`, `products_for_upload.csv`, and `sku-package-scenario-lookup.json`.
+    +-   Correctly parsing product dimension data from `products_for_upload.csv`.
+    +-   Performing bin-packing and selecting an appropriate box (e.g., "small-white-plane-box").
+    +-   Outputting `packingMethod` (e.g., "bin-packing") and `packing_diagram_html` (if generated).
+    +
+    +**Problem Identified:**
+    +While the `determineParcels` Lambda is working as intended, the `packingMethod` and `packing_diagram_html` values are not being saved to the database or displayed in the UI. This indicates an issue in the downstream processing of the Step Functions workflow.
+    +
+    +**Steps to Investigate and Resolve:**
+
+     1.  **Explore Step Function Definition:**
+    -    *   Identify the main CDK construct defining the `ShopifyOrderProcessor` Step Function. Based on the `README.md` and file structure, this is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).
+    -    *   Read the content of this file to understand the state machine's structure, especially the states leading up to and including "Update Print Status: Print Approved" (which likely corresponds to the `updateShopifyStatus.ts` Lambda).
+    -    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states.
+    +    *   Identify the main CDK construct defining the `ShopifyOrderProcessingWorkflow`. This is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).
+    +    *   Read the content of this file to understand the state machine's structure, specifically the states immediately following the `determineParcels` Lambda.
+    +    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states to see how the output of `determineParcels` is being handled.
+
+    -2.  **Identify Relevant Lambda Schemas:**
+    -    *   Determine which Lambda functions are involved in the data flow for `starshipitShippingMethodName` and `trackingInfo.number`. This will likely include `createStarshipitShipment.ts`, `generateStarshipitPdf.ts`, the "Normalize Starshipit Output" Pass state, and `updateShopifyStatus.ts`.
+    -    *   Locate the Zod schemas used by these Lambdas for input and output validation. These are typically found in [`lambda/types/`](lambda/types/) or [`lib/schemas/`](lib/schemas/).
+    +2.  **Identify Relevant Lambda Functions:**
+    +    *   Determine which Lambda functions are responsible for receiving the output of `determineParcels` and interacting with the database (e.g., `updatePrintStatus.ts` or any other Lambda that saves order/parcel information).
+    +    *   Locate the schemas (if any) used by these Lambdas for input validation.
+
+     3.  **Trace Data Flow and Pinpoint Discrepancies:**
+    -    *   Using the Step Function definition and Lambda schemas, I will trace the journey of `starshipitShippingMethodName` and `trackingInfo.number` through the workflow.
+    -    *   Specifically, I will identify:
+    -        *   Where `starshipitShippingMethodName` is initially introduced (e.g., from `createStarshipitShipment.ts` output).
+    -        *   How it is transformed or passed through subsequent states, particularly the "Normalize Starshipit Output" Pass state.
+    -        *   Why it is missing from the input to "Print Approved" (i.e., `Update Print Status: Print Approved`).
+    -        *   Where `trackingInfo.number` is expected to be populated and why it's becoming `[null]` before the `updateShopifyStatus.ts` Lambda. This might involve examining the output of `generateStarshipitPdf.ts` or the "Normalize Starshipit Output" state.
+    +    *   Trace the journey of `packingMethod` and `packing_diagram_html` from the output of `determineParcels` through the subsequent states and Lambda functions.
+    +    *   Specifically, identify:
+    +        *   If these fields are being correctly passed from the `determineParcels` Lambda's output to the input of the next state.
+    +        *   If the next state's `InputPath`, `Parameters`, `ResultSelector`, or `OutputPath` are inadvertently dropping or transforming these fields.
+    +        *   If the Lambda responsible for saving to the DB is receiving these fields and correctly persisting them.
+
+     4.  **Propose and Implement Solutions:**
+    -    *   **Schema Refinement:** If necessary, update existing Zod schemas or create new ones to explicitly define the expected structure for `starshipitShippingMethodName` (as a string) and `trackingInfo.number` (as an array of strings, not `[null]`) at each relevant state boundary.
+    -    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure these properties are correctly extracted, transformed, and passed between states. This will involve using `sfn.JsonPath` expressions precisely.
+    -    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly populating these fields, I will suggest modifications to the Lambda handler code to ensure the output conforms to the expected schema.
+    +    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure `packingMethod` and `packing_diagram_html` are correctly extracted, transformed, and passed between states and to the database-saving Lambda.
+    +    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly receiving or persisting these fields, suggest modifications to the Lambda handler code.
+
+     ### Data Flow Visualization (Conceptual)
+
+    @@ -33,17 +41,13 @@ To illustrate the data flow, here's a conceptual Mermaid diagram focusing on the
+     ```mermaid
+     graph TD
+         subgraph Step Function Workflow
+    -        A[Create Starshipit Shipment] --> B{Generate Starshipit PDF};
+    -        B --> C[Normalize Starshipit Output (Pass State)];
+    -        C -- Output: { ..., starshipitShippingMethodName: "...", trackingInfo: { number: ["TRACKING_NUM"] } } --> D[Update Print Status: Print Approved];
+    -        D -- Input: { ..., starshipitShippingMethod: "...", trackingInfo: { number: ["TRACKING_NUM"] } } --> E[Update Shopify Status Lambda];
+    +        A[Determine Parcels Lambda] --> B{Next State (e.g., Pass State or another Lambda)};
+    +        B -- Output: { ..., packingMethod: "...", packing_diagram_html: "..." } --> C[Database Update Lambda];
+         end
+
+         style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -    style B fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -    style C fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style D fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -    style E fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    +    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    +    style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+     ```
+
+    -The critical points to investigate are the output of `Generate Starshipit PDF`, the transformations within `Normalize Starshipit Output (Pass State)`, and the input mapping to `Update Print Status: Print Approved`.
+    \ No newline at end of file
+    +The critical points to investigate are the output of `Determine Parcels Lambda` and how it's consumed by the subsequent states and Lambdas responsible for database persistence.
+
+- Commit eb95d9f: feat: Add harmonized system code to ShopifyVariant interface and implement HS code update script
+    - Changes: 2 files changed (165 insertions, 0 deletions)
+
+--- Session 32 ---
+- Commit 69393ba: feat: Refactor Shopify schemas to use Effect library and enhance validation logic
+    - Changes: 11 files changed (147 insertions, 206 deletions)
+- Commit 3b2b1bd: feat: Enhance print status handling to include packing method and diagram HTML in payloads
+    - Changes: 2 files changed (9 insertions, 1 deletions)
+- Commit 7e3348e: feat: Simplify print status payload construction by removing redundant fields and enhancing parcel data handling.
+    - Changes: 1 files changed (3 insertions, 16 deletions)
+- Commit 97e26e8: feat: Add line item rendering to order details and remove SKU display
+    - Changes: 2 files changed (61 insertions, 15 deletions)
+- Commit 206ece6: refactor: Use parcel lookup first and use bin-packing as fallback
+    - Changes: 1 files changed (61 insertions, 61 deletions)
+- Commit 023e8fe: feat: Add packing diagram rendering to order items and update payload structure
+    - Changes: 3 files changed (16 insertions, 17 deletions)
+- Commit 860bbec: feat: Update parcel output to include nullable packing diagram HTML and packing method
+    - Changes: 2 files changed (4 insertions, 3 deletions)
+
+--- Session 33 ---
+- Commit eb4809d: feat: Enhance packing diagram handling and update shipping method formatting in payloads
+    - Changes: 8 files changed (63 insertions, 22 deletions)
+
+--- Session 34 ---
+- Commit 9dc2f30: feat: Update Makefile targets for script compilation
+    - Changes: 7 files changed (136 insertions, 112 deletions)
+- Commit ad41053: fix: Clean up products and logging.
+    - Changes: 3 files changed (1 insertions, 15 deletions)
+
+--- Session 35 ---
+- Commit 7e3bb96: feat: Refactor Shopify product lookup and error handling
+    - Changes: 9 files changed (374 insertions, 140 deletions)
+
+--- Session 36 ---
+- Commit 03c1625: feat: Add test-inventory-item command and update box-definitions in Makefile
+    - Changes: 4 files changed (47 insertions, 65 deletions)
+  - Diff for `task.md`:
+    commit 03c1625963ce5c82d95e3e2e4dc8dc9c3d2ed37c
+    Author: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>
+    Date:   Sat Sep 27 15:11:01 2025 -0700
+
+        feat: Add test-inventory-item command and update box-definitions in Makefile
+
+    diff --git a/task.md b/task.md
+    index 6cb1e3f..7a29858 100644
+    --- a/task.md
+    +++ b/task.md
+    @@ -1,53 +1,49 @@
+    -### Plan to Resolve Remaining Issues in Step Function Workflow
+    +# Task: Bulk Update Shopify Product HS Codes
+
+    -**Goal:** Ensure `packingMethod` and `packing_diagram_html` from the `determineParcels` Lambda are correctly propagated, saved to the database, and potentially displayed.
+    +**Objective:** The primary goal is to run the `scripts/updateShopifyHsCodes.ts` script to bulk-update Harmonized System (HS) codes for products in Shopify, based on a master CSV file stored in S3. The script should only update products that are missing an HS code and generate an accurate log file of all changes for auditing purposes.
+
+    -**Current Status:**
+    -The `determineParcels` Lambda is now successfully:
+    --   Loading `box-definitions.json`, `products_for_upload.csv`, and `sku-package-scenario-lookup.json`.
+    --   Correctly parsing product dimension data from `products_for_upload.csv`.
+    --   Performing bin-packing and selecting an appropriate box (e.g., "small-white-plane-box").
+    --   Outputting `packingMethod` (e.g., "bin-packing") and `packing_diagram_html` (if generated).
+    +---
+
+    -**Problem Identified:**
+    -While the `determineParcels` Lambda is working as intended, the `packingMethod` and `packing_diagram_html` values are not being saved to the database or displayed in the UI. This indicates an issue in the downstream processing of the Step Functions workflow.
+    +### Current Status: **Build Broken**
+
+    -**Steps to Investigate and Resolve:**
+    +After a lengthy debugging process, we have successfully identified the correct Shopify API calls and logic required to perform the task. However, in the process of implementing this, a major refactoring of a central utility file (`lambda/utils/productData.ts`) was done recklessly. The file's content was completely replaced, which resulted in the deletion of many critical TypeScript interfaces and helper functions that numerous other scripts in the project depend on.
+
+    -1.  **Explore Step Function Definition:**
+    -    *   Identify the main CDK construct defining the `ShopifyOrderProcessingWorkflow`. This is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).
+    -    *   Read the content of this file to understand the state machine's structure, specifically the states immediately following the `determineParcels` Lambda.
+    -    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states to see how the output of `determineParcels` is being handled.
+    +As a result, the project build is currently broken with over 30 TypeScript errors across at least 5 different scripts.
+
+    -2.  **Identify Relevant Lambda Functions:**
+    -    *   Determine which Lambda functions are responsible for receiving the output of `determineParcels` and interacting with the database (e.g., `updatePrintStatus.ts` or any other Lambda that saves order/parcel information).
+    -    *   Locate the schemas (if any) used by these Lambdas for input validation.
+    +### Key Discoveries During Debugging:
+
+    -3.  **Trace Data Flow and Pinpoint Discrepancies:**
+    -    *   Trace the journey of `packingMethod` and `packing_diagram_html` from the output of `determineParcels` through the subsequent states and Lambda functions.
+    -    *   Specifically, identify:
+    -        *   If these fields are being correctly passed from the `determineParcels` Lambda's output to the input of the next state.
+    -        *   If the next state's `InputPath`, `Parameters`, `ResultSelector`, or `OutputPath` are inadvertently dropping or transforming these fields.
+    -        *   If the Lambda responsible for saving to the DB is receiving these fields and correctly persisting them.
+    +1.  **Correct API Call:** The correct way to fetch and update HS codes is via the **Shopify GraphQL API**, not the REST API. The specific query needed is `inventoryItems` (to fetch the code) and the mutation is `inventoryItemUpdate` (to set it). My previous attempts using the `productVariants` query were incorrect.
+    +2.  **Test Script:** We created a new, focused test script at `scripts/testInventoryItemLookup.ts` and a corresponding `make test-inventory-item` command. This script successfully proved that the `inventoryItems` GraphQL query works for fetching data for a single SKU.
+    +3.  **Root Cause of Bugs:** The original script was failing for multiple reasons that have now been identified:
+    +    *   It was using incorrect API endpoints.
+    +    *   It was not correctly checking if an HS code already existed, causing it to re-update products on every run.
+    +    *   It was not handling API errors or data parsing errors robustly.
+
+    -4.  **Propose and Implement Solutions:**
+    -    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure `packingMethod` and `packing_diagram_html` are correctly extracted, transformed, and passed between states and to the database-saving Lambda.
+    -    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly receiving or persisting these fields, suggest modifications to the Lambda handler code.
+    +---
+
+    -### Data Flow Visualization (Conceptual)
+    +### Path to Resolution
+
+    -To illustrate the data flow, here's a conceptual Mermaid diagram focusing on the problematic areas:
+    +To fix the broken build and complete the task, the following steps are required:
+
+    -```mermaid
+    -graph TD
+    -    subgraph Step Function Workflow
+    -        A[Determine Parcels Lambda] --> B{Next State (e.g., Pass State or another Lambda)};
+    -        B -- Output: { ..., packingMethod: "...", packing_diagram_html: "..." } --> C[Database Update Lambda];
+    -    end
+    +**Step 1: Recover Lost Code**
+
+    -    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -```
+    +The previous version of `lambda/utils/productData.ts` must be restored. **The model (Gemini) has lost this code from its context and cannot proceed without it.** The user must provide the content of this file.
+
+    -The critical points to investigate are the output of `Determine Parcels Lambda` and how it's consumed by the subsequent states and Lambdas responsible for database persistence.
+    +**Step 2: Carefully Re-integrate the Correct Logic**
+    +
+    +Once the original file content is restored, the correct GraphQL logic must be carefully merged back into it. The goal is to create a single, unified, and powerful function (e.g., `getVariantDetailsBySku`) that fetches all data required by all dependent scripts in a single API call. This involves:
+    +*   Adding the new GraphQL functions (`getVariantDetailsBySku`, `updateInventoryItemHsCode`) to the file.
+    +*   **Crucially, preserving all existing interfaces and helper functions** (`ShopifyImage`, `getProductImageUrl`, etc.) that were previously deleted.
+    +
+    +**Step 3: Fix All Dependent Scripts**
+    +
+    +With the central utility file fixed, each script that is currently broken must be updated to use the new, unified `getVariantDetailsBySku` function. This involves:
+    +*   Updating `scripts/updateShopifyHsCodes.ts`
+    +*   Updating `scripts/createShopifyTestOrder.ts`
+    +*   Updating `scripts/testShopifyProductLookup.ts`
+    +*   Updating `scripts/manageShopifyImages.ts`
+    +*   Updating `lambda/startExecution.ts`
+    +
+    +**Step 4: Final Verification**
+    +
+    +After all scripts are fixed and the build is successful, run the commands `make test-inventory-item` and `make update-hs-codes` to verify that everything works as expected and that the final log file is accurate.
+    \ No newline at end of file
+
+
+--- Session 37 ---
+- Commit 185fdc1: feat: Refactor Makefile targets and enhance inventory item handling in product data scripts
+    - Changes: 6 files changed (477 insertions, 196 deletions)
+- Commit fe3c453: fix: Run HS update on PROD and UAT and log it
+    - Changes: 4 files changed (164 insertions, 10 deletions)
+
+--- Session 38 ---
+- Commit 90c9ed0: feat: Add shipping problem reporting feature
+    - Changes: 9 files changed (246 insertions, 7 deletions)
+
+--- Session 39 ---
+- Commit 9801edc: feat: Add increment API Gateway version script
+    - Changes: 3 files changed (30 insertions, 7 deletions)
+
+--- Session 40 ---
+- Commit 07218d6: feat: Add support for customs documents in Starshipit integration and update related schemas
+    - Changes: 6 files changed (102 insertions, 49 deletions)
+  - Diff for `task.md`:
+    commit 07218d653720d8d2a95f00a55881bc049edaec21
+    Author: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>
+    Date:   Sun Sep 28 09:56:25 2025 -0700
+
+        feat: Add support for customs documents in Starshipit integration and update related schemas
+
+    diff --git a/task.md b/task.md
+    index 7a29858..1f973e8 100644
+    --- a/task.md
+    +++ b/task.md
+    @@ -1,49 +1 @@
+    -# Task: Bulk Update Shopify Product HS Codes
+    -
+    -**Objective:** The primary goal is to run the `scripts/updateShopifyHsCodes.ts` script to bulk-update Harmonized System (HS) codes for products in Shopify, based on a master CSV file stored in S3. The script should only update products that are missing an HS code and generate an accurate log file of all changes for auditing purposes.
+    -
+    ----
+    -
+    -### Current Status: **Build Broken**
+    -
+    -After a lengthy debugging process, we have successfully identified the correct Shopify API calls and logic required to perform the task. However, in the process of implementing this, a major refactoring of a central utility file (`lambda/utils/productData.ts`) was done recklessly. The file's content was completely replaced, which resulted in the deletion of many critical TypeScript interfaces and helper functions that numerous other scripts in the project depend on.
+    -
+    -As a result, the project build is currently broken with over 30 TypeScript errors across at least 5 different scripts.
+    -
+    -### Key Discoveries During Debugging:
+    -
+    -1.  **Correct API Call:** The correct way to fetch and update HS codes is via the **Shopify GraphQL API**, not the REST API. The specific query needed is `inventoryItems` (to fetch the code) and the mutation is `inventoryItemUpdate` (to set it). My previous attempts using the `productVariants` query were incorrect.
+    -2.  **Test Script:** We created a new, focused test script at `scripts/testInventoryItemLookup.ts` and a corresponding `make test-inventory-item` command. This script successfully proved that the `inventoryItems` GraphQL query works for fetching data for a single SKU.
+    -3.  **Root Cause of Bugs:** The original script was failing for multiple reasons that have now been identified:
+    -    *   It was using incorrect API endpoints.
+    -    *   It was not correctly checking if an HS code already existed, causing it to re-update products on every run.
+    -    *   It was not handling API errors or data parsing errors robustly.
+    -
+    ----
+    -
+    -### Path to Resolution
+    -
+    -To fix the broken build and complete the task, the following steps are required:
+    -
+    -**Step 1: Recover Lost Code**
+    -
+    -The previous version of `lambda/utils/productData.ts` must be restored. **The model (Gemini) has lost this code from its context and cannot proceed without it.** The user must provide the content of this file.
+    -
+    -**Step 2: Carefully Re-integrate the Correct Logic**
+    -
+    -Once the original file content is restored, the correct GraphQL logic must be carefully merged back into it. The goal is to create a single, unified, and powerful function (e.g., `getVariantDetailsBySku`) that fetches all data required by all dependent scripts in a single API call. This involves:
+    -*   Adding the new GraphQL functions (`getVariantDetailsBySku`, `updateInventoryItemHsCode`) to the file.
+    -*   **Crucially, preserving all existing interfaces and helper functions** (`ShopifyImage`, `getProductImageUrl`, etc.) that were previously deleted.
+    -
+    -**Step 3: Fix All Dependent Scripts**
+    -
+    -With the central utility file fixed, each script that is currently broken must be updated to use the new, unified `getVariantDetailsBySku` function. This involves:
+    -*   Updating `scripts/updateShopifyHsCodes.ts`
+    -*   Updating `scripts/createShopifyTestOrder.ts`
+    -*   Updating `scripts/testShopifyProductLookup.ts`
+    -*   Updating `scripts/manageShopifyImages.ts`
+    -*   Updating `lambda/startExecution.ts`
+    -
+    -**Step 4: Final Verification**
+    -
+    -After all scripts are fixed and the build is successful, run the commands `make test-inventory-item` and `make update-hs-codes` to verify that everything works as expected and that the final log file is accurate.
+    \ No newline at end of file
+    +When we have a foreign order, Starshipit creates customs docs, based on our products Harmonized System (HS) codes. When we run @lambda/generateStarshipitPdf.ts , we need to fetch the customs docs as well as the Label and Packing Slip that we are already fetching, and we need to store it in the same place we are storing those docs and add the S3 path to the DB, just like we do for those docs.
+    \ No newline at end of file
+
+
+--- Session 41 ---
+- Commit 859e92d: feat: Add foreign order creation support and related payloads
+    - Changes: 5 files changed (62 insertions, 4 deletions)
+
+--- Session 42 ---
+- Commit b67482b: fix: Revert double prepend of code.
+    - Changes: 1 files changed (3 insertions, 3 deletions)
+
+--- Session 43 ---
+- Commit e6736c2: feat: Add support for foreign order handling and shipping country code in various components
+    - Changes: 10 files changed (55 insertions, 29 deletions)
+
+--- Session 44 ---
+- Commit 3c1af57: feat: Update parcel handling to include shipping country code and remove foreign country references
+    - Changes: 4 files changed (2 insertions, 20 deletions)
+
+--- Session 45 ---
+- Commit 2789428: feat: implement Shopify shipping labels scraper using Playwright
+    - Changes: 44 files changed (313 insertions, 5122 deletions)
+  - Diff for `plan.md`:
+    commit 27894283f9653ebcb5e8220cead8c1d314da4d1e
+    Author: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>
+    Date:   Tue Sep 30 22:49:49 2025 -0700
+
+        feat: implement Shopify shipping labels scraper using Playwright
+
+        - Added a new script to scrape shipping labels from Shopify's admin interface.
+        - Integrated 1Password CLI for secure credential retrieval.
+        - Implemented date parsing for shipping labels.
+        - Added pagination handling to scrape multiple pages of labels.
+        - Saved scraped data to a JSON file in the specified output directory.
+
+    diff --git a/plan.md b/plan.md
+    index c2a0ed5..e69de29 100644
+    --- a/plan.md
+    +++ b/plan.md
+    @@ -1,97 +0,0 @@
+    -### **Plan: Incremental Effect Schema Integration for Step Function Data Mapping**
+    -
+    -**Objective:** To incrementally integrate Effect Schema into the Turbo Webhook project's Step Function workflows, specifically targeting recurring data mapping errors (e.g., `topicHeader` or `starshipitShippingMethod`) between CDK Lambdas. This initial, constrained integration aims to demonstrate the benefits of a schema-first approach, with the potential for broader adoption to enhance robustness and maintainability.
+    -
+    ----
+    -
+    -**Problem Statement:**
+    -
+    -The Turbo Webhook project frequently encounters data mapping inconsistencies and errors within its Step Function workflows. These issues manifest as:
+    -*   **JSONPath Errors:** Step Functions failing due to missing or incorrectly located fields in payloads.
+    -*   **Lambda Input/Output Mismatches:** Lambdas receiving or producing data that does not conform to expected shapes.
+    -*   **Ambiguous Naming:** Inconsistent naming conventions for logical entities across components.
+    -*   **Manual Transformation Overhead:** Excessive manual logic for data reconciliation.
+    -*   **Debugging Complexity:** Difficulty tracing data flow and identifying error sources.
+    -
+    -These problems lead to increased development time, bugs, and reduced system reliability, particularly for critical values like `topicHeader` or `starshipitShippingMethod` that need consistent mapping.
+    -
+    ----
+    -
+    -**Core Principles for Incremental Effect Schema Adoption:**
+    -
+    -Based on the `docs/data-mapping-guidance.md`, the following principles will guide this integration:
+    -1.  **Start with Critical Boundaries:** Focus on the most problematic or frequently changing data flows first.
+    -2.  **Schema-First Definition:** Define explicit Effect Schemas for inputs and outputs at these boundaries.
+    -3.  **Custom CDK Constructs:** Leverage custom CDK constructs to programmatically generate Step Function `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` based on Effect Schemas, enabling design-time validation.
+    -4.  **Gradual Adoption:** Introduce Effect Schema one component at a time, allowing coexistence with existing Zod schemas and JSONPath definitions.
+    -5.  **Robust Testing:** Implement comprehensive testing at each stage to validate schema enforcement and data flow.
+    -
+    ----
+    -
+    -**Detailed Plan for Implementation:**
+    -
+    -This plan outlines the steps to introduce Effect Schema, focusing on a single, critical data mapping problem within a Step Function workflow.
+    -
+    -**Mermaid Diagram for the Plan:**
+    -
+    -```mermaid
+    -graph TD
+    -    A[Start: Identify Critical Data Mapping Problem] --> B{Example: `topicHeader` or `starshipitShippingMethod`};
+    -    B --> C[Phase 1: Initial Setup & Schema Definition];
+    -    C --> D[Define Effect Schema for Input/Output];
+    -    D --> E[Phase 2: Lambda Handler Integration];
+    -    E --> F[Integrate Effect Schema for Runtime Validation in Lambda];
+    -    F --> G[Phase 3: Custom CDK Construct Development];
+    -    G --> H[Create `SchemaValidatedLambdaTask` CDK Construct];
+    -    H --> I[Construct Programmatically Generates SF `InputPath`, `Parameters`, `ResultSelector`, `OutputPath`];
+    -    I --> J[Phase 4: Step Function Integration];
+    -    J --> K[Replace Existing `LambdaInvoke` or `Pass` State with New Construct];
+    -    K --> L[Phase 5: Testing & Validation];
+    -    L --> M[Unit, Integration, and Cloud-based Testing];
+    -    M --> N[Phase 6: Gradual Expansion];
+    -    N --> O[Apply Pattern to Other Problematic Areas];
+    -    O --> P[End: Enhanced Data Robustness];
+    -
+    -    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style C fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style D fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style E fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style F fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style G fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style H fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style I fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style J fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style K fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style L fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style M fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style N fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    -    style O fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    -    style P fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    -```
+    -
+    -**Detailed Todo List:**
+    -
+    -*   **Phase 1: Initial Setup & Schema Definition**
+    -    *   [ ] **Identify a Critical Data Boundary:** Select a specific Step Function state (e.g., a `LambdaInvoke` task or a `Pass` state) where `topicHeader` or `starshipitShippingMethod` mapping issues frequently occur.
+    -    *   [ ] **Install Effect Schema:** Add `effect` and `effect-schema` to the project dependencies.
+    -    *   [ ] **Define Effect Schemas:** Create a new file (e.g., `lib/schemas/effect/myFeatureSchema.ts`) to define the Effect Schemas for the *exact* input and output of the chosen Step Function state.
+    -        *   Example: `TopicHeaderInputSchema`, `TopicHeaderOutputSchema`.
+    -*   **Phase 2: Lambda Handler Integration (if applicable)**
+    -    *   [ ] **Update Lambda Handler:** If the chosen state is a `LambdaInvoke` task, modify the corresponding Lambda handler to use the defined Effect Schemas for runtime validation and parsing of its `event` input and its return value.
+    -        *   This will replace or augment existing Zod validation for this specific Lambda.
+    -*   **Phase 3: Custom CDK Construct Development**
+    -    *   [ ] **Create `SchemaValidatedLambdaTask` Construct:** Develop a new custom CDK construct (e.g., `lib/constructs/SchemaValidatedLambdaTask.ts`).
+    -    *   [ ] **Accept Schemas as Props:** This construct should accept the Effect Schemas (or their inferred TypeScript types) for the Lambda's input and output as props.
+    -    *   [ ] **Programmatic JSONPath Generation:** Implement logic within the construct to dynamically generate the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties for the `sfn.LambdaInvoke` task based on the provided Effect Schemas. This ensures type-safe data flow at the infrastructure level.
+    -        *   Consider how to map schema fields to JSONPath expressions.
+    -*   **Phase 4: Step Function Integration**
+    -    *   [ ] **Replace Existing Task:** In the main Step Function definition (e.g., `lib/turbo-webhook-stack.ts`), replace the problematic `sfn.LambdaInvoke` or `sfn.Pass` state with an instance of the new `SchemaValidatedLambdaTask` construct, passing in the relevant Lambda function and Effect Schemas.
+    -*   **Phase 5: Testing & Validation**
+    -    *   [ ] **CDK Unit Tests:** Write CDK unit tests to assert that the `SchemaValidatedLambdaTask` construct correctly synthesizes the CloudFormation template with the expected `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` based on the provided schemas.
+    -    *   [ ] **Lambda Unit Tests:** Update or create unit tests for the modified Lambda handler to ensure Effect Schema validation works as expected.
+    -    *   [ ] **Step Function Integration Tests (AWS TestState API):** Use the AWS TestState API to test the individual Step Function state, verifying that data flows correctly and schema validation is enforced.
+    -    *   [ ] **End-to-End Testing:** Conduct end-to-end tests in a development cloud environment to validate the entire workflow with the new schema integration.
+    -*   **Phase 6: Gradual Expansion**
+    -    *   [ ] **Documentation:** Document the process and benefits of using `SchemaValidatedLambdaTask` for future team reference.
+    -    *   [ ] **Identify Next Targets:** Based on the success of this initial integration, identify other problematic data boundaries for subsequent incremental adoption of Effect Schema.
+
+  - Diff for `task.md`:
+    commit 27894283f9653ebcb5e8220cead8c1d314da4d1e
+    Author: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>
+    Date:   Tue Sep 30 22:49:49 2025 -0700
+
+        feat: implement Shopify shipping labels scraper using Playwright
+
+        - Added a new script to scrape shipping labels from Shopify's admin interface.
+        - Integrated 1Password CLI for secure credential retrieval.
+        - Implemented date parsing for shipping labels.
+        - Added pagination handling to scrape multiple pages of labels.
+        - Saved scraped data to a JSON file in the specified output directory.
+
+    diff --git a/task.md b/task.md
+    index 1f973e8..e69de29 100644
+    --- a/task.md
+    +++ b/task.md
+    @@ -1 +0,0 @@
+    -When we have a foreign order, Starshipit creates customs docs, based on our products Harmonized System (HS) codes. When we run @lambda/generateStarshipitPdf.ts , we need to fetch the customs docs as well as the Label and Packing Slip that we are already fetching, and we need to store it in the same place we are storing those docs and add the S3 path to the DB, just like we do for those docs.
+    \ No newline at end of file
+
+- Commit bd6bef2: add: Scraped order shipping info
+    - Changes: 1 files changed (2940 insertions, 0 deletions)
+
+Please provide a characterization of the work, highlighting key achievements, areas of focus, and patterns of activity.

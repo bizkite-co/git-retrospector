@@ -1,0 +1,2513 @@
+{
+  "analysis_repo_path": "..",
+  "analysis_period_days": 30,
+  "max_session_gap_hours": 1.0,
+  "full_credit_hours": 1.0,
+  "zero_credit_hours": 5.0,
+  "change_baseline": 100,
+  "change_max_score": 500,
+  "max_bonus_hours": 5.0,
+  "estimated_hours": 42.43673588840967,
+  "total_commits": 61,
+  "work_sessions": [
+    [
+      {
+        "hash": "6c899210b48f751d61ad56249a92ecd6bb3ad69a",
+        "author_date": "2025-09-03T13:53:59-07:00",
+        "subject": "feat(starshipit): Improve order discovery and prevent direct creation",
+        "hours_since_previous": 0.0,
+        "stats": [
+          {
+            "file": "docs/issues/order-4325/_index.md",
+            "insertions": 51,
+            "deletions": 0
+          },
+          {
+            "file": "docs/issues/order-4325/create-starshipit-shipment-lambda.log",
+            "insertions": 189,
+            "deletions": 0
+          },
+          {
+            "file": "docs/issues/order-4325/plan.md",
+            "insertions": 45,
+            "deletions": 0
+          },
+          {
+            "file": "docs/issues/order-4325/roocode-plan.html",
+            "insertions": 60,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 41,
+            "deletions": 30
+          },
+          {
+            "file": "lambda/utils/starshipitApi.ts",
+            "insertions": 6,
+            "deletions": 142
+          },
+          {
+            "file": "lib/schemas/starshipit-shipping-map.ts",
+            "insertions": 38,
+            "deletions": 0
+          },
+          {
+            "file": "package.json",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "prompt.md",
+            "insertions": 36,
+            "deletions": 0
+          },
+          {
+            "file": "tsconfig.json",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 317,
+        "adjusted_zero_credit_hours": 7.71,
+        "contributed_hours": 0.0
+      }
+    ],
+    [
+      {
+        "hash": "07feb462faca08e2215f53eccafae9f9c8a8f23b",
+        "author_date": "2025-09-04T10:27:10-07:00",
+        "subject": "feat(starshipit): Enforce integration-first order creation and improve shipping mapping",
+        "hours_since_previous": 20.55,
+        "stats": [
+          {
+            "file": ".gitignore",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "docs/issues/order-4325/plan.md",
+            "insertions": 53,
+            "deletions": 27
+          },
+          {
+            "file": "docs/issues/order-4325/task.md",
+            "insertions": 615,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 53,
+            "deletions": 49
+          },
+          {
+            "file": "lambda/utils/starshipitApi.ts",
+            "insertions": 3,
+            "deletions": 1
+          },
+          {
+            "file": "lib/schemas/starshipit-shipping-map.ts",
+            "insertions": 71,
+            "deletions": 12
+          },
+          {
+            "file": "tsconfig.json",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 189,
+        "adjusted_zero_credit_hours": 6.11,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "263da79e8b43934733cb8c2b793b63d7f7cc568b",
+        "author_date": "2025-09-04T11:07:40-07:00",
+        "subject": "refactor(cdk): Improve application stack resilience and configuration",
+        "hours_since_previous": 0.68,
+        "stats": [
+          {
+            "file": "cdk.json",
+            "insertions": 3,
+            "deletions": 1
+          },
+          {
+            "file": "docs/issues/order-4325/task.md",
+            "insertions": 16,
+            "deletions": 543
+          },
+          {
+            "file": "lib/turboship-application-stack.ts",
+            "insertions": 70,
+            "deletions": 43
+          },
+          {
+            "file": "package.json",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/checkEzeepToken.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "tsconfig.script.json",
+            "insertions": 2,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 115,
+        "adjusted_zero_credit_hours": 5.19,
+        "contributed_hours": 0.68
+      }
+    ],
+    [
+      {
+        "hash": "af1c182c10b627f3716898a299e530b5036c91e9",
+        "author_date": "2025-09-04T13:21:29-07:00",
+        "subject": "feat(workflow): Enhance Starshipit integration resilience",
+        "hours_since_previous": 2.23,
+        "stats": [
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 22,
+            "deletions": 17
+          },
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 4,
+            "deletions": 4
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 3,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 53,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.54
+      },
+      {
+        "hash": "33fa2563adf3f71b8a31661c3800d71ed4368e21",
+        "author_date": "2025-09-04T14:00:56-07:00",
+        "subject": "Move Update Starshipit retries to Step Function",
+        "hours_since_previous": 0.66,
+        "stats": [
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 3,
+            "deletions": 19
+          },
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 3,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 28,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.66
+      }
+    ],
+    [
+      {
+        "hash": "378f13fea1418f463d0af2e15dd6d0e84af7dbc6",
+        "author_date": "2025-09-04T17:36:10-07:00",
+        "subject": "feat(workflow): Improve error handling for Starshipit and approval tasks",
+        "hours_since_previous": 3.59,
+        "stats": [
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 17,
+            "deletions": 9
+          }
+        ],
+        "code_change_score": 26,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.27
+      }
+    ],
+    [
+      {
+        "hash": "efeec96920283bf7511d0660f14ae924e74908f5",
+        "author_date": "2025-09-04T18:47:32-07:00",
+        "subject": "refactor: Move scripts to Makefile to declutter package.json",
+        "hours_since_previous": 1.19,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 286,
+            "deletions": 0
+          },
+          {
+            "file": "package.json",
+            "insertions": 3,
+            "deletions": 92
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.13
+      }
+    ],
+    [
+      {
+        "hash": "c93ff14931a6675c89af79c54bdded8db7d98537",
+        "author_date": "2025-09-04T21:56:43-07:00",
+        "subject": "plan: Issue 28 reopened",
+        "hours_since_previous": 3.15,
+        "stats": [
+          {
+            "file": "docs/issues/order-4325/plan.md",
+            "insertions": 16,
+            "deletions": 64
+          },
+          {
+            "file": "docs/issues/order-4325/task.md",
+            "insertions": 17,
+            "deletions": 80
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.46
+      }
+    ],
+    [
+      {
+        "hash": "69b9abe1f6f04d0f8688d78b4d13cdeeb571fd35",
+        "author_date": "2025-09-05T08:38:14-07:00",
+        "subject": "refactor(workflow): Extract Starshipit logic into a separate construct This commit refactors the main Shopify order processing Step Function workflow by extracting all Starshipit-related tasks and logic into a new `StarshipitWorkflow` construct.",
+        "hours_since_previous": 10.69,
+        "stats": [
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 4,
+            "deletions": 2
+          },
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 243,
+            "deletions": 443
+          },
+          {
+            "file": "lib/constructs/starshipit-workflow.ts",
+            "insertions": 159,
+            "deletions": 0
+          },
+          {
+            "file": "package.json",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/post-deploy-setup.sh",
+            "insertions": 1,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 855,
+        "adjusted_zero_credit_hours": 10.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "9f901f6e852e2f01ecd2a5862e9efc190b193999",
+        "author_date": "2025-09-05T09:58:29-07:00",
+        "subject": "feat(workflow): Modularize Shopify order processing workflow",
+        "hours_since_previous": 1.34,
+        "stats": [
+          {
+            "file": "lib/constructs/ezeep-workflow.ts",
+            "insertions": 156,
+            "deletions": 0
+          },
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 109,
+            "deletions": 517
+          },
+          {
+            "file": "lib/constructs/shopify-update-workflow.ts",
+            "insertions": 100,
+            "deletions": 0
+          },
+          {
+            "file": "lib/constructs/validation-workflow.ts",
+            "insertions": 202,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 1084,
+        "adjusted_zero_credit_hours": 10.0,
+        "contributed_hours": 1.29
+      }
+    ],
+    [
+      {
+        "hash": "85b5f76bc30639e8fbc345fc6eabadd732f36158",
+        "author_date": "2025-09-05T19:21:52-07:00",
+        "subject": "feat: Update \"Parcels Determined\" status to \"Waiting for PDFs\"",
+        "hours_since_previous": 9.39,
+        "stats": [
+          {
+            "file": "lib/constructs/shopify-order-processing-workflow.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lib/constructs/validation-workflow.ts",
+            "insertions": 11,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 15,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "af83b1ca06931aeca756a7e4cc3440c092740654",
+        "author_date": "2025-09-05T21:29:50-07:00",
+        "subject": "refactor: Modularize print status page JS",
+        "hours_since_previous": 2.13,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 61,
+            "deletions": 5
+          },
+          {
+            "file": "data/buckets/status-website/js/apiService.js",
+            "insertions": 107,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/config.js",
+            "insertions": 28,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/ezeepStatus.js",
+            "insertions": 49,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/main.js",
+            "insertions": 62,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/notifications.js",
+            "insertions": 8,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 239,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/status.js",
+            "insertions": 0,
+            "deletions": 342
+          },
+          {
+            "file": "lib/nested-stacks/frontend-cdn-nested-stack.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 8,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 913,
+        "adjusted_zero_credit_hours": 10.0,
+        "contributed_hours": 1.86
+      }
+    ],
+    [
+      {
+        "hash": "5c848e3811842598b9d4a0b133bd4d39d9795556",
+        "author_date": "2025-09-06T11:30:39-07:00",
+        "subject": "refactor: Simplify HTML labels and update Ezeep status message format",
+        "hours_since_previous": 14.01,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 5,
+            "deletions": 6
+          },
+          {
+            "file": "data/buckets/status-website/js/ezeepStatus.js",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 15,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "d527448e1a8166becf60599fc4f619b1ccee9927",
+        "author_date": "2025-09-06T12:44:49-07:00",
+        "subject": "feat: Add 'copy-to-web' task to Makefile and enhance status website styles",
+        "hours_since_previous": 1.24,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 3,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/index.css",
+            "insertions": 13,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 17,
+            "deletions": 20
+          },
+          {
+            "file": "data/buckets/status-website/js/config.js",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 0,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 54,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.17
+      }
+    ],
+    [
+      {
+        "hash": "40ab11910cd7a68a46db43f7a236698d45dedc77",
+        "author_date": "2025-09-06T18:01:33-07:00",
+        "subject": "feat: Fix `make build`",
+        "hours_since_previous": 5.28,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 2,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "4fdac7be903679305739a8bce671f99432cf8db1",
+        "author_date": "2025-09-06T22:24:39-07:00",
+        "subject": "plan: Convert Zod to Effect Schema for Fulfillment workflow",
+        "hours_since_previous": 4.38,
+        "stats": [
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/_index.md",
+            "insertions": 12,
+            "deletions": 0
+          },
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/plan.md",
+            "insertions": 109,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.68
+      }
+    ],
+    [
+      {
+        "hash": "06893dd5db078f1b0117a048d59e2347344a1d2e",
+        "author_date": "2025-09-07T18:04:04-07:00",
+        "subject": "feat: Update Makefile for improved build process and add Shopify schemas",
+        "hours_since_previous": 19.66,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "data/shopify/order_parcels/to-4353.json",
+            "insertions": 402,
+            "deletions": 0
+          },
+          {
+            "file": "eslint-plugin-custom-rules/prefer-nullish-coalescing.mjs",
+            "insertions": 69,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/effect/shopify-schemas.ts",
+            "insertions": 252,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/effect/workflow-schemas.ts",
+            "insertions": 171,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 423,
+        "adjusted_zero_credit_hours": 9.04,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "8b34f3ed1d0c39b5e3763d2383372a7623b57823",
+        "author_date": "2025-09-07T19:19:04-07:00",
+        "subject": "plan: Issue #29 fix Fulfillment workflow by fixing data mapping.",
+        "hours_since_previous": 1.25,
+        "stats": [
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/plan.md",
+            "insertions": 94,
+            "deletions": 45
+          },
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/task.md",
+            "insertions": 45,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/getWorkflowConfig.ts",
+            "insertions": 0,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 3,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.17
+      }
+    ],
+    [
+      {
+        "hash": "f690f463a93af70a9eced3817cac62f4bea79f27",
+        "author_date": "2025-09-08T10:36:56-07:00",
+        "subject": "feat: Update linting commands in Makefile to use npx and improve schema definitions",
+        "hours_since_previous": 15.3,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "lambda/setupCredentials.ts",
+            "insertions": 6,
+            "deletions": 3
+          },
+          {
+            "file": "lambda/webhook.ts",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 2
+          },
+          {
+            "file": "package.json",
+            "insertions": 3,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 15,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "ad34cb809f72f5076a103138ae0e09bd5f8fa89a",
+        "author_date": "2025-09-08T20:51:12-07:00",
+        "subject": "feat: Configure ESLint with flat config and fix linting errors",
+        "hours_since_previous": 10.24,
+        "stats": [
+          {
+            "file": "bin/turbo-webhook.d.ts",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/task.md",
+            "insertions": 7,
+            "deletions": 11
+          },
+          {
+            "file": "eslint-plugin-custom-rules/package.json",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "eslint-plugin-custom-rules/prefer-nullish-coalescing.cjs",
+            "insertions": 0,
+            "deletions": 63
+          },
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/ezeepOAuthCallbackHandler.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/generateStarshipitPdf.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/startExecution.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "lambda/utils/starshipitApi.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lib/turboship-core-stack.ts",
+            "insertions": 0,
+            "deletions": 5
+          },
+          {
+            "file": "package-lock.json",
+            "insertions": 1472,
+            "deletions": 97
+          },
+          {
+            "file": "package.json",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/utils/shopifyApi.d.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "tsconfig.json",
+            "insertions": 4,
+            "deletions": 6
+          }
+        ],
+        "code_change_score": 26,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "8e278e0fb82f317a9710c9f25eebe95bbcb3a635",
+        "author_date": "2025-09-09T08:23:45-07:00",
+        "subject": "Starshipit meeting",
+        "hours_since_previous": 11.54,
+        "stats": [
+          {
+            "file": "data/starshipit/starshipit-2025-09-08.md",
+            "insertions": 10,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "ebd7246127274cf1e4bf12868c2c3e5558727a2e",
+        "author_date": "2025-09-09T20:52:33-07:00",
+        "subject": "feat: Load product data from S3 instead of local CSV",
+        "hours_since_previous": 12.48,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 5,
+            "deletions": 2
+          },
+          {
+            "file": "docs/issues/29-fulfillment-fails-to-update-db/task.md",
+            "insertions": 19,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 27,
+            "deletions": 6
+          },
+          {
+            "file": "lambda/utils/products_export.csv",
+            "insertions": 296,
+            "deletions": 0
+          },
+          {
+            "file": "lib/app-naming-constants.ts",
+            "insertions": 3,
+            "deletions": 0
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 39,
+            "deletions": 76
+          },
+          {
+            "file": "package-lock.json",
+            "insertions": 1048,
+            "deletions": 387
+          },
+          {
+            "file": "package.json",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "tsconfig.script.json",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "uat-outputs.json",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 151,
+        "adjusted_zero_credit_hours": 5.64,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "b4fcceaace65de573665e24037c7e090b9f0e4e5",
+        "author_date": "2025-09-09T21:33:04-07:00",
+        "subject": "fix: Erroneous workflow renaming and refactor",
+        "hours_since_previous": 0.68,
+        "stats": [
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 74,
+            "deletions": 22
+          },
+          {
+            "file": "uat-outputs.json",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 96,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.68
+      }
+    ],
+    [
+      {
+        "hash": "848895307ab9cbdcd90686ca91da6bc9719bbb80",
+        "author_date": "2025-09-14T19:14:35-07:00",
+        "subject": "feat: Handle orders with no shipping lines gracefully",
+        "hours_since_previous": 117.69,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 9,
+            "deletions": 5
+          },
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 11,
+            "deletions": 4
+          },
+          {
+            "file": "lambda/webhook.ts",
+            "insertions": 50,
+            "deletions": 4
+          },
+          {
+            "file": "lib/app-naming-constants.ts",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 29,
+            "deletions": 21
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "package-lock.json",
+            "insertions": 725,
+            "deletions": 193
+          },
+          {
+            "file": "package.json",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/createShopifyDraftOrder.ts",
+            "insertions": 10,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 135,
+        "adjusted_zero_credit_hours": 5.44,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "7ac94a4c9bb4e2e139e833ec6fe62ac240f29b35",
+        "author_date": "2025-09-18T16:53:42-07:00",
+        "subject": "feat: Enhance Starshipit shipping mapping and output",
+        "hours_since_previous": 93.65,
+        "stats": [
+          {
+            "file": "lambda/createStarshipitShipment.ts",
+            "insertions": 10,
+            "deletions": 1
+          },
+          {
+            "file": "lib/schemas/starshipit-shipping-map.ts",
+            "insertions": 106,
+            "deletions": 10
+          }
+        ],
+        "code_change_score": 127,
+        "adjusted_zero_credit_hours": 5.34,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "e63f5429ae2b1618b691653d8033c537ae601d04",
+        "author_date": "2025-09-22T20:47:57-07:00",
+        "subject": "feat: Refactor test order creation and update shipping data",
+        "hours_since_previous": 99.9,
+        "stats": [
+          {
+            "file": "data/shopify/order_parcels/{to-3033.json => 2921-to-3033.json}",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "data/shopify/order_parcels/{to-3146.json => 3034-to-3146.json}",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "data/shopify/order_parcels/{to-3253.json => 3145-to-3253.json}",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "data/shopify/order_parcels/4227-to-4287.json",
+            "insertions": 402,
+            "deletions": 0
+          },
+          {
+            "file": "data/sku-package-scenario-lookup.json",
+            "insertions": 893,
+            "deletions": 345
+          },
+          {
+            "file": "data/starshipit/ups.md",
+            "insertions": 40,
+            "deletions": 0
+          },
+          {
+            "file": "deployed_lambda_code.zip",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "lib/schemas/starshipit-shipping-map.ts",
+            "insertions": 27,
+            "deletions": 27
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 9,
+            "deletions": 112
+          },
+          {
+            "file": "scripts/test-orders/default.ts",
+            "insertions": 116,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/test-orders/index.ts",
+            "insertions": 17,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 309,
+        "adjusted_zero_credit_hours": 7.61,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "c171345886d9f5a61ee6d2e319de1a7ab4fe2d1f",
+        "author_date": "2025-09-23T22:45:15-07:00",
+        "subject": "feat: Update product data with HS codes and add csv-stringify",
+        "hours_since_previous": 25.95,
+        "stats": [
+          {
+            "file": "data/{product-listing-1743467634775.csv => products-from-easyship.csv}",
+            "insertions": 19,
+            "deletions": 19
+          },
+          {
+            "file": "data/starshipit/products_for_upload.csv",
+            "insertions": 78,
+            "deletions": 78
+          },
+          {
+            "file": "package-lock.json",
+            "insertions": 8,
+            "deletions": 1
+          },
+          {
+            "file": "package.json",
+            "insertions": 3,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "f2f50d1f191c5dabd312bd1d20312ae2380aaa71",
+        "author_date": "2025-09-25T08:01:53-07:00",
+        "subject": "fix: Stop removing DB attributes as a default action",
+        "hours_since_previous": 33.28,
+        "stats": [
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 0,
+            "deletions": 19
+          }
+        ],
+        "code_change_score": 19,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "16aa3eda6d47985de191d32a3f23e667cb5e0e04",
+        "author_date": "2025-09-25T09:00:07-07:00",
+        "subject": "feat: Migrate print status update schemas to Effect Schema and enhance Shopify line item definitions",
+        "hours_since_previous": 0.97,
+        "stats": [
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 10,
+            "deletions": 8
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 76,
+            "deletions": 2
+          },
+          {
+            "file": "lib/schemas/workflow-schemas.ts",
+            "insertions": 15,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 111,
+        "adjusted_zero_credit_hours": 5.14,
+        "contributed_hours": 0.97
+      }
+    ],
+    [
+      {
+        "hash": "b22cd243caeb353c6e510bfa3f1c9ebe11e4274b",
+        "author_date": "2025-09-25T11:38:21-07:00",
+        "subject": "feat: Enhance parcel determination logic with product data loading and packing diagram generation",
+        "hours_since_previous": 2.64,
+        "stats": [
+          {
+            "file": ".gitignore",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "data/box-definitions.json",
+            "insertions": 0,
+            "deletions": 162
+          },
+          {
+            "file": "data/buckets/main/config/box-definitions.json",
+            "insertions": 120,
+            "deletions": 40
+          },
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 13,
+            "deletions": 0
+          },
+          {
+            "file": "data/starshipit/products_for_upload.csv",
+            "insertions": 83,
+            "deletions": 83
+          },
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 162,
+            "deletions": 218
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/utils/bin-packer.ts",
+            "insertions": 127,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 15,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/starshipit-products-schema.ts",
+            "insertions": 31,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/workflow-schemas.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/process-product-data.ts",
+            "insertions": 143,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/update-box-definitions.ts",
+            "insertions": 45,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/update-product-data.js",
+            "insertions": 169,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 930,
+        "adjusted_zero_credit_hours": 10.0,
+        "contributed_hours": 2.16
+      }
+    ],
+    [
+      {
+        "hash": "7cb2ca274dc7eab47e466b1b8252d25411fadf4a",
+        "author_date": "2025-09-25T14:24:27-07:00",
+        "subject": "feat: Add packing method display and logic to order processing",
+        "hours_since_previous": 2.77,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 3,
+            "deletions": 0
+          },
+          {
+            "file": "data/{starshipit => buckets/main/config}/products_for_upload.csv",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 10,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 93,
+            "deletions": 50
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/utils/bin-packer.ts",
+            "insertions": 58,
+            "deletions": 27
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 20,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 61,
+            "deletions": 10
+          },
+          {
+            "file": "scripts/pollStarshipitOrder.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/update-product-data.js",
+            "insertions": 5,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 344,
+        "adjusted_zero_credit_hours": 8.05,
+        "contributed_hours": 2.07
+      }
+    ],
+    [
+      {
+        "hash": "52f6bcf2f132a451036e6ba7153efb9c6e2a11f4",
+        "author_date": "2025-09-25T16:33:59-07:00",
+        "subject": "fix: Recurrent `__dirname` error",
+        "hours_since_previous": 2.16,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 6,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 24,
+            "deletions": 6
+          },
+          {
+            "file": "scripts/fetchShopifyFulfillments.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/fetchShopifyOrders.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/process-product-data.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/queryPackagingRecommendations.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "scripts/testStarshipitGetOrder.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/update-box-definitions.ts",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 46,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.53
+      },
+      {
+        "hash": "5d931a24cb486d7e04c3a1a9125d0ae1f65ffa8b",
+        "author_date": "2025-09-25T16:35:47-07:00",
+        "subject": "fix: Add titles back in to products.",
+        "hours_since_previous": 0.03,
+        "stats": [
+          {
+            "file": "data/buckets/main/config/products_for_upload.csv",
+            "insertions": 83,
+            "deletions": 83
+          },
+          {
+            "file": "scripts/update-product-data.js",
+            "insertions": 5,
+            "deletions": 4
+          }
+        ],
+        "code_change_score": 9,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.03
+      }
+    ],
+    [
+      {
+        "hash": "99651b62feb2aa6a7fcf30817e7357da0267133a",
+        "author_date": "2025-09-25T18:36:55-07:00",
+        "subject": "feat: Update product detail retrieval to include price and streamline order creation logic",
+        "hours_since_previous": 2.02,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 1,
+            "deletions": 5
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 5,
+            "deletions": 5
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 3,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 15,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.5
+      },
+      {
+        "hash": "e23fbae8a09f82ff07400c45126a467926dab514",
+        "author_date": "2025-09-25T18:46:23-07:00",
+        "subject": "feat: Enhance create order logic to include random price for items without product details",
+        "hours_since_previous": 0.16,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 5,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 6,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.16
+      }
+    ],
+    [
+      {
+        "hash": "9eaa2c635dd393e892cc69f1c25f1593f0fc8074",
+        "author_date": "2025-09-25T21:29:18-07:00",
+        "subject": "feat: Refactor product data loading and improve error handling",
+        "hours_since_previous": 2.72,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 4,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/main/config/products_for_upload.csv",
+            "insertions": 83,
+            "deletions": 83
+          },
+          {
+            "file": "data/{ => buckets/main/config}/sku-package-scenario-lookup.json",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 20,
+            "deletions": 5
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 0,
+            "deletions": 2
+          },
+          {
+            "file": "lib/app-naming-constants.ts",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 3,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/createShopifyDraftOrder.ts",
+            "insertions": 3,
+            "deletions": 3
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 25,
+            "deletions": 7
+          },
+          {
+            "file": "scripts/getProductData.ts",
+            "insertions": 91,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/process-product-data.ts",
+            "insertions": 4,
+            "deletions": 2
+          }
+        ],
+        "code_change_score": 170,
+        "adjusted_zero_credit_hours": 5.88,
+        "contributed_hours": 1.76
+      }
+    ],
+    [
+      {
+        "hash": "896a4a7cc214d6aeae4e0d5a714b01b0b699c04d",
+        "author_date": "2025-09-26T11:00:17-07:00",
+        "subject": "feat: Enhance parcel determination logic to include enriched line item dimensions and packing method",
+        "hours_since_previous": 13.52,
+        "tracked_file_diffs": {
+          "task.md": "commit 896a4a7cc214d6aeae4e0d5a714b01b0b699c04d\nAuthor: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>\nDate:   Fri Sep 26 11:00:17 2025 -0700\n\n    feat: Enhance parcel determination logic to include enriched line item dimensions and packing method\n\ndiff --git a/task.md b/task.md\nindex ba51e29..6cb1e3f 100644\n--- a/task.md\n+++ b/task.md\n@@ -1,30 +1,38 @@\n-### Plan to Resolve Data Mapping Issues\n+### Plan to Resolve Remaining Issues in Step Function Workflow\n \n-**Goal:** Ensure `starshipitShippingMethodName` and `trackingInfo.number` are correctly propagated and validated throughout the Step Function workflow, adhering to the principles outlined in `docs/data-mapping-guidance.md`.\n+**Goal:** Ensure `packingMethod` and `packing_diagram_html` from the `determineParcels` Lambda are correctly propagated, saved to the database, and potentially displayed.\n \n-**Steps:**\n+**Current Status:**\n+The `determineParcels` Lambda is now successfully:\n+-   Loading `box-definitions.json`, `products_for_upload.csv`, and `sku-package-scenario-lookup.json`.\n+-   Correctly parsing product dimension data from `products_for_upload.csv`.\n+-   Performing bin-packing and selecting an appropriate box (e.g., \"small-white-plane-box\").\n+-   Outputting `packingMethod` (e.g., \"bin-packing\") and `packing_diagram_html` (if generated).\n+\n+**Problem Identified:**\n+While the `determineParcels` Lambda is working as intended, the `packingMethod` and `packing_diagram_html` values are not being saved to the database or displayed in the UI. This indicates an issue in the downstream processing of the Step Functions workflow.\n+\n+**Steps to Investigate and Resolve:**\n \n 1.  **Explore Step Function Definition:**\n-    *   Identify the main CDK construct defining the `ShopifyOrderProcessor` Step Function. Based on the `README.md` and file structure, this is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).\n-    *   Read the content of this file to understand the state machine's structure, especially the states leading up to and including \"Update Print Status: Print Approved\" (which likely corresponds to the `updateShopifyStatus.ts` Lambda).\n-    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states.\n+    *   Identify the main CDK construct defining the `ShopifyOrderProcessingWorkflow`. This is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).\n+    *   Read the content of this file to understand the state machine's structure, specifically the states immediately following the `determineParcels` Lambda.\n+    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states to see how the output of `determineParcels` is being handled.\n \n-2.  **Identify Relevant Lambda Schemas:**\n-    *   Determine which Lambda functions are involved in the data flow for `starshipitShippingMethodName` and `trackingInfo.number`. This will likely include `createStarshipitShipment.ts`, `generateStarshipitPdf.ts`, the \"Normalize Starshipit Output\" Pass state, and `updateShopifyStatus.ts`.\n-    *   Locate the Zod schemas used by these Lambdas for input and output validation. These are typically found in [`lambda/types/`](lambda/types/) or [`lib/schemas/`](lib/schemas/).\n+2.  **Identify Relevant Lambda Functions:**\n+    *   Determine which Lambda functions are responsible for receiving the output of `determineParcels` and interacting with the database (e.g., `updatePrintStatus.ts` or any other Lambda that saves order/parcel information).\n+    *   Locate the schemas (if any) used by these Lambdas for input validation.\n \n 3.  **Trace Data Flow and Pinpoint Discrepancies:**\n-    *   Using the Step Function definition and Lambda schemas, I will trace the journey of `starshipitShippingMethodName` and `trackingInfo.number` through the workflow.\n-    *   Specifically, I will identify:\n-        *   Where `starshipitShippingMethodName` is initially introduced (e.g., from `createStarshipitShipment.ts` output).\n-        *   How it is transformed or passed through subsequent states, particularly the \"Normalize Starshipit Output\" Pass state.\n-        *   Why it is missing from the input to \"Print Approved\" (i.e., `Update Print Status: Print Approved`).\n-        *   Where `trackingInfo.number` is expected to be populated and why it's becoming `[null]` before the `updateShopifyStatus.ts` Lambda. This might involve examining the output of `generateStarshipitPdf.ts` or the \"Normalize Starshipit Output\" state.\n+    *   Trace the journey of `packingMethod` and `packing_diagram_html` from the output of `determineParcels` through the subsequent states and Lambda functions.\n+    *   Specifically, identify:\n+        *   If these fields are being correctly passed from the `determineParcels` Lambda's output to the input of the next state.\n+        *   If the next state's `InputPath`, `Parameters`, `ResultSelector`, or `OutputPath` are inadvertently dropping or transforming these fields.\n+        *   If the Lambda responsible for saving to the DB is receiving these fields and correctly persisting them.\n \n 4.  **Propose and Implement Solutions:**\n-    *   **Schema Refinement:** If necessary, update existing Zod schemas or create new ones to explicitly define the expected structure for `starshipitShippingMethodName` (as a string) and `trackingInfo.number` (as an array of strings, not `[null]`) at each relevant state boundary.\n-    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure these properties are correctly extracted, transformed, and passed between states. This will involve using `sfn.JsonPath` expressions precisely.\n-    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly populating these fields, I will suggest modifications to the Lambda handler code to ensure the output conforms to the expected schema.\n+    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure `packingMethod` and `packing_diagram_html` are correctly extracted, transformed, and passed between states and to the database-saving Lambda.\n+    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly receiving or persisting these fields, suggest modifications to the Lambda handler code.\n \n ### Data Flow Visualization (Conceptual)\n \n@@ -33,17 +41,13 @@ To illustrate the data flow, here's a conceptual Mermaid diagram focusing on the\n ```mermaid\n graph TD\n     subgraph Step Function Workflow\n-        A[Create Starshipit Shipment] --> B{Generate Starshipit PDF};\n-        B --> C[Normalize Starshipit Output (Pass State)];\n-        C -- Output: { ..., starshipitShippingMethodName: \"...\", trackingInfo: { number: [\"TRACKING_NUM\"] } } --> D[Update Print Status: Print Approved];\n-        D -- Input: { ..., starshipitShippingMethod: \"...\", trackingInfo: { number: [\"TRACKING_NUM\"] } } --> E[Update Shopify Status Lambda];\n+        A[Determine Parcels Lambda] --> B{Next State (e.g., Pass State or another Lambda)};\n+        B -- Output: { ..., packingMethod: \"...\", packing_diagram_html: \"...\" } --> C[Database Update Lambda];\n     end\n \n     style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-    style B fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-    style C fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style D fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-    style E fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n+    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n+    style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n ```\n \n-The critical points to investigate are the output of `Generate Starshipit PDF`, the transformations within `Normalize Starshipit Output (Pass State)`, and the input mapping to `Update Print Status: Print Approved`.\n\\ No newline at end of file\n+The critical points to investigate are the output of `Determine Parcels Lambda` and how it's consumed by the subsequent states and Lambdas responsible for database persistence.\n"
+        },
+        "stats": [
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 39,
+            "deletions": 20
+          },
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 7,
+            "deletions": 5
+          },
+          {
+            "file": "lib/schemas/effect/shopify-schemas.ts",
+            "insertions": 10,
+            "deletions": 0
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 9,
+            "deletions": 4
+          },
+          {
+            "file": "scripts/update-product-data.js",
+            "insertions": 0,
+            "deletions": 172
+          },
+          {
+            "file": "task.md",
+            "insertions": 31,
+            "deletions": 27
+          }
+        ],
+        "code_change_score": 266,
+        "adjusted_zero_credit_hours": 7.07,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "eb95d9f23c98204748eabf208b1cfbe562794bdc",
+        "author_date": "2025-09-26T11:44:15-07:00",
+        "subject": "feat: Add harmonized system code to ShopifyVariant interface and implement HS code update script",
+        "hours_since_previous": 0.73,
+        "stats": [
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 164,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 165,
+        "adjusted_zero_credit_hours": 5.81,
+        "contributed_hours": 0.73
+      }
+    ],
+    [
+      {
+        "hash": "69393bad881e63d29d530455e1b429cb9e6ad616",
+        "author_date": "2025-09-26T13:55:07-07:00",
+        "subject": "feat: Refactor Shopify schemas to use Effect library and enhance validation logic",
+        "hours_since_previous": 2.18,
+        "stats": [
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 10,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 14,
+            "deletions": 30
+          },
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "lambda/updateShopifyStatus.ts",
+            "insertions": 9,
+            "deletions": 8
+          },
+          {
+            "file": "lambda/utils/shopifyFulfillment.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lib/constructs/validation-workflow.ts",
+            "insertions": 4,
+            "deletions": 3
+          },
+          {
+            "file": "lib/schemas/effect/shopify-schemas.ts",
+            "insertions": 17,
+            "deletions": 3
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 8,
+            "deletions": 80
+          },
+          {
+            "file": "lib/schemas/shopify-schemas.ts",
+            "insertions": 0,
+            "deletions": 18
+          },
+          {
+            "file": "lib/schemas/workflow-schemas.ts",
+            "insertions": 62,
+            "deletions": 54
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 20,
+            "deletions": 6
+          }
+        ],
+        "code_change_score": 353,
+        "adjusted_zero_credit_hours": 8.16,
+        "contributed_hours": 1.82
+      },
+      {
+        "hash": "3b2b1bd2cf8229d1e5cf0c0992805d87160ff240",
+        "author_date": "2025-09-26T14:33:05-07:00",
+        "subject": "feat: Enhance print status handling to include packing method and diagram HTML in payloads",
+        "hours_since_previous": 0.63,
+        "stats": [
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 7,
+            "deletions": 0
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 2,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 10,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.63
+      },
+      {
+        "hash": "7e3348ebb7b911170c8acd2659c13d0924f5bdfa",
+        "author_date": "2025-09-26T14:52:34-07:00",
+        "subject": "feat: Simplify print status payload construction by removing redundant fields and enhancing parcel data handling.",
+        "hours_since_previous": 0.32,
+        "stats": [
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 3,
+            "deletions": 16
+          }
+        ],
+        "code_change_score": 19,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.32
+      },
+      {
+        "hash": "97e26e819b1f201d50ff990e03099e0f3fc16c16",
+        "author_date": "2025-09-26T15:15:22-07:00",
+        "subject": "feat: Add line item rendering to order details and remove SKU display",
+        "hours_since_previous": 0.38,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 20,
+            "deletions": 2
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 41,
+            "deletions": 13
+          }
+        ],
+        "code_change_score": 76,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.38
+      },
+      {
+        "hash": "206ece6d412f6f619882a184554ce9e5f006e06c",
+        "author_date": "2025-09-26T15:26:03-07:00",
+        "subject": "refactor: Use parcel lookup first and use bin-packing as fallback",
+        "hours_since_previous": 0.18,
+        "stats": [
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 61,
+            "deletions": 61
+          }
+        ],
+        "code_change_score": 122,
+        "adjusted_zero_credit_hours": 5.28,
+        "contributed_hours": 0.18
+      },
+      {
+        "hash": "023e8fe3cea1d19d73852b600550cee02c96ec28",
+        "author_date": "2025-09-26T15:59:04-07:00",
+        "subject": "feat: Add packing diagram rendering to order items and update payload structure",
+        "hours_since_previous": 0.55,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 4,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 9,
+            "deletions": 13
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 3,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 33,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.55
+      },
+      {
+        "hash": "860bbec1736797c2266f4790764e487ec58c605c",
+        "author_date": "2025-09-26T15:59:20-07:00",
+        "subject": "feat: Update parcel output to include nullable packing diagram HTML and packing method",
+        "hours_since_previous": 0.0,
+        "stats": [
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 3,
+            "deletions": 2
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 7,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.0
+      }
+    ],
+    [
+      {
+        "hash": "eb4809dbc4614b2419a0f5e3421945c3c39d2f74",
+        "author_date": "2025-09-26T21:01:12-07:00",
+        "subject": "feat: Enhance packing diagram handling and update shipping method formatting in payloads",
+        "hours_since_previous": 5.03,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/js/apiService.js",
+            "insertions": 0,
+            "deletions": 7
+          },
+          {
+            "file": "data/buckets/status-website/js/main.js",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 2,
+            "deletions": 4
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/utils/bin-packer.ts",
+            "insertions": 51,
+            "deletions": 3
+          },
+          {
+            "file": "lib/constructs/starshipit-workflow.ts",
+            "insertions": 1,
+            "deletions": 1
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 4,
+            "deletions": 4
+          }
+        ],
+        "code_change_score": 85,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "9dc2f30489a670a3ab8ebd3b4b80659eef216cf3",
+        "author_date": "2025-09-27T07:53:02-07:00",
+        "subject": "feat: Update Makefile targets for script compilation",
+        "hours_since_previous": 10.86,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 12,
+            "deletions": 6
+          },
+          {
+            "file": "data/buckets/main/config/box-definitions.json",
+            "insertions": 40,
+            "deletions": 40
+          },
+          {
+            "file": "data/buckets/main/config/products_for_upload.csv",
+            "insertions": 0,
+            "deletions": 3
+          },
+          {
+            "file": "lambda/utils/bin-packer.ts",
+            "insertions": 36,
+            "deletions": 34
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 8,
+            "deletions": 7
+          },
+          {
+            "file": "scripts/update-box-definitions.ts",
+            "insertions": 7,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 33,
+            "deletions": 22
+          }
+        ],
+        "code_change_score": 147,
+        "adjusted_zero_credit_hours": 5.59,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "ad410538f4a78022f3db3246748bfa44feeeb85b",
+        "author_date": "2025-09-27T08:30:25-07:00",
+        "subject": "fix: Clean up products and logging.",
+        "hours_since_previous": 0.62,
+        "stats": [
+          {
+            "file": "data/buckets/main/config/products_for_upload.csv",
+            "insertions": 0,
+            "deletions": 2
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 0,
+            "deletions": 13
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 1,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 14,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.62
+      }
+    ],
+    [
+      {
+        "hash": "7e3bb966acfb3859f7baca3868885f5026c00c64",
+        "author_date": "2025-09-27T12:56:41-07:00",
+        "subject": "feat: Refactor Shopify product lookup and error handling",
+        "hours_since_previous": 4.44,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 4,
+            "deletions": 5
+          },
+          {
+            "file": "docs/adr/effect/llms.txt",
+            "insertions": 134,
+            "deletions": 0
+          },
+          {
+            "file": "docs/adr/moving-from-zod-to-effect.md",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 82,
+            "deletions": 49
+          },
+          {
+            "file": "lib/schemas/starshipit-products-schema.ts",
+            "insertions": 18,
+            "deletions": 9
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 24,
+            "deletions": 11
+          },
+          {
+            "file": "scripts/getProductData.ts",
+            "insertions": 5,
+            "deletions": 4
+          },
+          {
+            "file": "scripts/testShopifyProductLookup.ts",
+            "insertions": 47,
+            "deletions": 27
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 60,
+            "deletions": 35
+          }
+        ],
+        "code_change_score": 371,
+        "adjusted_zero_credit_hours": 8.39,
+        "contributed_hours": 2.37
+      }
+    ],
+    [
+      {
+        "hash": "03c1625963ce5c82d95e3e2e4dc8dc9c3d2ed37c",
+        "author_date": "2025-09-27T15:11:01-07:00",
+        "subject": "feat: Add test-inventory-item command and update box-definitions in Makefile",
+        "hours_since_previous": 2.24,
+        "tracked_file_diffs": {
+          "task.md": "commit 03c1625963ce5c82d95e3e2e4dc8dc9c3d2ed37c\nAuthor: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>\nDate:   Sat Sep 27 15:11:01 2025 -0700\n\n    feat: Add test-inventory-item command and update box-definitions in Makefile\n\ndiff --git a/task.md b/task.md\nindex 6cb1e3f..7a29858 100644\n--- a/task.md\n+++ b/task.md\n@@ -1,53 +1,49 @@\n-### Plan to Resolve Remaining Issues in Step Function Workflow\n+# Task: Bulk Update Shopify Product HS Codes\n \n-**Goal:** Ensure `packingMethod` and `packing_diagram_html` from the `determineParcels` Lambda are correctly propagated, saved to the database, and potentially displayed.\n+**Objective:** The primary goal is to run the `scripts/updateShopifyHsCodes.ts` script to bulk-update Harmonized System (HS) codes for products in Shopify, based on a master CSV file stored in S3. The script should only update products that are missing an HS code and generate an accurate log file of all changes for auditing purposes.\n \n-**Current Status:**\n-The `determineParcels` Lambda is now successfully:\n--   Loading `box-definitions.json`, `products_for_upload.csv`, and `sku-package-scenario-lookup.json`.\n--   Correctly parsing product dimension data from `products_for_upload.csv`.\n--   Performing bin-packing and selecting an appropriate box (e.g., \"small-white-plane-box\").\n--   Outputting `packingMethod` (e.g., \"bin-packing\") and `packing_diagram_html` (if generated).\n+---\n \n-**Problem Identified:**\n-While the `determineParcels` Lambda is working as intended, the `packingMethod` and `packing_diagram_html` values are not being saved to the database or displayed in the UI. This indicates an issue in the downstream processing of the Step Functions workflow.\n+### Current Status: **Build Broken**\n \n-**Steps to Investigate and Resolve:**\n+After a lengthy debugging process, we have successfully identified the correct Shopify API calls and logic required to perform the task. However, in the process of implementing this, a major refactoring of a central utility file (`lambda/utils/productData.ts`) was done recklessly. The file's content was completely replaced, which resulted in the deletion of many critical TypeScript interfaces and helper functions that numerous other scripts in the project depend on.\n \n-1.  **Explore Step Function Definition:**\n-    *   Identify the main CDK construct defining the `ShopifyOrderProcessingWorkflow`. This is likely [`lib/constructs/shopify-order-processing-workflow.ts`](lib/constructs/shopify-order-processing-workflow.ts).\n-    *   Read the content of this file to understand the state machine's structure, specifically the states immediately following the `determineParcels` Lambda.\n-    *   Pay close attention to `sfn.JsonPath` expressions, `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` for these states to see how the output of `determineParcels` is being handled.\n+As a result, the project build is currently broken with over 30 TypeScript errors across at least 5 different scripts.\n \n-2.  **Identify Relevant Lambda Functions:**\n-    *   Determine which Lambda functions are responsible for receiving the output of `determineParcels` and interacting with the database (e.g., `updatePrintStatus.ts` or any other Lambda that saves order/parcel information).\n-    *   Locate the schemas (if any) used by these Lambdas for input validation.\n+### Key Discoveries During Debugging:\n \n-3.  **Trace Data Flow and Pinpoint Discrepancies:**\n-    *   Trace the journey of `packingMethod` and `packing_diagram_html` from the output of `determineParcels` through the subsequent states and Lambda functions.\n-    *   Specifically, identify:\n-        *   If these fields are being correctly passed from the `determineParcels` Lambda's output to the input of the next state.\n-        *   If the next state's `InputPath`, `Parameters`, `ResultSelector`, or `OutputPath` are inadvertently dropping or transforming these fields.\n-        *   If the Lambda responsible for saving to the DB is receiving these fields and correctly persisting them.\n+1.  **Correct API Call:** The correct way to fetch and update HS codes is via the **Shopify GraphQL API**, not the REST API. The specific query needed is `inventoryItems` (to fetch the code) and the mutation is `inventoryItemUpdate` (to set it). My previous attempts using the `productVariants` query were incorrect.\n+2.  **Test Script:** We created a new, focused test script at `scripts/testInventoryItemLookup.ts` and a corresponding `make test-inventory-item` command. This script successfully proved that the `inventoryItems` GraphQL query works for fetching data for a single SKU.\n+3.  **Root Cause of Bugs:** The original script was failing for multiple reasons that have now been identified:\n+    *   It was using incorrect API endpoints.\n+    *   It was not correctly checking if an HS code already existed, causing it to re-update products on every run.\n+    *   It was not handling API errors or data parsing errors robustly.\n \n-4.  **Propose and Implement Solutions:**\n-    *   **CDK JSONPath Adjustments:** Modify the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties within the Step Function state definitions in the CDK code to ensure `packingMethod` and `packing_diagram_html` are correctly extracted, transformed, and passed between states and to the database-saving Lambda.\n-    *   **Lambda Handler Review:** If the issue stems from a Lambda not correctly receiving or persisting these fields, suggest modifications to the Lambda handler code.\n+---\n \n-### Data Flow Visualization (Conceptual)\n+### Path to Resolution\n \n-To illustrate the data flow, here's a conceptual Mermaid diagram focusing on the problematic areas:\n+To fix the broken build and complete the task, the following steps are required:\n \n-```mermaid\n-graph TD\n-    subgraph Step Function Workflow\n-        A[Determine Parcels Lambda] --> B{Next State (e.g., Pass State or another Lambda)};\n-        B -- Output: { ..., packingMethod: \"...\", packing_diagram_html: \"...\" } --> C[Database Update Lambda];\n-    end\n+**Step 1: Recover Lost Code**\n \n-    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-```\n+The previous version of `lambda/utils/productData.ts` must be restored. **The model (Gemini) has lost this code from its context and cannot proceed without it.** The user must provide the content of this file.\n \n-The critical points to investigate are the output of `Determine Parcels Lambda` and how it's consumed by the subsequent states and Lambdas responsible for database persistence.\n+**Step 2: Carefully Re-integrate the Correct Logic**\n+\n+Once the original file content is restored, the correct GraphQL logic must be carefully merged back into it. The goal is to create a single, unified, and powerful function (e.g., `getVariantDetailsBySku`) that fetches all data required by all dependent scripts in a single API call. This involves:\n+*   Adding the new GraphQL functions (`getVariantDetailsBySku`, `updateInventoryItemHsCode`) to the file.\n+*   **Crucially, preserving all existing interfaces and helper functions** (`ShopifyImage`, `getProductImageUrl`, etc.) that were previously deleted.\n+\n+**Step 3: Fix All Dependent Scripts**\n+\n+With the central utility file fixed, each script that is currently broken must be updated to use the new, unified `getVariantDetailsBySku` function. This involves:\n+*   Updating `scripts/updateShopifyHsCodes.ts`\n+*   Updating `scripts/createShopifyTestOrder.ts`\n+*   Updating `scripts/testShopifyProductLookup.ts`\n+*   Updating `scripts/manageShopifyImages.ts`\n+*   Updating `lambda/startExecution.ts`\n+\n+**Step 4: Final Verification**\n+\n+After all scripts are fixed and the build is successful, run the commands `make test-inventory-item` and `make update-hs-codes` to verify that everything works as expected and that the final log file is accurate.\n\\ No newline at end of file\n"
+        },
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 4,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/main/config/box-definitions.json",
+            "insertions": 0,
+            "deletions": 24
+          },
+          {
+            "file": "docs/adr/moving-from-zod-to-effect.md",
+            "insertions": 7,
+            "deletions": 0
+          },
+          {
+            "file": "task.md",
+            "insertions": 36,
+            "deletions": 40
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.55
+      }
+    ],
+    [
+      {
+        "hash": "185fdc1b07da09814aa2b5d07701c90c1fa055f3",
+        "author_date": "2025-09-27T16:21:11-07:00",
+        "subject": "feat: Refactor Makefile targets and enhance inventory item handling in product data scripts",
+        "hours_since_previous": 1.17,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 16,
+            "deletions": 13
+          },
+          {
+            "file": "lambda/utils/productData.ts",
+            "insertions": 214,
+            "deletions": 27
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 9,
+            "deletions": 6
+          },
+          {
+            "file": "scripts/testInventoryItemLookup.ts",
+            "insertions": 111,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/testShopifyProductLookup.ts",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 125,
+            "deletions": 148
+          }
+        ],
+        "code_change_score": 644,
+        "adjusted_zero_credit_hours": 10.0,
+        "contributed_hours": 1.15
+      },
+      {
+        "hash": "fe3c453de1b87629cd6479cb88bc86d8fdbbd92f",
+        "author_date": "2025-09-27T16:58:34-07:00",
+        "subject": "fix: Run HS update on PROD and UAT and log it",
+        "hours_since_previous": 0.62,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 2,
+            "deletions": 2
+          },
+          {
+            "file": "data/shopify/hs-update-prod.log",
+            "insertions": 78,
+            "deletions": 0
+          },
+          {
+            "file": "data/shopify/hs-update-uat.log",
+            "insertions": 76,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/updateShopifyHsCodes.ts",
+            "insertions": 8,
+            "deletions": 8
+          }
+        ],
+        "code_change_score": 16,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.62
+      }
+    ],
+    [
+      {
+        "hash": "90c9ed0dac5285e025cd02a2437011cb6d8ebedd",
+        "author_date": "2025-09-27T21:22:22-07:00",
+        "subject": "feat: Add shipping problem reporting feature",
+        "hours_since_previous": 4.4,
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.css",
+            "insertions": 85,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 7,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/apiService.js",
+            "insertions": 25,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 39,
+            "deletions": 1
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 58,
+            "deletions": 2
+          },
+          {
+            "file": "lib/nested-stacks/api-gateway-nested-stack.ts",
+            "insertions": 20,
+            "deletions": 3
+          },
+          {
+            "file": "lib/nested-stacks/frontend-cdn-nested-stack.ts",
+            "insertions": 7,
+            "deletions": 1
+          },
+          {
+            "file": "lib/nested-stacks/workflow-and-lambdas-nested-stack.ts",
+            "insertions": 4,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 253,
+        "adjusted_zero_credit_hours": 6.91,
+        "contributed_hours": 1.87
+      }
+    ],
+    [
+      {
+        "hash": "9801edcf14dec80394853a459b0ff66f3601fd8a",
+        "author_date": "2025-09-27T23:05:34-07:00",
+        "subject": "feat: Add increment API Gateway version script",
+        "hours_since_previous": 1.72,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 5,
+            "deletions": 0
+          },
+          {
+            "file": "lib/nested-stacks/api-gateway-nested-stack.ts",
+            "insertions": 23,
+            "deletions": 6
+          },
+          {
+            "file": "package.json",
+            "insertions": 2,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 29,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.41
+      }
+    ],
+    [
+      {
+        "hash": "07218d653720d8d2a95f00a55881bc049edaec21",
+        "author_date": "2025-09-28T09:56:25-07:00",
+        "subject": "feat: Add support for customs documents in Starshipit integration and update related schemas",
+        "hours_since_previous": 10.85,
+        "tracked_file_diffs": {
+          "task.md": "commit 07218d653720d8d2a95f00a55881bc049edaec21\nAuthor: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>\nDate:   Sun Sep 28 09:56:25 2025 -0700\n\n    feat: Add support for customs documents in Starshipit integration and update related schemas\n\ndiff --git a/task.md b/task.md\nindex 7a29858..1f973e8 100644\n--- a/task.md\n+++ b/task.md\n@@ -1,49 +1 @@\n-# Task: Bulk Update Shopify Product HS Codes\n-\n-**Objective:** The primary goal is to run the `scripts/updateShopifyHsCodes.ts` script to bulk-update Harmonized System (HS) codes for products in Shopify, based on a master CSV file stored in S3. The script should only update products that are missing an HS code and generate an accurate log file of all changes for auditing purposes.\n-\n----\n-\n-### Current Status: **Build Broken**\n-\n-After a lengthy debugging process, we have successfully identified the correct Shopify API calls and logic required to perform the task. However, in the process of implementing this, a major refactoring of a central utility file (`lambda/utils/productData.ts`) was done recklessly. The file's content was completely replaced, which resulted in the deletion of many critical TypeScript interfaces and helper functions that numerous other scripts in the project depend on.\n-\n-As a result, the project build is currently broken with over 30 TypeScript errors across at least 5 different scripts.\n-\n-### Key Discoveries During Debugging:\n-\n-1.  **Correct API Call:** The correct way to fetch and update HS codes is via the **Shopify GraphQL API**, not the REST API. The specific query needed is `inventoryItems` (to fetch the code) and the mutation is `inventoryItemUpdate` (to set it). My previous attempts using the `productVariants` query were incorrect.\n-2.  **Test Script:** We created a new, focused test script at `scripts/testInventoryItemLookup.ts` and a corresponding `make test-inventory-item` command. This script successfully proved that the `inventoryItems` GraphQL query works for fetching data for a single SKU.\n-3.  **Root Cause of Bugs:** The original script was failing for multiple reasons that have now been identified:\n-    *   It was using incorrect API endpoints.\n-    *   It was not correctly checking if an HS code already existed, causing it to re-update products on every run.\n-    *   It was not handling API errors or data parsing errors robustly.\n-\n----\n-\n-### Path to Resolution\n-\n-To fix the broken build and complete the task, the following steps are required:\n-\n-**Step 1: Recover Lost Code**\n-\n-The previous version of `lambda/utils/productData.ts` must be restored. **The model (Gemini) has lost this code from its context and cannot proceed without it.** The user must provide the content of this file.\n-\n-**Step 2: Carefully Re-integrate the Correct Logic**\n-\n-Once the original file content is restored, the correct GraphQL logic must be carefully merged back into it. The goal is to create a single, unified, and powerful function (e.g., `getVariantDetailsBySku`) that fetches all data required by all dependent scripts in a single API call. This involves:\n-*   Adding the new GraphQL functions (`getVariantDetailsBySku`, `updateInventoryItemHsCode`) to the file.\n-*   **Crucially, preserving all existing interfaces and helper functions** (`ShopifyImage`, `getProductImageUrl`, etc.) that were previously deleted.\n-\n-**Step 3: Fix All Dependent Scripts**\n-\n-With the central utility file fixed, each script that is currently broken must be updated to use the new, unified `getVariantDetailsBySku` function. This involves:\n-*   Updating `scripts/updateShopifyHsCodes.ts`\n-*   Updating `scripts/createShopifyTestOrder.ts`\n-*   Updating `scripts/testShopifyProductLookup.ts`\n-*   Updating `scripts/manageShopifyImages.ts`\n-*   Updating `lambda/startExecution.ts`\n-\n-**Step 4: Final Verification**\n-\n-After all scripts are fixed and the build is successful, run the commands `make test-inventory-item` and `make update-hs-codes` to verify that everything works as expected and that the final log file is accurate.\n\\ No newline at end of file\n+When we have a foreign order, Starshipit creates customs docs, based on our products Harmonized System (HS) codes. When we run @lambda/generateStarshipitPdf.ts , we need to fetch the customs docs as well as the Label and Packing Slip that we are already fetching, and we need to store it in the same place we are storing those docs and add the S3 path to the DB, just like we do for those docs.\n\\ No newline at end of file\n"
+        },
+        "stats": [
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "data/buckets/status-website/js/main.js",
+            "insertions": 28,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/generateStarshipitPdf.ts",
+            "insertions": 67,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 4,
+            "deletions": 0
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "task.md",
+            "insertions": 1,
+            "deletions": 49
+          }
+        ],
+        "code_change_score": 101,
+        "adjusted_zero_credit_hours": 5.01,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "859e92da1271c67e6d6b85a2cac1a66cda04c557",
+        "author_date": "2025-09-28T12:05:51-07:00",
+        "subject": "feat: Add foreign order creation support and related payloads",
+        "hours_since_previous": 2.16,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 3,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/createShopifyTestOrder.ts",
+            "insertions": 7,
+            "deletions": 3
+          },
+          {
+            "file": "scripts/test-orders/foreign.ts",
+            "insertions": 33,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/test-orders/index.ts",
+            "insertions": 4,
+            "deletions": 1
+          },
+          {
+            "file": "test/e2e-inputs/addresses/au_cafe_sydney.json",
+            "insertions": 15,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 48,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.53
+      }
+    ],
+    [
+      {
+        "hash": "b67482bd378cf5a77cd47f1609f141fefcdb78c0",
+        "author_date": "2025-09-28T14:12:37-07:00",
+        "subject": "fix: Revert double prepend of code.",
+        "hours_since_previous": 2.11,
+        "stats": [
+          {
+            "file": "lib/constructs/starshipit-workflow.ts",
+            "insertions": 3,
+            "deletions": 3
+          }
+        ],
+        "code_change_score": 6,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.52
+      }
+    ],
+    [
+      {
+        "hash": "e6736c2dd435063f5bfde7ef3672ccb4cfb82f95",
+        "author_date": "2025-09-28T15:37:39-07:00",
+        "subject": "feat: Add support for foreign order handling and shipping country code in various components",
+        "hours_since_previous": 1.42,
+        "stats": [
+          {
+            "file": "Makefile",
+            "insertions": 4,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/index.css",
+            "insertions": 8,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/index.html",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "data/buckets/status-website/js/orderRenderer.js",
+            "insertions": 15,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 8,
+            "deletions": 15
+          },
+          {
+            "file": "lambda/getStatus.ts",
+            "insertions": 4,
+            "deletions": 0
+          },
+          {
+            "file": "lambda/updatePrintStatus.ts",
+            "insertions": 9,
+            "deletions": 1
+          },
+          {
+            "file": "lib/constructs/validation-workflow.ts",
+            "insertions": 2,
+            "deletions": 10
+          },
+          {
+            "file": "lib/schemas/print-status-schemas.ts",
+            "insertions": 1,
+            "deletions": 0
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 2,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 79,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 1.27
+      }
+    ],
+    [
+      {
+        "hash": "3c1af570d8081b9f5be3ebd1c61a99254f8f53e5",
+        "author_date": "2025-09-28T22:29:52-07:00",
+        "subject": "feat: Update parcel handling to include shipping country code and remove foreign country references",
+        "hours_since_previous": 6.87,
+        "stats": [
+          {
+            "file": "lambda/determineParcels.ts",
+            "insertions": 1,
+            "deletions": 5
+          },
+          {
+            "file": "lib/constructs/validation-workflow.ts",
+            "insertions": 1,
+            "deletions": 13
+          },
+          {
+            "file": "lib/schemas/workflow-schemas.ts",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "lib/utils/step-function-payload-helpers.ts",
+            "insertions": 0,
+            "deletions": 1
+          }
+        ],
+        "code_change_score": 22,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0
+      }
+    ],
+    [
+      {
+        "hash": "27894283f9653ebcb5e8220cead8c1d314da4d1e",
+        "author_date": "2025-09-30T22:49:49-07:00",
+        "subject": "feat: implement Shopify shipping labels scraper using Playwright",
+        "hours_since_previous": 48.33,
+        "tracked_file_diffs": {
+          "plan.md": "commit 27894283f9653ebcb5e8220cead8c1d314da4d1e\nAuthor: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>\nDate:   Tue Sep 30 22:49:49 2025 -0700\n\n    feat: implement Shopify shipping labels scraper using Playwright\n    \n    - Added a new script to scrape shipping labels from Shopify's admin interface.\n    - Integrated 1Password CLI for secure credential retrieval.\n    - Implemented date parsing for shipping labels.\n    - Added pagination handling to scrape multiple pages of labels.\n    - Saved scraped data to a JSON file in the specified output directory.\n\ndiff --git a/plan.md b/plan.md\nindex c2a0ed5..e69de29 100644\n--- a/plan.md\n+++ b/plan.md\n@@ -1,97 +0,0 @@\n-### **Plan: Incremental Effect Schema Integration for Step Function Data Mapping**\n-\n-**Objective:** To incrementally integrate Effect Schema into the Turbo Webhook project's Step Function workflows, specifically targeting recurring data mapping errors (e.g., `topicHeader` or `starshipitShippingMethod`) between CDK Lambdas. This initial, constrained integration aims to demonstrate the benefits of a schema-first approach, with the potential for broader adoption to enhance robustness and maintainability.\n-\n----\n-\n-**Problem Statement:**\n-\n-The Turbo Webhook project frequently encounters data mapping inconsistencies and errors within its Step Function workflows. These issues manifest as:\n-*   **JSONPath Errors:** Step Functions failing due to missing or incorrectly located fields in payloads.\n-*   **Lambda Input/Output Mismatches:** Lambdas receiving or producing data that does not conform to expected shapes.\n-*   **Ambiguous Naming:** Inconsistent naming conventions for logical entities across components.\n-*   **Manual Transformation Overhead:** Excessive manual logic for data reconciliation.\n-*   **Debugging Complexity:** Difficulty tracing data flow and identifying error sources.\n-\n-These problems lead to increased development time, bugs, and reduced system reliability, particularly for critical values like `topicHeader` or `starshipitShippingMethod` that need consistent mapping.\n-\n----\n-\n-**Core Principles for Incremental Effect Schema Adoption:**\n-\n-Based on the `docs/data-mapping-guidance.md`, the following principles will guide this integration:\n-1.  **Start with Critical Boundaries:** Focus on the most problematic or frequently changing data flows first.\n-2.  **Schema-First Definition:** Define explicit Effect Schemas for inputs and outputs at these boundaries.\n-3.  **Custom CDK Constructs:** Leverage custom CDK constructs to programmatically generate Step Function `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` based on Effect Schemas, enabling design-time validation.\n-4.  **Gradual Adoption:** Introduce Effect Schema one component at a time, allowing coexistence with existing Zod schemas and JSONPath definitions.\n-5.  **Robust Testing:** Implement comprehensive testing at each stage to validate schema enforcement and data flow.\n-\n----\n-\n-**Detailed Plan for Implementation:**\n-\n-This plan outlines the steps to introduce Effect Schema, focusing on a single, critical data mapping problem within a Step Function workflow.\n-\n-**Mermaid Diagram for the Plan:**\n-\n-```mermaid\n-graph TD\n-    A[Start: Identify Critical Data Mapping Problem] --> B{Example: `topicHeader` or `starshipitShippingMethod`};\n-    B --> C[Phase 1: Initial Setup & Schema Definition];\n-    C --> D[Define Effect Schema for Input/Output];\n-    D --> E[Phase 2: Lambda Handler Integration];\n-    E --> F[Integrate Effect Schema for Runtime Validation in Lambda];\n-    F --> G[Phase 3: Custom CDK Construct Development];\n-    G --> H[Create `SchemaValidatedLambdaTask` CDK Construct];\n-    H --> I[Construct Programmatically Generates SF `InputPath`, `Parameters`, `ResultSelector`, `OutputPath`];\n-    I --> J[Phase 4: Step Function Integration];\n-    J --> K[Replace Existing `LambdaInvoke` or `Pass` State with New Construct];\n-    K --> L[Phase 5: Testing & Validation];\n-    L --> M[Unit, Integration, and Cloud-based Testing];\n-    M --> N[Phase 6: Gradual Expansion];\n-    N --> O[Apply Pattern to Other Problematic Areas];\n-    O --> P[End: Enhanced Data Robustness];\n-\n-    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style C fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style D fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style E fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style F fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style G fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style H fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style I fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style J fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style K fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style L fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style M fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style N fill:#bbf,stroke:#333,stroke-width:2px,color:#000;\n-    style O fill:#ccf,stroke:#333,stroke-width:2px,color:#000;\n-    style P fill:#f9f,stroke:#333,stroke-width:2px,color:#000;\n-```\n-\n-**Detailed Todo List:**\n-\n-*   **Phase 1: Initial Setup & Schema Definition**\n-    *   [ ] **Identify a Critical Data Boundary:** Select a specific Step Function state (e.g., a `LambdaInvoke` task or a `Pass` state) where `topicHeader` or `starshipitShippingMethod` mapping issues frequently occur.\n-    *   [ ] **Install Effect Schema:** Add `effect` and `effect-schema` to the project dependencies.\n-    *   [ ] **Define Effect Schemas:** Create a new file (e.g., `lib/schemas/effect/myFeatureSchema.ts`) to define the Effect Schemas for the *exact* input and output of the chosen Step Function state.\n-        *   Example: `TopicHeaderInputSchema`, `TopicHeaderOutputSchema`.\n-*   **Phase 2: Lambda Handler Integration (if applicable)**\n-    *   [ ] **Update Lambda Handler:** If the chosen state is a `LambdaInvoke` task, modify the corresponding Lambda handler to use the defined Effect Schemas for runtime validation and parsing of its `event` input and its return value.\n-        *   This will replace or augment existing Zod validation for this specific Lambda.\n-*   **Phase 3: Custom CDK Construct Development**\n-    *   [ ] **Create `SchemaValidatedLambdaTask` Construct:** Develop a new custom CDK construct (e.g., `lib/constructs/SchemaValidatedLambdaTask.ts`).\n-    *   [ ] **Accept Schemas as Props:** This construct should accept the Effect Schemas (or their inferred TypeScript types) for the Lambda's input and output as props.\n-    *   [ ] **Programmatic JSONPath Generation:** Implement logic within the construct to dynamically generate the `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` properties for the `sfn.LambdaInvoke` task based on the provided Effect Schemas. This ensures type-safe data flow at the infrastructure level.\n-        *   Consider how to map schema fields to JSONPath expressions.\n-*   **Phase 4: Step Function Integration**\n-    *   [ ] **Replace Existing Task:** In the main Step Function definition (e.g., `lib/turbo-webhook-stack.ts`), replace the problematic `sfn.LambdaInvoke` or `sfn.Pass` state with an instance of the new `SchemaValidatedLambdaTask` construct, passing in the relevant Lambda function and Effect Schemas.\n-*   **Phase 5: Testing & Validation**\n-    *   [ ] **CDK Unit Tests:** Write CDK unit tests to assert that the `SchemaValidatedLambdaTask` construct correctly synthesizes the CloudFormation template with the expected `InputPath`, `Parameters`, `ResultSelector`, and `OutputPath` based on the provided schemas.\n-    *   [ ] **Lambda Unit Tests:** Update or create unit tests for the modified Lambda handler to ensure Effect Schema validation works as expected.\n-    *   [ ] **Step Function Integration Tests (AWS TestState API):** Use the AWS TestState API to test the individual Step Function state, verifying that data flows correctly and schema validation is enforced.\n-    *   [ ] **End-to-End Testing:** Conduct end-to-end tests in a development cloud environment to validate the entire workflow with the new schema integration.\n-*   **Phase 6: Gradual Expansion**\n-    *   [ ] **Documentation:** Document the process and benefits of using `SchemaValidatedLambdaTask` for future team reference.\n-    *   [ ] **Identify Next Targets:** Based on the success of this initial integration, identify other problematic data boundaries for subsequent incremental adoption of Effect Schema.\n",
+          "task.md": "commit 27894283f9653ebcb5e8220cead8c1d314da4d1e\nAuthor: Mark Stouffer <1802850+InTEGr8or@users.noreply.github.com>\nDate:   Tue Sep 30 22:49:49 2025 -0700\n\n    feat: implement Shopify shipping labels scraper using Playwright\n    \n    - Added a new script to scrape shipping labels from Shopify's admin interface.\n    - Integrated 1Password CLI for secure credential retrieval.\n    - Implemented date parsing for shipping labels.\n    - Added pagination handling to scrape multiple pages of labels.\n    - Saved scraped data to a JSON file in the specified output directory.\n\ndiff --git a/task.md b/task.md\nindex 1f973e8..e69de29 100644\n--- a/task.md\n+++ b/task.md\n@@ -1 +0,0 @@\n-When we have a foreign order, Starshipit creates customs docs, based on our products Harmonized System (HS) codes. When we run @lambda/generateStarshipitPdf.ts , we need to fetch the customs docs as well as the Label and Packing Slip that we are already fetching, and we need to store it in the same place we are storing those docs and add the S3 path to the DB, just like we do for those docs.\n\\ No newline at end of file\n"
+        },
+        "stats": [
+          {
+            "file": ".envrc",
+            "insertions": 4,
+            "deletions": 1
+          },
+          {
+            "file": ".gitignore",
+            "insertions": 2,
+            "deletions": 0
+          },
+          {
+            "file": "Makefile",
+            "insertions": 3,
+            "deletions": 0
+          },
+          {
+            "file": "error.json",
+            "insertions": 0,
+            "deletions": 4
+          },
+          {
+            "file": "execution_history.json",
+            "insertions": 0,
+            "deletions": 853
+          },
+          {
+            "file": "input.json",
+            "insertions": 0,
+            "deletions": 957
+          },
+          {
+            "file": "lambda-error.txt",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "lambda-output.txt",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "lambda_logs_base64.txt",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "package-lock.json",
+            "insertions": 51,
+            "deletions": 2
+          },
+          {
+            "file": "package.json",
+            "insertions": 2,
+            "deletions": 1
+          },
+          {
+            "file": "plan.md",
+            "insertions": 0,
+            "deletions": 97
+          },
+          {
+            "file": "recent_api_gateway_execution_logs.txt",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "recent_api_gateway_logs.txt",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "recent_logs.txt",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "recent_webhook_handler_logs.txt",
+            "insertions": 0,
+            "deletions": 40
+          },
+          {
+            "file": "scripts/data-scraping/__pycache__/consolidate_data.cpython-312.pyc",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/__pycache__/extract_pdf.cpython-312.pyc",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/__pycache__/extract_xlsx.cpython-312.pyc",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/__pycache__/generate_markdown.cpython-312.pyc",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/consolidate_data.py",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/extract_pdf.py",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/extract_xlsx.py",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/generate_markdown.py",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/archived-price-list-scrapers/pyproject.toml",
+            "insertions": 9,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/run_scraping.py",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/{ => archived-price-list-scrapers}/uv.lock",
+            "insertions": 0,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/data-scraping/requirements.txt",
+            "insertions": 0,
+            "deletions": 2
+          },
+          {
+            "file": "scripts/scrape-shopify-labels.ts",
+            "insertions": 234,
+            "deletions": 0
+          },
+          {
+            "file": "scripts/test-orders/foreign.ts",
+            "insertions": 8,
+            "deletions": 0
+          },
+          {
+            "file": "task.md",
+            "insertions": 0,
+            "deletions": 1
+          },
+          {
+            "file": "temp-approve-lambda-policy.json",
+            "insertions": 0,
+            "deletions": 22
+          },
+          {
+            "file": "temp-approve-lambda-trust-policy.json",
+            "insertions": 0,
+            "deletions": 12
+          },
+          {
+            "file": "temp-open-policy.json",
+            "insertions": 0,
+            "deletions": 11
+          },
+          {
+            "file": "temp-starshipit-secrets-policy.json",
+            "insertions": 0,
+            "deletions": 15
+          },
+          {
+            "file": "temp_foreign_order.json",
+            "insertions": 0,
+            "deletions": 1141
+          },
+          {
+            "file": "temp_fulfillment_payload.json",
+            "insertions": 0,
+            "deletions": 17
+          },
+          {
+            "file": "temp_method_settings.json",
+            "insertions": 0,
+            "deletions": 12
+          },
+          {
+            "file": "temp_policy.json",
+            "insertions": 0,
+            "deletions": 10
+          },
+          {
+            "file": "temp_webhook_payload.json",
+            "insertions": 0,
+            "deletions": 26
+          },
+          {
+            "file": "test-event.json",
+            "insertions": 0,
+            "deletions": 21
+          },
+          {
+            "file": "test-results.json",
+            "insertions": 0,
+            "deletions": 1858
+          },
+          {
+            "file": "test-shiptment.json",
+            "insertions": 0,
+            "deletions": 5
+          },
+          {
+            "file": "test-state-input.json",
+            "insertions": 0,
+            "deletions": 11
+          }
+        ],
+        "code_change_score": 242,
+        "adjusted_zero_credit_hours": 6.78,
+        "contributed_hours": 0
+      },
+      {
+        "hash": "bd6bef20304449d08e811a5d33c558bb8bd3559a",
+        "author_date": "2025-09-30T22:57:26-07:00",
+        "subject": "add: Scraped order shipping info",
+        "hours_since_previous": 0.13,
+        "stats": [
+          {
+            "file": "data/shopify/order_parcels/scraped_shipping_labels.csv",
+            "insertions": 2940,
+            "deletions": 0
+          }
+        ],
+        "code_change_score": 0,
+        "adjusted_zero_credit_hours": 5.0,
+        "contributed_hours": 0.13
+      }
+    ]
+  ]
+}
